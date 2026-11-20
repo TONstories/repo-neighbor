@@ -15,7 +15,7 @@ const token = () => crypto.randomUUID() + crypto.randomUUID();
 type Env = {
   DESK: DurableObjectNamespace;
   ASSETS: Fetcher;
-  REVIEWERS?: string;
+  REVIEWER_IDS?: string;
   GITHUB_CLIENT_ID?: string;
   GITHUB_CLIENT_SECRET?: string;
 };
@@ -58,11 +58,10 @@ export class Desk extends DurableObject<Env> {
       .toArray()[0];
     const reviewer =
       !!me &&
-      (this.env.REVIEWERS || "")
-        .toLowerCase()
+      (this.env.REVIEWER_IDS || "")
         .split(",")
         .map((s) => s.trim())
-        .includes(me.login.toLowerCase());
+        .includes(me.uid);
     // OAuth uses identity-only scope; the browser never receives a GitHub token.
     if (path === "/auth/github") {
       if (!this.env.GITHUB_CLIENT_ID || !this.env.GITHUB_CLIENT_SECRET)

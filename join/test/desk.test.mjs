@@ -36,7 +36,7 @@ test("identity, distinct reservations, review capacity and idempotent receipts",
       return { toArray: () => rows };
     },
   };
-  const desk = new Desk({ storage: { sql } }, { REVIEWERS: "alice,reviewer" });
+  const desk = new Desk({ storage: { sql } }, { REVIEWER_IDS: "alice,reviewer" });
   for (const login of ["alice", "bob", "reviewer", "carol"])
     sql.exec(
       "INSERT INTO sessions VALUES(?,?,?,?)",

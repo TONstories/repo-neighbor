@@ -3,7 +3,7 @@
 import json
 import re
 from datetime import datetime, timezone
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 
 
 def normalize(rows):
@@ -58,7 +58,7 @@ def normalize(rows):
 
 
 def read_export():
-    with urlopen(
-        "https://repo-neighbor.fil-support-bot.workers.dev/api/export", timeout=20
-    ) as response:
+    request = Request("https://repo-neighbor.fil-support-bot.workers.dev/api/export",
+                      headers={"User-Agent": "RepoNeighbor-Campaign/1.0 (+https://github.com/TONstories/repo-neighbor)"})
+    with urlopen(request, timeout=20) as response:
         return normalize(json.loads(response.read(4000000)))

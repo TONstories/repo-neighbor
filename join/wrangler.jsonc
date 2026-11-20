@@ -1,5 +1,5 @@
 {
-  "vars": { "REVIEWERS": "TONstories" },
+  "vars": { "REVIEWER_IDS": "286848286" },
   "name": "repo-neighbor",
   "main": "src/server.ts",
   "compatibility_date": "2026-06-01",

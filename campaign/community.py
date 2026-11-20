@@ -30,7 +30,7 @@ def week(when):
     return f"{y}-W{w:02d}"
 
 
-def weight(user, claims, opening, mobile=()):
+def credited_issues(user, claims, opening, mobile=()):
     accepted = {
         c["issue"]
         for c in claims
@@ -41,7 +41,11 @@ def weight(user, claims, opening, mobile=()):
     }
     accepted.update(c["issue"] for c in mobile if c["user"].casefold() == user.casefold()
                     and c["state"] == "accepted" and parse(c["reviewed_at"]) < opening)
-    return 1 + len({key.casefold() for key in accepted})
+    return sorted({key.casefold() for key in accepted})
+
+
+def weight(user, claims, opening, mobile=()):
+    return 1 + len(credited_issues(user, claims, opening, mobile))
 
 
 def command(title, user, at, ledger, repo_lookup, issue_number=None):
@@ -86,9 +90,11 @@ def command(title, user, at, ledger, repo_lookup, issue_number=None):
     if verb == "vote":
         if target not in ballot["nominees"]:
             return "Nominate this repository first."
+        credits = credited_issues(user, ledger["claims"], start(at), ledger.get("mobile", []))
         ballot["votes"][user.lower()] = {
+            "credits": credits,
             "repo": target,
-            "weight": weight(user, ledger["claims"], start(at), ledger.get("mobile", [])),
+            "weight": 1 + len(credits),
             "at": at.isoformat(),
         }
         return "Ballot recorded. A later vote replaces this one."
