@@ -12,3 +12,7 @@ On 2026-11-20 four clients connected to a local LM Studio endpoint running Qwen3
 | Other local and hosted models | — | — | Use a portable brief. Compatibility depends on the chosen client and model. |
 
 Review the technical wording before submitting. Some generated drafts described the example imprecisely even when the credit check passed. To recover a broken attribution, replace it with the exact output of the credit command and validate the final body.
+
+Goose, Mistral Vibe and Qwen Code have individual, documentation-based adapters. Their live client sessions have not been tested in this release. The optional local planner uses the native Ollama chat endpoint or LM Studio chat completions.
+
+On 2026-11-20 the local planner returned visible implementation checklists through LM Studio for **Gemma 4 12B IT QAT** and **Qwen3-Coder-30B** on the same offline Python validation scenario. Qwen3.5-4B returned no visible checklist within the output budget. The Ollama transport is implemented; its runtime was not exercised in this release.

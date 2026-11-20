@@ -6,18 +6,18 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['campaigns/editor.json']
+    paths: ['campaigns/editor.json', 'campaigns/costs.json']
   issues:
     types: [opened]
 concurrency:
-  group: quota-for-good-campaign
+  group: repo-neighbor-campaign
   cancel-in-progress: false
 permissions:
   contents: write
   issues: write
 jobs:
   reconcile:
-    if: github.repository == 'TONstories/quota-for-good' && (github.event_name != 'issues' || startsWith(github.event.issue.title, 'qfg '))
+    if: github.repository == 'TONstories/repo-neighbor' && (github.event_name != 'issues' || startsWith(github.event.issue.title, 'qfg ') || startsWith(github.event.issue.title, 'rn '))
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

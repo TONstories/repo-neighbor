@@ -1,5 +1,6 @@
-"""Publish and reconcile the Quota for Good board. Run from the repository root."""
+"""Publish and reconcile the Repo Neighbor board. Run from the repository root."""
 
+import community
 import json
 import re
 import sys
@@ -8,7 +9,7 @@ from pathlib import Path
 from urllib.parse import urlencode
 
 sys.path.insert(
-    0, str(Path(__file__).resolve().parents[1] / "skills/quota-for-good/scripts")
+    0, str(Path(__file__).resolve().parents[1] / "skills/repo-neighbor/scripts")
 )
 from finder import (
     SLUG,
@@ -22,11 +23,11 @@ from finder import (
     reviews,
 )
 
-HOME = "TONstories/quota-for-good"
+HOME = "TONstories/repo-neighbor"
 BASE = "https://github.com/" + HOME
 DIR = Path("campaigns")
 COMMAND = re.compile(
-    r"qfg (claim|release|submit) (https://github\.com/\S+)(?: (\S+))?", re.ASCII
+    r"(?:rn|qfg) (claim|release|submit) (https://github\.com/\S+)(?: (\S+))?", re.ASCII
 )
 UTC = timezone.utc
 
@@ -82,8 +83,22 @@ def select(now, editor, existing, claims):
     if len(set(pins)) != len(pins) or len(pins) > 3:
         raise ValueError("Up to 3 unique pins")
     by_repo = {}
-    for repo in pins:
-        by_repo[repo] = discover([], repo, 100, today, 180, 10)["candidates"]
+    preferences = list(pins)
+    if existing is None:
+        preferences += [
+            r
+            for r in editor.get("ranked", [])
+            if r.lower() not in {p.lower() for p in pins} and r.lower() not in excluded
+        ]
+    seat_order = []
+    for repo in preferences[:12]:
+        rows = discover([], repo, 100, today, 180, 10)["candidates"]
+        if rows:
+            canonical = rows[0]["repo"]
+            if canonical not in seat_order:
+                seat_order.append(canonical)
+            by_repo[canonical] = list(rows)
+    preferences = seat_order
     if existing is None:
         for row in discover([], None, 150, today, 180, 10)["candidates"]:
             by_repo.setdefault(row["repo"], []).append(row)
@@ -117,7 +132,9 @@ def select(now, editor, existing, claims):
         result.append(dict(repo=repo, tasks=tasks, window=window))
     result.sort(
         key=lambda p: (
-            pins.index(p["repo"]) if p["repo"] in pins else 3,
+            preferences.index(p["repo"])
+            if p["repo"] in preferences
+            else len(preferences),
             -min(5, len(p["tasks"])),
             -sum(t["score"] for t in p["tasks"][:2]),
             p["repo"],
@@ -133,14 +150,14 @@ def upstream_pr(url):
     owner, repo = match[1].split("/")
     return graph(
         """query($o:String!,$n:String!,$i:Int!){repository(owner:$o,name:$n){
-      pullRequest(number:$i){state url body author{login} closingIssuesReferences(first:50){nodes{url}}}}}""",
+      pullRequest(number:$i){state mergedAt url body author{login} closingIssuesReferences(first:50){nodes{url}}}}}""",
         o=owner,
         n=repo,
         i=int(match[3]),
     )["repository"]["pullRequest"]
 
 
-def transition(command, user, claims, week, projects, now):
+def transition(command, user, claims, week, projects, now, requires=None):
     match = COMMAND.fullmatch(command)
     if not match:
         return "Invalid command. See the campaign guide."
@@ -186,7 +203,12 @@ def transition(command, user, claims, week, projects, now):
         refs = {r["url"] for r in pr["closingIssuesReferences"]["nodes"]}
         if url not in refs and not re.search(re.escape(url) + r"(?![\w/])", pr["body"]):
             return "Link the issue in the PR description."
-        owned.update(status=pr["state"].lower(), pr=arg)
+        owned.update(
+            status=pr["state"].lower(),
+            pr=arg,
+            submitted_at=now.isoformat(),
+            merged_at=pr.get("mergedAt"),
+        )
         return "PR recorded."
     if op == "release":
         if not owned or arg:
@@ -210,6 +232,13 @@ def transition(command, user, claims, week, projects, now):
     )
     if not project:
         return "Issue is not listed in the current campaign."
+    blockers = [
+        link
+        for link in (requires or {}).get(url, [])
+        if not any(c["issue"] == link and c["status"] == "merged" for c in claims)
+    ]
+    if blockers:
+        return "Waiting for accepted prerequisites: " + " ".join(blockers)
     issue = live_issue(url)
     if not issue or not assess(
         issue, repo, *metadata(repo), now.date(), minutes=int(arg), reserve=0
@@ -218,6 +247,17 @@ def transition(command, user, claims, week, projects, now):
     window = reviews(repo, now.date())
     if slots(window, claims, now, repo) < 1:
         return "Review capacity is full or unknown."
+    task = next(t for t in project["tasks"] if t["url"] == url)
+    if any(
+        c["repo"] == repo
+        and (
+            c["issue"] == task.get("parent")
+            or c.get("parent") == url
+            or set(c.get("scope", [])) & set(task.get("scope", []))
+        )
+        for c in active
+    ):
+        return "An overlapping work package is already reserved or in review."
     until = now + timedelta(minutes=min(1440, int(arg) + 60))
     claims.append(
         dict(
@@ -226,6 +266,10 @@ def transition(command, user, claims, week, projects, now):
             user=user,
             week=week,
             status="held",
+            claimed_at=now.isoformat(),
+            estimate=task.get("minutes"),
+            scope=task.get("scope", []),
+            parent=task.get("parent"),
             until=until.isoformat(),
         )
     )
@@ -236,7 +280,7 @@ def inbox():
     owner, name = HOME.split("/")
     q = """query($o:String!,$n:String!,$cursor:String){repository(owner:$o,name:$n){
       issues(first:100,states:OPEN,after:$cursor,orderBy:{field:CREATED_AT,direction:ASC}){
-      nodes{number title author{login}} pageInfo{endCursor hasNextPage}}}}"""
+      nodes{number title createdAt lastEditedAt author{login}} pageInfo{endCursor hasNextPage}}}}"""
     args = {"o": owner, "n": name}
     while True:
         page = graph(q, **args)["repository"]["issues"]
@@ -352,8 +396,8 @@ def render(week, projects, claims, now, override, lang):
                 + "/issues/new?"
                 + urlencode(
                     {
-                        "title": "qfg claim " + t["url"] + " 90",
-                        "body": "Quota for Good campaign reservation.",
+                        "title": "rn claim " + t["url"] + " 90",
+                        "body": "Repo Neighbor campaign reservation.",
                     }
                 )
             )
@@ -391,6 +435,7 @@ def refresh_claims(claims, now):
             pr = upstream_pr(c["pr"])
             if pr:
                 c["status"] = pr["state"].lower()
+                c["merged_at"] = pr.get("mergedAt")
 
 
 def run(now):
@@ -403,26 +448,60 @@ def run(now):
     ledger = load(DIR / "ledger.json", {"claims": [], "receipts": {}})
     claims = ledger["claims"]
     refresh_claims(claims, now)
+    requests = list(inbox())
+    for request in requests:
+        key = str(request["number"])
+        title = request["title"]
+        if key in ledger["receipts"] or not title.startswith(
+            ("rn nominate ", "rn vote ", "rn pledge ")
+        ):
+            continue
+        user = (request["author"] or {}).get("login")
+        if user:
+            at = community.parse(
+                request.get("lastEditedAt")
+                or request.get("createdAt")
+                or now.isoformat()
+            )
+            ledger["receipts"][key] = community.command(
+                title, user, at, ledger, metadata
+            )
+    election = ledger.setdefault("elections", {}).setdefault(
+        week, {"nominees": {}, "votes": {}}
+    )
     projects = select(
         now,
         {
             "exclude": editor["exclude"] + override.get("exclude", []),
             "override": override,
+            "ranked": community.ranking(election),
         },
         load(folder / "selection.json", load(board, None)),
         claims,
     )
     if not (folder / "selection.json").exists():
         save(folder / "selection.json", projects)
-    for request in inbox():
+    if not election.get("closed"):
+        election.update(closed=True, selected=[p["repo"] for p in projects])
+    for request in requests:
         key = str(request["number"])
-        if not request["title"].startswith("qfg ") or key in ledger["receipts"]:
+        if (
+            not request["title"].startswith(("qfg ", "rn "))
+            or key in ledger["receipts"]
+        ):
             continue
         user = (request["author"] or {}).get("login")
         if user:
             ledger["receipts"][key] = transition(
-                request["title"], user, claims, week, projects, now
+                request["title"],
+                user,
+                claims,
+                week,
+                projects,
+                now,
+                override.get("requires", {}),
             )
+    community.reports(DIR, ledger, projects, now, override)
     save(board, projects)
     save(DIR / "ledger.json", ledger)
     for data in sorted((DIR / "archive").glob("*/projects.json")):
@@ -447,7 +526,7 @@ def run(now):
                 ("Español", "board.es.md"),
             )
         )
-        + "\n\n[Archive](archive) · [Participation and editing](guide.md) · [Reservation receipts](ledger.json)\n"
+        + "\n\n[Community, voting and impact](reports/README.md) · [Archive](archive) · [Participation and editing](guide.md) · [Reservation receipts](ledger.json)\n"
     )
 
 

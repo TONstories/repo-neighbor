@@ -14,6 +14,7 @@
           45,
           120
         ],
+        "parent": null,
         "repo": "cubrid-lab/cubrid-cookbook-python",
         "scope": [
           "CONTRIBUTING.md/AGENTS.md",
@@ -51,6 +52,7 @@
           30,
           90
         ],
+        "parent": null,
         "repo": "cubrid-lab/cubrid-cookbook-python",
         "scope": [
           "github.com/cubrid-lab/cubrid-cookbook-python/blob/main/quickstart/first-cubrid/04_cleanup.py",
@@ -88,6 +90,7 @@
           45,
           120
         ],
+        "parent": null,
         "repo": "cubrid-lab/cubrid-cookbook-python",
         "scope": [
           "github.com/cubrid-lab/cubrid-cookbook-python/blob/main/scripts/check_expected_coverage.py",
@@ -124,6 +127,7 @@
           45,
           120
         ],
+        "parent": null,
         "repo": "cubrid-lab/cubrid-cookbook-python",
         "scope": [
           "fundamentals/pycubrid/19_pagination.py",
@@ -160,6 +164,7 @@
           45,
           120
         ],
+        "parent": null,
         "repo": "cubrid-lab/cubrid-cookbook-python",
         "scope": [
           "fundamentals/pycubrid/12_pool_retry_worker.py",
@@ -213,6 +218,7 @@
           45,
           120
         ],
+        "parent": null,
         "repo": "cubrid-lab/sqlalchemy-cubrid",
         "scope": [
           "github.com/cubrid-lab/sqlalchemy-cubrid/blob/main/samples/create_engine.py",
@@ -252,6 +258,7 @@
           45,
           120
         ],
+        "parent": null,
         "repo": "cubrid-lab/sqlalchemy-cubrid",
         "scope": [
           "github.com/cubrid-lab/sqlalchemy-cubrid/blob/main/samples/async_basic.py",
@@ -291,6 +298,7 @@
           45,
           120
         ],
+        "parent": null,
         "repo": "cubrid-lab/sqlalchemy-cubrid",
         "scope": [
           "github.com/cubrid-lab/sqlalchemy-cubrid/blob/main/scripts/reflection_probe.py",

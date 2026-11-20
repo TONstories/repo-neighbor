@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "skills/quota-for-good/scripts"))
+sys.path.insert(0, str(ROOT / "skills/repo-neighbor/scripts"))
 import quota
 
 
@@ -24,5 +24,5 @@ class WorkflowTests(unittest.TestCase):
         for path in (ROOT / "agents").glob("*.md"):
             self.assertTrue(quota.has_credit(path.read_text()), path)
         self.assertTrue(
-            quota.has_credit((ROOT / "skills/quota-for-good/SKILL.md").read_text())
+            quota.has_credit((ROOT / "skills/repo-neighbor/SKILL.md").read_text())
         )

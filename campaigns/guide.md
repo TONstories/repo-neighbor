@@ -9,12 +9,12 @@
 | A reservation expires one hour after your time box, capped at 24 hours. Release early or record your PR before expiry. | Бронь истекает через час после сессии, максимум через 24 часа. Освободите ее раньше или привяжите свой PR до истечения. | La reserva vence una hora después de la sesión, con un máximo de 24 horas. Libérala o registra tu PR antes del vencimiento. |
 | Follow the upstream project's AI and assignment rules. Check the discussion again before editing. | Соблюдайте правила проекта по ИИ и назначению исполнителей. Перед правкой проверьте обсуждение. | Respeta las reglas sobre IA y asignaciones del proyecto. Revisa la conversación antes de editar. |
 
-Create an issue **in Quota for Good** with one of these exact title formats. Replace the URLs and minutes. GitHub supplies the requester identity. Only the holder can release or submit. Include the source issue URL and mandatory attribution in the PR body. Results are recorded by command issue number; the workflow closes processed requests. A failed run leaves requests available for reconciliation.
+Create an issue **in Repo Neighbor** with one of these exact title formats. Replace the URLs and minutes. GitHub supplies the requester identity. Only the holder can release or submit. Include the source issue URL and mandatory attribution in the PR body. Results are recorded by command issue number; the workflow closes processed requests. A failed run leaves requests available for reconciliation.
 
 ```text
-qfg claim https://github.com/OWNER/PROJECT/issues/123 90
-qfg release https://github.com/OWNER/PROJECT/issues/123
-qfg submit https://github.com/OWNER/PROJECT/issues/123 https://github.com/OWNER/PROJECT/pull/456
+rn claim https://github.com/OWNER/PROJECT/issues/123 90
+rn release https://github.com/OWNER/PROJECT/issues/123
+rn submit https://github.com/OWNER/PROJECT/issues/123 https://github.com/OWNER/PROJECT/pull/456
 ```
 
 ## How a week works

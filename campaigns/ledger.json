@@ -1,4 +1,15 @@
 {
   "claims": [],
+  "elections": {
+    "2026-W47": {
+      "closed": true,
+      "nominees": {},
+      "selected": [
+        "cubrid-lab/cubrid-cookbook-python",
+        "cubrid-lab/sqlalchemy-cubrid"
+      ],
+      "votes": {}
+    }
+  },
   "receipts": {}
 }

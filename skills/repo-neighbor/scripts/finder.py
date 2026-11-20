@@ -12,6 +12,15 @@ SLUG = r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+"
 URL = re.compile(r"https://github\.com/(" + SLUG + r")/(issues|pull)/([1-9][0-9]*)")
 BLOCK = {"blocked", "wontfix", "duplicate", "in progress", "invalid", "claimed"}
 LANGS = {
+    "Ruby": ("rb|rake", "Gemfile", "bundle exec rake test"),
+    "PHP": ("php", "composer.json", "composer test"),
+    "Swift": ("swift", "Package.swift", "swift test"),
+    "Dart": ("dart", "pubspec.yaml", "dart test"),
+    "Elixir": ("ex|exs", "mix.exs", "mix test"),
+    "Scala": ("scala", "build.sbt", "sbt test"),
+    "Zig": ("zig", "build.zig", "zig build test"),
+    "C++": ("cpp|cxx|cc|hpp", "CMakeLists.txt", "ctest"),
+    "C": ("c|h", "meson.build", "meson test"),
     "Python": ("py", "pyproject.toml", "pytest"),
     "JavaScript": ("js|jsx|mjs|cjs", "package.json", "package scripts"),
     "TypeScript": ("ts|tsx", "tsconfig.json", "package scripts"),
@@ -21,7 +30,9 @@ LANGS = {
     "Kotlin": ("kt|kts", "build.gradle.kts", "Gradle tests"),
     "C#": ("cs|csproj", "global.json", "dotnet test"),
 }
-ISSUE = """number title url body state locked updatedAt assignees(first:1){totalCount}
+ISSUE = """number title url body state locked updatedAt
+ parent{url state locked assignees(first:1){totalCount} labels(first:40){nodes{name}}}
+ subIssues(first:12){nodes{url state}} assignees(first:1){totalCount}
  labels(first:40){nodes{name}} comments(last:8){nodes{body}}
  closedByPullRequestsReferences(first:1){totalCount}"""
 POLICIES = [
@@ -189,6 +200,23 @@ def assess(
     if not issue or not meta:
         return None
     labels = {n["name"].lower() for n in issue["labels"]["nodes"]}
+    parent = issue.get("parent")
+    if (
+        parent
+        and parent["url"].startswith("https://github.com/" + repo + "/issues/")
+        and parent["state"] == "OPEN"
+        and not parent["locked"]
+        and not parent["assignees"]["totalCount"]
+    ):
+        labels |= {n["name"].lower() for n in parent["labels"]["nodes"]} & {
+            "help wanted",
+            "good first issue",
+        }
+    if any(
+        child["state"] == "OPEN"
+        for child in issue.get("subIssues", {}).get("nodes", [])
+    ):
+        return
     text = issue["title"] + "\n" + issue["body"]
     policy = "\n".join(files[p] for p in POLICIES if p in files)
     license_id = (meta.get("licenseInfo") or {}).get("spdxId")
@@ -226,7 +254,7 @@ def assess(
             r"\b[\w./-]+\.(?:"
             + extensions
             + r")\b|(?<![\w])"
-            + re.escape(lang)
+            + (re.escape(lang) if lang != "C" else r"(?!)")
             + r"(?![\w])",
             text,
             re.I if lang != "Go" else 0,
@@ -327,6 +355,7 @@ def assess(
             labels & {"good first issue", "help wanted", "documentation", "tests"}
         ),
         score=score,
+        parent=(parent or {}).get("url"),
         stack=stack,
         stack_source=confidence,
         evidence=evidence,
@@ -368,6 +397,19 @@ def discover(languages, repo, limit, today, minutes=60, reserve=10, kind=None):
     picks = []
     for name, issues in list(grouped.items())[:24]:
         meta, files = metadata(name)
+        children = list(
+            dict.fromkeys(
+                child["url"]
+                for row in issues.values()
+                for child in row.get("subIssues", {}).get("nodes", [])
+                if child["state"] == "OPEN"
+                and child["url"].startswith("https://github.com/" + name + "/issues/")
+                and child["url"] not in issues
+            )
+        )
+        for child in live_issues(children[:12]):
+            if child:
+                issues[child["url"]] = child
         for row in issues.values():
             item = assess(
                 row, name, meta, files, today, languages, minutes, reserve, kind

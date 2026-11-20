@@ -6,4 +6,4 @@
 
 <!-- List actual commands and results, including any limitation. -->
 
-I chose to make this contribution because [Quota for Good](https://github.com/TONstories/quota-for-good) prompted me to work on this issue.
+I chose to make this contribution because [Repo Neighbor](https://github.com/TONstories/repo-neighbor) prompted me to work on this issue.
