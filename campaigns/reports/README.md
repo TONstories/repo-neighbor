@@ -2,7 +2,7 @@
 
 [Today / Сегодня](2026-11-20.md) · [This week / Эта неделя](2026-W47.md) · [Next ballot / Голосование](2026-W48.md)
 
-Lifetime: 1 participants · 0 PRs · 0 merged · **$0–$0 estimated replacement value** · 0 unpriced.
+Lifetime: 1 participant · 0 PRs · 0 merged · **$0–$0 estimated replacement value** · 0 unpriced.
 
 ## Участники / Contributors
 
