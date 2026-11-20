@@ -2,12 +2,16 @@
   "claims": [],
   "elections": {
     "2026-W47": {
+      "capacity": 3,
       "closed": true,
       "nominees": {},
       "selected": [
         "cubrid-lab/cubrid-cookbook-python",
         "cubrid-lab/sqlalchemy-cubrid"
       ],
+      "tracks": {
+        "cubrid-lab/cubrid-cookbook-python": "general"
+      },
       "votes": {}
     }
   },
