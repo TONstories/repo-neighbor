@@ -466,7 +466,7 @@ def run(now):
                 or now.isoformat()
             )
             ledger["receipts"][key] = community.command(
-                title, user, at, ledger, metadata
+                title, user, at, ledger, metadata, issue_number=request["number"]
             )
     election = ledger.setdefault("elections", {}).setdefault(
         week, {"nominees": {}, "votes": {}}

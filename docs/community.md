@@ -1,5 +1,7 @@
 # Community rules · Правила сообщества · Reglas
 
+[Maintainer proposal / Заявка владельца / Propuesta](maintainers.md)
+
 [Live desk: nominate, vote, claim and see results](../campaigns/reports/README.md)
 
 | Goal | Command in a new issue title in Repo Neighbor |

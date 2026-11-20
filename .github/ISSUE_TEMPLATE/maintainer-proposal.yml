@@ -1,0 +1,47 @@
+name: "Project proposal / Заявка владельца / Propuesta"
+description: "Share your roadmap and a week of reviewable work. План продукта и задачи на неделю."
+title: "rn nominate OWNER/REPO"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Replace OWNER/REPO in the title with the GitHub repository. Answer in English, Russian or Spanish.
+        В заголовке замените OWNER/REPO на адрес репозитория без https://github.com/. Можно отвечать по-русски.
+        Sustituye OWNER/REPO en el título. Puedes responder en español.
+        [Guide and example / Инструкция и пример / Guía](https://github.com/TONstories/repo-neighbor/blob/main/docs/maintainers.md)
+  - type: textarea
+    id: product
+    attributes:
+      label: "Product / Продукт / Producto"
+      description: "Who uses it and what is hard today? Для кого продукт и в чем проблема? ¿A quién afecta el problema?"
+    validations:
+      required: true
+  - type: textarea
+    id: roadmap
+    attributes:
+      label: "Roadmap / План развития / Hoja de ruta"
+      description: "Now → next milestone → later. Что уже работает, какой результат нужен следующим и что от него зависит? ¿Qué viene después y por qué?"
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: "Weekly outcome / Цель недели / Objetivo semanal"
+      description: "One user-visible outcome, a success check and scope boundaries. Что должно заработать к концу недели и что отложим? ¿Cómo sabrás que se logró?"
+    validations:
+      required: true
+  - type: textarea
+    id: tasks
+    attributes:
+      label: "Work packages / Задачи / Tareas"
+      description: "List priority, issue URL, affected files, dependencies and acceptance test per task. Для каждой задачи укажите эти данные. Incluye estos datos por tarea."
+      placeholder: "P1 · issue URL · component/files · depends on… · done when… · test command"
+    validations:
+      required: true
+  - type: textarea
+    id: review
+    attributes:
+      label: "Review and rules / Ревью и правила / Revisión y reglas"
+      description: "Your role, GitHub reviewer, weekly PR capacity, contribution and AI rules. Кто примет работу и сколько PR сможет проверить? ¿Quién revisará los PR y cuántos puede revisar?"
+    validations:
+      required: true

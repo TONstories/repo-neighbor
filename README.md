@@ -6,6 +6,8 @@ Turn spare AI coding-agent quota into a reviewed open-source contribution. If yo
 
 ## Choose the next project
 
+[Submit your project as a maintainer](docs/maintainers.md)
+
 [Community desk, ballots and contributions](campaigns/reports/README.md) · [Nominate and vote](docs/community.md) · [Donate capped inference](sponsorship/README.md)
 
 Propose a repository for next week. A new participant has one vote; each distinct upstream task they helped land before voting opened adds one. Reserve one independent work package at a time. The public reports show contributors, merged PRs and estimated engineering value in USD. Donated compute never increases voting power.

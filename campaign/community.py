@@ -41,7 +41,7 @@ def weight(user, claims, opening):
     return 1 + len(accepted)
 
 
-def command(title, user, at, ledger, repo_lookup):
+def command(title, user, at, ledger, repo_lookup, issue_number=None):
     verb, _, target = title[3:].partition(" ")
     if verb == "pledge":
         if not re.fullmatch(r"[a-f0-9]{32}", target):
@@ -77,6 +77,8 @@ def command(title, user, at, ledger, repo_lookup):
         if canonical in ballot["nominees"]:
             return "Already nominated."
         ballot["nominees"][canonical] = {"user": user, "at": at.isoformat()}
+        if issue_number is not None:
+            ballot["nominees"][canonical]["issue"] = int(issue_number)
         return "Nominated for next week's selection."
     if verb == "vote":
         if target not in ballot["nominees"]:
@@ -88,6 +90,11 @@ def command(title, user, at, ledger, repo_lookup):
         }
         return "Ballot recorded. A later vote replaces this one."
     return "Unknown community command."
+
+
+def proposal_link(nominee):
+    number = nominee.get("issue")
+    return f" · [Заявка / Proposal]({BASE}/issues/{number})" if number else ""
 
 
 def ranking(ballot):
@@ -256,7 +263,7 @@ def reports(directory, ledger, projects, now, override):
         ]
         for repo, n in e.get("nominees", {}).items():
             out.append(
-                f"- [{repo}](https://github.com/{repo}) · proposed by {n['user']}"
+                f"- [{repo}](https://github.com/{repo}) · proposed by {n['user']}{proposal_link(n)}"
             )
         for user, v in sorted(e.get("votes", {}).items()):
             out.append(f"- {user} → {v['repo']} · {v['weight']} votes")
@@ -318,12 +325,12 @@ def reports(directory, ledger, projects, now, override):
     out += [
         "## Next week",
         "",
-        f"[Nominate a project]({issue_link('rn nominate OWNER/REPO')}) · [Rules](../../docs/community.md)",
+        f"[Nominate a project]({issue_link('rn nominate OWNER/REPO')}) · [Заявка владельца / Maintainer proposal](../../docs/maintainers.md) · [Rules](../../docs/community.md)",
         "",
     ]
     for repo, n in board.get("nominees", {}).items():
         votes = sum(v["weight"] for v in board["votes"].values() if v["repo"] == repo)
-        out.append(f"- {repo} · {votes} · [vote]({issue_link('rn vote ' + repo)})")
+        out.append(f"- {repo} · {votes}{proposal_link(n)} · [vote]({issue_link('rn vote ' + repo)})")
     if not board.get("nominees"):
         out.append("Прием открыт, предложений пока нет. Nominations are open.")
     if nextweek not in weeks:

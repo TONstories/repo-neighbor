@@ -23,6 +23,6 @@ Lifetime: 0 participants · 0 PRs · 0 merged · **$0–$0 estimated replacement
 
 ## Next week
 
-[Nominate a project](https://github.com/TONstories/repo-neighbor/issues/new?title=rn%20nominate%20OWNER%2FREPO) · [Rules](../../docs/community.md)
+[Nominate a project](https://github.com/TONstories/repo-neighbor/issues/new?title=rn%20nominate%20OWNER%2FREPO) · [Заявка владельца / Maintainer proposal](../../docs/maintainers.md) · [Rules](../../docs/community.md)
 
 Прием открыт, предложений пока нет. Nominations are open.

@@ -53,6 +53,18 @@ class ElectionTests(unittest.TestCase):
         election["closed"] = True
         self.assertIn("closed", submit("vote org/first"))
 
+    def test_proposal_is_readable_from_ballot_after_issue_closes(self):
+        ledger = {"claims": []}
+        c.command("rn nominate org/tool", "Alice", NOW, ledger,
+                  lambda repo: (dict(META, nameWithOwner=repo), {}), issue_number=42)
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            c.reports(root, ledger, [], NOW, {})
+            ballot = c.week(NOW + dt.timedelta(days=7)) + ".md"
+            for page in ("README.md", ballot):
+                self.assertIn(c.BASE + "/issues/42", (root / "reports" / page).read_text())
+        self.assertEqual(c.proposal_link({"user": "previous contributor"}), "")
+
     def test_impact_unique_merged_pr(self):
         row = dict(pr="test", estimate=[30, 90])
         self.assertEqual(c.impact(c.unique_prs([row, row]).values()), ("$30–$90", 0))

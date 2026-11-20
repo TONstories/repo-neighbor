@@ -6,6 +6,8 @@ Cuando termines tus propias tareas, puedes dedicar una parte de tu cuota a una c
 
 ## Comunidad y presupuesto
 
+[Cómo proponer tu propio proyecto](maintainers.md)
+
 Propón un proyecto y vota por la próxima semana. El peso crece con las tareas aceptadas. Los informes muestran participantes, PR y valor estimado en dólares.
 
 [Dashboard](../campaigns/reports/README.md) · [Voting](community.md) · [API donations](../sponsorship/README.md) · [Goose](../agents/goose.md) · [Mistral Vibe](../agents/vibe.md) · [Qwen Code](../agents/qwen-code.md)
