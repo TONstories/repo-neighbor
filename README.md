@@ -1,5 +1,8 @@
 # Repo Neighbor
 
+[Check your actual Codex allowance or start an opt-in session before reset](docs/reset-window.md)
+
+
 [Community allocation and volunteer computing · Правила выбора и кластер · Selección y computación](docs/allocation.md)
 
 [Русский](docs/ru.md) · [Español](docs/es.md)
