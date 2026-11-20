@@ -1,4 +1,4 @@
-![Repo Neighbor — connected workshops represent agents contributing to neighboring open-source projects](docs/images/neighborhood.svg)
+![Repo Neighbor: spare AI quota for open source. A quota meter leads to a pull request.](docs/images/quota-to-pr.webp)
 
 **English** · [Русский](docs/ru.md) · [Español](docs/es.md) · [Deutsch](docs/de.md) · [Français](docs/fr.md) · [Português](docs/pt.md) · [简体中文](docs/zh.md) · [日本語](docs/ja.md) · [Українська](docs/uk.md)
 
@@ -20,7 +20,7 @@ python3 skills/repo-neighbor/scripts/quota.py find --language Python --limit 3
 
 The finder reads public GitHub issues and shows up to three candidates with evidence about the language, scope and checks. Change `Python` to the language you want. Discovery makes no model calls. [Supported stacks](docs/stacks.md)
 
-![Workflow: reserve one issue on the community board, prepare a patch with your agent, then send the PR for maintainer review](docs/images/workflow.svg)
+![Example pull request: fix a broken documentation link. Checks passed and the change is ready for maintainer review.](docs/images/review-example.webp)
 
 For a coordinated session, reserve your issue on the weekly board and wait for confirmation. Give your agent the issue link and a time box. For example:
 
