@@ -1,5 +1,400 @@
 [
   {
+    "repo": "cubrid-lab/sqlalchemy-cubrid",
+    "tasks": [
+      {
+        "checks": [
+          "make test (CONTRIBUTING.md)",
+          "make test-fast (CONTRIBUTING.md)",
+          "make test-repo (CONTRIBUTING.md)"
+        ],
+        "evidence": [
+          "samples/create_engine.py"
+        ],
+        "fit": "fits",
+        "kind": "docs",
+        "license": "MIT",
+        "minutes": [
+          15,
+          45
+        ],
+        "parent": null,
+        "repo": "cubrid-lab/sqlalchemy-cubrid",
+        "scope": [
+          "docs/LESSON_PREPARE.md",
+          "github.com/cubrid-lab/sqlalchemy-cubrid/blob/main/docs/LESSON_PREPARE.md",
+          "github.com/cubrid-lab/sqlalchemy-cubrid/blob/main/samples/create_engine.py",
+          "github.com/cubrid-lab/sqlalchemy-cubrid/blob/main/samples/cubrid_datatypes.py",
+          "samples/create_engine.py",
+          "samples/cubrid_datatypes.py"
+        ],
+        "score": 84,
+        "signals": [
+          "documentation",
+          "good first issue"
+        ],
+        "stack": [
+          "Python"
+        ],
+        "stack_source": "issue",
+        "title": "docs: align starter samples with the disposable quickstart database",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope."
+        ],
+        "updated": "2026-11-19T11:48:43Z",
+        "url": "https://github.com/cubrid-lab/sqlalchemy-cubrid/issues/1365"
+      },
+      {
+        "checks": [
+          "make test (CONTRIBUTING.md)",
+          "make test-fast (CONTRIBUTING.md)",
+          "make test-repo (CONTRIBUTING.md)"
+        ],
+        "evidence": [
+          "Python"
+        ],
+        "fit": "fits",
+        "kind": "docs",
+        "license": "MIT",
+        "minutes": [
+          15,
+          45
+        ],
+        "parent": null,
+        "repo": "cubrid-lab/sqlalchemy-cubrid",
+        "scope": [
+          "docs/CONNECTION.md"
+        ],
+        "score": 84,
+        "signals": [
+          "documentation",
+          "good first issue"
+        ],
+        "stack": [
+          "Python"
+        ],
+        "stack_source": "issue",
+        "title": "docs: make the async connection example executable as a script",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope."
+        ],
+        "updated": "2026-11-19T12:12:26Z",
+        "url": "https://github.com/cubrid-lab/sqlalchemy-cubrid/issues/1367"
+      },
+      {
+        "checks": [
+          "make test (CONTRIBUTING.md)",
+          "make test-fast (CONTRIBUTING.md)",
+          "make test-repo (CONTRIBUTING.md)"
+        ],
+        "evidence": [
+          "Python"
+        ],
+        "fit": "fits",
+        "kind": "docs",
+        "license": "MIT",
+        "minutes": [
+          15,
+          45
+        ],
+        "parent": null,
+        "repo": "cubrid-lab/sqlalchemy-cubrid",
+        "scope": [
+          "docs/DML_EXTENSIONS.md"
+        ],
+        "score": 84,
+        "signals": [
+          "documentation",
+          "good first issue"
+        ],
+        "stack": [
+          "Python"
+        ],
+        "stack_source": "issue",
+        "title": "docs: distinguish illustrative SQL from bound-parameter SQL in DML examples",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope."
+        ],
+        "updated": "2026-11-19T12:12:34Z",
+        "url": "https://github.com/cubrid-lab/sqlalchemy-cubrid/issues/1370"
+      },
+      {
+        "checks": [
+          "make test (CONTRIBUTING.md)",
+          "make test-fast (CONTRIBUTING.md)",
+          "make test-repo (CONTRIBUTING.md)"
+        ],
+        "evidence": [
+          "samples/async_basic.py"
+        ],
+        "fit": "fits",
+        "kind": "docs",
+        "license": "MIT",
+        "minutes": [
+          15,
+          45
+        ],
+        "parent": null,
+        "repo": "cubrid-lab/sqlalchemy-cubrid",
+        "scope": [
+          "samples/async_basic.py"
+        ],
+        "score": 84,
+        "signals": [
+          "documentation",
+          "good first issue"
+        ],
+        "stack": [
+          "Python"
+        ],
+        "stack_source": "issue",
+        "title": "docs: warn that the async sample drops a pre-existing table",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope."
+        ],
+        "updated": "2026-11-19T12:12:54Z",
+        "url": "https://github.com/cubrid-lab/sqlalchemy-cubrid/issues/1371"
+      },
+      {
+        "checks": [
+          "make test (CONTRIBUTING.md)",
+          "make test-fast (CONTRIBUTING.md)",
+          "make test-repo (CONTRIBUTING.md)"
+        ],
+        "evidence": [
+          "scripts/bench_compile.py"
+        ],
+        "fit": "fits",
+        "kind": "code",
+        "license": "MIT",
+        "minutes": [
+          45,
+          120
+        ],
+        "parent": null,
+        "repo": "cubrid-lab/sqlalchemy-cubrid",
+        "scope": [
+          "scripts/bench_compile.py",
+          "test/test_bench_compile.py"
+        ],
+        "score": 84,
+        "signals": [
+          "good first issue"
+        ],
+        "stack": [
+          "Python"
+        ],
+        "stack_source": "issue",
+        "title": "bug: use singular grammar for one compiler benchmark iteration",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope."
+        ],
+        "updated": "2026-11-19T12:13:03Z",
+        "url": "https://github.com/cubrid-lab/sqlalchemy-cubrid/issues/1374"
+      },
+      {
+        "checks": [
+          "make test (CONTRIBUTING.md)",
+          "make test-fast (CONTRIBUTING.md)",
+          "make test-repo (CONTRIBUTING.md)"
+        ],
+        "evidence": [
+          "scripts/report_driver_versions.py"
+        ],
+        "fit": "fits",
+        "kind": "tests",
+        "license": "MIT",
+        "minutes": [
+          30,
+          90
+        ],
+        "parent": null,
+        "repo": "cubrid-lab/sqlalchemy-cubrid",
+        "scope": [
+          "scripts/report_driver_versions.py",
+          "test/test_report_driver_versions.py"
+        ],
+        "score": 84,
+        "signals": [
+          "good first issue"
+        ],
+        "stack": [
+          "Python"
+        ],
+        "stack_source": "issue",
+        "title": "test: cover version-report collection with a configured database URL",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope."
+        ],
+        "updated": "2026-11-19T12:13:05Z",
+        "url": "https://github.com/cubrid-lab/sqlalchemy-cubrid/issues/1375"
+      },
+      {
+        "checks": [
+          "make test (CONTRIBUTING.md)",
+          "make test-fast (CONTRIBUTING.md)",
+          "make test-repo (CONTRIBUTING.md)"
+        ],
+        "evidence": [
+          "sqlalchemy_cubrid/__init__.py"
+        ],
+        "fit": "fits",
+        "kind": "docs",
+        "license": "MIT",
+        "minutes": [
+          15,
+          45
+        ],
+        "parent": null,
+        "repo": "cubrid-lab/sqlalchemy-cubrid",
+        "scope": [
+          "docs/DRIVER_COMPAT.md",
+          "github.com/cubrid-lab/sqlalchemy-cubrid/blob/main/docs/DRIVER_COMPAT.md",
+          "github.com/cubrid-lab/sqlalchemy-cubrid/blob/main/sqlalchemy_cubrid/__init__.py",
+          "sqlalchemy_cubrid/__init__.py"
+        ],
+        "score": 84,
+        "signals": [
+          "documentation",
+          "good first issue",
+          "help wanted"
+        ],
+        "stack": [
+          "Python"
+        ],
+        "stack_source": "issue",
+        "title": "docs: describe supported CUBRIDdb as maintained rather than legacy",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope."
+        ],
+        "updated": "2026-11-20T14:47:16Z",
+        "url": "https://github.com/cubrid-lab/sqlalchemy-cubrid/issues/1383"
+      },
+      {
+        "checks": [
+          "make test (CONTRIBUTING.md)",
+          "make test-fast (CONTRIBUTING.md)",
+          "make test-repo (CONTRIBUTING.md)"
+        ],
+        "evidence": [],
+        "fit": "fits",
+        "kind": "docs",
+        "license": "MIT",
+        "minutes": [
+          15,
+          45
+        ],
+        "parent": null,
+        "repo": "cubrid-lab/sqlalchemy-cubrid",
+        "scope": [
+          "docs/ORM_COOKBOOK.md",
+          "docs/ko/ORM_COOKBOOK.md"
+        ],
+        "score": 74,
+        "signals": [
+          "documentation",
+          "good first issue"
+        ],
+        "stack": [
+          "Python"
+        ],
+        "stack_source": "repository only",
+        "title": "docs: use the recommended pycubrid URL in ORM Cookbook quick setup",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope.",
+          "Issue stack inferred from repository files."
+        ],
+        "updated": "2026-11-19T12:12:23Z",
+        "url": "https://github.com/cubrid-lab/sqlalchemy-cubrid/issues/1366"
+      },
+      {
+        "checks": [
+          "make test (CONTRIBUTING.md)",
+          "make test-fast (CONTRIBUTING.md)",
+          "make test-repo (CONTRIBUTING.md)"
+        ],
+        "evidence": [],
+        "fit": "fits",
+        "kind": "docs",
+        "license": "MIT",
+        "minutes": [
+          15,
+          45
+        ],
+        "parent": null,
+        "repo": "cubrid-lab/sqlalchemy-cubrid",
+        "scope": [],
+        "score": 74,
+        "signals": [
+          "documentation",
+          "good first issue"
+        ],
+        "stack": [
+          "Python"
+        ],
+        "stack_source": "repository only",
+        "title": "docs: add the MCP Server to the first-contribution project list",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope.",
+          "Issue stack inferred from repository files."
+        ],
+        "updated": "2026-11-19T12:12:57Z",
+        "url": "https://github.com/cubrid-lab/sqlalchemy-cubrid/issues/1372"
+      },
+      {
+        "checks": [
+          "make test (CONTRIBUTING.md)",
+          "make test-fast (CONTRIBUTING.md)",
+          "make test-repo (CONTRIBUTING.md)"
+        ],
+        "evidence": [],
+        "fit": "fits",
+        "kind": "docs",
+        "license": "MIT",
+        "minutes": [
+          15,
+          45
+        ],
+        "parent": null,
+        "repo": "cubrid-lab/sqlalchemy-cubrid",
+        "scope": [
+          "docs/DEVELOPMENT.md",
+          "github.com/cubrid-lab/sqlalchemy-cubrid/blob/main/docs/DEVELOPMENT.md"
+        ],
+        "score": 74,
+        "signals": [
+          "documentation",
+          "good first issue",
+          "help wanted"
+        ],
+        "stack": [
+          "Python"
+        ],
+        "stack_source": "repository only",
+        "title": "docs: install the recommended driver in manual contributor setup",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope.",
+          "Issue stack inferred from repository files."
+        ],
+        "updated": "2026-11-20T15:27:31Z",
+        "url": "https://github.com/cubrid-lab/sqlalchemy-cubrid/issues/1384"
+      }
+    ],
+    "window": {
+      "complete": true,
+      "decisions": 262,
+      "limit": 5,
+      "open": [
+        "https://github.com/cubrid-lab/sqlalchemy-cubrid/pull/1362",
+        "https://github.com/cubrid-lab/sqlalchemy-cubrid/pull/1376",
+        "https://github.com/cubrid-lab/sqlalchemy-cubrid/pull/1379",
+        "https://github.com/cubrid-lab/sqlalchemy-cubrid/pull/1385",
+        "https://github.com/cubrid-lab/sqlalchemy-cubrid/pull/1387",
+        "https://github.com/cubrid-lab/sqlalchemy-cubrid/pull/1388"
+      ]
+    }
+  },
+  {
     "repo": "cubrid-lab/cubrid-cookbook-python",
     "tasks": [
       {
@@ -37,7 +432,7 @@
           "Confirm AI and attribution policy, current ownership and actual scope.",
           "Inspect the project's CI for its exact check."
         ],
-        "updated": "2026-11-20T13:16:42Z",
+        "updated": "2026-11-20T14:48:08Z",
         "url": "https://github.com/cubrid-lab/cubrid-cookbook-python/issues/581"
       },
       {
@@ -75,82 +470,8 @@
           "Confirm AI and attribution policy, current ownership and actual scope.",
           "Inspect the project's CI for its exact check."
         ],
-        "updated": "2026-11-20T13:16:50Z",
+        "updated": "2026-11-20T14:48:06Z",
         "url": "https://github.com/cubrid-lab/cubrid-cookbook-python/issues/582"
-      },
-      {
-        "checks": [],
-        "evidence": [
-          "scripts/check_expected_coverage.py"
-        ],
-        "fit": "fits",
-        "kind": "code",
-        "license": "MIT",
-        "minutes": [
-          45,
-          120
-        ],
-        "parent": null,
-        "repo": "cubrid-lab/cubrid-cookbook-python",
-        "scope": [
-          "github.com/cubrid-lab/cubrid-cookbook-python/blob/main/scripts/check_expected_coverage.py",
-          "github.com/cubrid-lab/cubrid-cookbook-python/blob/main/tests/test_check_expected_coverage.py",
-          "scripts/check_expected_coverage.py",
-          "tests/test_check_expected_coverage.py"
-        ],
-        "score": 76,
-        "signals": [
-          "good first issue",
-          "help wanted"
-        ],
-        "stack": [
-          "Python"
-        ],
-        "stack_source": "issue",
-        "title": "bug: give an actionable error for golden checks outside the repository",
-        "unknown": [
-          "Confirm AI and attribution policy, current ownership and actual scope.",
-          "Inspect the project's CI for its exact check."
-        ],
-        "updated": "2026-11-20T13:21:28Z",
-        "url": "https://github.com/cubrid-lab/cubrid-cookbook-python/issues/583"
-      },
-      {
-        "checks": [],
-        "evidence": [
-          "fundamentals/pycubrid/19_pagination.py"
-        ],
-        "fit": "fits",
-        "kind": "code",
-        "license": "MIT",
-        "minutes": [
-          45,
-          120
-        ],
-        "parent": null,
-        "repo": "cubrid-lab/cubrid-cookbook-python",
-        "scope": [
-          "fundamentals/pycubrid/19_pagination.py",
-          "github.com/cubrid-lab/cubrid-cookbook-python/blob/main/fundamentals/pycubrid/19_pagination.py",
-          "github.com/cubrid-lab/cubrid-cookbook-python/blob/main/tests/test_pagination_recipe.py",
-          "tests/test_pagination_recipe.py"
-        ],
-        "score": 76,
-        "signals": [
-          "good first issue",
-          "help wanted"
-        ],
-        "stack": [
-          "Python"
-        ],
-        "stack_source": "issue",
-        "title": "bug: reject invalid page numbers in both pagination recipes",
-        "unknown": [
-          "Confirm AI and attribution policy, current ownership and actual scope.",
-          "Inspect the project's CI for its exact check."
-        ],
-        "updated": "2026-11-20T13:21:57Z",
-        "url": "https://github.com/cubrid-lab/cubrid-cookbook-python/issues/584"
       },
       {
         "checks": [],
@@ -185,7 +506,7 @@
           "Confirm AI and attribution policy, current ownership and actual scope.",
           "Inspect the project's CI for its exact check."
         ],
-        "updated": "2026-11-20T13:26:16Z",
+        "updated": "2026-11-20T14:47:23Z",
         "url": "https://github.com/cubrid-lab/cubrid-cookbook-python/issues/585"
       }
     ],
@@ -195,143 +516,10 @@
       "limit": 5,
       "open": [
         "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/578",
-        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/586"
-      ]
-    }
-  },
-  {
-    "repo": "cubrid-lab/sqlalchemy-cubrid",
-    "tasks": [
-      {
-        "checks": [
-          "make test (CONTRIBUTING.md)",
-          "make test-fast (CONTRIBUTING.md)",
-          "make test-repo (CONTRIBUTING.md)"
-        ],
-        "evidence": [
-          "samples/create_engine.py"
-        ],
-        "fit": "fits",
-        "kind": "code",
-        "license": "MIT",
-        "minutes": [
-          45,
-          120
-        ],
-        "parent": null,
-        "repo": "cubrid-lab/sqlalchemy-cubrid",
-        "scope": [
-          "github.com/cubrid-lab/sqlalchemy-cubrid/blob/main/samples/create_engine.py",
-          "github.com/cubrid-lab/sqlalchemy-cubrid/blob/main/test/test_samples_create_engine.py",
-          "samples/create_engine.py",
-          "test/test_samples_create_engine.py"
-        ],
-        "score": 84,
-        "signals": [
-          "good first issue",
-          "help wanted"
-        ],
-        "stack": [
-          "Python"
-        ],
-        "stack_source": "issue",
-        "title": "bug: avoid database access when importing the basic engine sample",
-        "unknown": [
-          "Confirm AI and attribution policy, current ownership and actual scope."
-        ],
-        "updated": "2026-11-20T13:22:01Z",
-        "url": "https://github.com/cubrid-lab/sqlalchemy-cubrid/issues/1380"
-      },
-      {
-        "checks": [
-          "make test (CONTRIBUTING.md)",
-          "make test-fast (CONTRIBUTING.md)",
-          "make test-repo (CONTRIBUTING.md)"
-        ],
-        "evidence": [
-          "samples/async_basic.py"
-        ],
-        "fit": "fits",
-        "kind": "code",
-        "license": "MIT",
-        "minutes": [
-          45,
-          120
-        ],
-        "parent": null,
-        "repo": "cubrid-lab/sqlalchemy-cubrid",
-        "scope": [
-          "github.com/cubrid-lab/sqlalchemy-cubrid/blob/main/samples/async_basic.py",
-          "github.com/cubrid-lab/sqlalchemy-cubrid/blob/main/test/test_samples_async_basic.py",
-          "samples/async_basic.py",
-          "test/test_samples_async_basic.py"
-        ],
-        "score": 84,
-        "signals": [
-          "good first issue",
-          "help wanted"
-        ],
-        "stack": [
-          "Python"
-        ],
-        "stack_source": "issue",
-        "title": "bug: always dispose the engine when the async sample fails",
-        "unknown": [
-          "Confirm AI and attribution policy, current ownership and actual scope."
-        ],
-        "updated": "2026-11-20T13:21:16Z",
-        "url": "https://github.com/cubrid-lab/sqlalchemy-cubrid/issues/1381"
-      },
-      {
-        "checks": [
-          "make test (CONTRIBUTING.md)",
-          "make test-fast (CONTRIBUTING.md)",
-          "make test-repo (CONTRIBUTING.md)"
-        ],
-        "evidence": [
-          "scripts/reflection_probe.py"
-        ],
-        "fit": "fits",
-        "kind": "code",
-        "license": "MIT",
-        "minutes": [
-          45,
-          120
-        ],
-        "parent": null,
-        "repo": "cubrid-lab/sqlalchemy-cubrid",
-        "scope": [
-          "github.com/cubrid-lab/sqlalchemy-cubrid/blob/main/scripts/reflection_probe.py",
-          "github.com/cubrid-lab/sqlalchemy-cubrid/blob/main/test/test_reflection_probe.py",
-          "scripts/reflection_probe.py",
-          "test/test_reflection_probe.py"
-        ],
-        "score": 84,
-        "signals": [
-          "good first issue",
-          "help wanted"
-        ],
-        "stack": [
-          "Python"
-        ],
-        "stack_source": "issue",
-        "title": "bug: report multiple model metadata registries in reflection comparison",
-        "unknown": [
-          "Confirm AI and attribution policy, current ownership and actual scope."
-        ],
-        "updated": "2026-11-20T13:21:19Z",
-        "url": "https://github.com/cubrid-lab/sqlalchemy-cubrid/issues/1382"
-      }
-    ],
-    "window": {
-      "complete": true,
-      "decisions": 260,
-      "limit": 5,
-      "open": [
-        "https://github.com/cubrid-lab/sqlalchemy-cubrid/pull/1120",
-        "https://github.com/cubrid-lab/sqlalchemy-cubrid/pull/1362",
-        "https://github.com/cubrid-lab/sqlalchemy-cubrid/pull/1376",
-        "https://github.com/cubrid-lab/sqlalchemy-cubrid/pull/1379"
+        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/586",
+        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/589",
+        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/590",
+        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/591"
       ]
     }
   }
