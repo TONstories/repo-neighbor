@@ -164,7 +164,7 @@ class CampaignTests(TestCase):
             run.week_key(datetime(2026, 11, 23, 6, 15, tzinfo=timezone.utc)), "2026-W48"
         )
         self.assertEqual(
-            run.select(NOW.date(), {"exclude": [REPO], "override": {}}, self.projects),
+            run.select(NOW, {"exclude": [REPO], "override": {}}, self.projects, []),
             [],
         )
         self.assertFalse(
@@ -173,3 +173,51 @@ class CampaignTests(TestCase):
                 dict(title="new check", scope=["a/x.py"]),
             )
         )
+
+    def test_replay_owner_edit_and_expiration(self):
+        import tempfile
+
+        item = assess(ROW, REPO, META, FILES, NOW.date())
+        other = dict(
+            ROW,
+            url=ISSUE + "1",
+            title="Add an independent config parser",
+            body="Expected: parse config/options.py",
+        )
+        pair = [item, assess(other, REPO, META, FILES, NOW.date())]
+        requests = [
+            {"number": i, "title": f"qfg claim {ISSUE} 90", "author": {"login": u}}
+            for i, u in enumerate(("alice", "bob"), 1)
+        ]
+        with (
+            tempfile.TemporaryDirectory() as path,
+            patch.object(run, "DIR", Path(path)),
+            patch.object(run, "discover", return_value={"candidates": pair}),
+            patch.object(run, "live_issues", return_value=[ROW, other]),
+            patch.object(run, "inbox", return_value=requests),
+        ):
+            editor = {"exclude": [], "weeks": {}}
+            run.save(run.DIR / "editor.json", editor)
+            run.run(NOW)
+            state = run.load(run.DIR / "ledger.json", {})
+            self.assertIn("Reserved", state["receipts"]["1"])
+            self.assertIn("taken", state["receipts"]["2"])
+            # A carried reservation exhausts this project's remaining review place.
+            self.assertEqual(
+                run.select(NOW, {"exclude": [], "override": {}}, None, state["claims"]),
+                [],
+            )
+            editor["weeks"]["2026-W47"] = {
+                "descriptions": {REPO: {"ru": "Проверка редактора"}}
+            }
+            run.save(run.DIR / "editor.json", editor)
+            run.run(NOW)
+            self.assertEqual(state, run.load(run.DIR / "ledger.json", {}))
+            self.assertIn(
+                "Проверка редактора",
+                (run.DIR / "archive/2026-W47/board.ru.md").read_text(),
+            )
+            run.run(NOW + timedelta(hours=4))
+            self.assertEqual(
+                run.load(run.DIR / "ledger.json", {})["claims"][0]["status"], "expired"
+            )

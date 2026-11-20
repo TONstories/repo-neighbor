@@ -71,7 +71,8 @@ def compatible(items, item):
     return True
 
 
-def select(today, editor, existing):
+def select(now, editor, existing, claims):
+    today = now.date()
     excluded = {r.lower() for r in editor.get("exclude", [])}
     overrides = editor["override"]
     pins = overrides.get("pin", [])
@@ -111,7 +112,7 @@ def select(today, editor, existing):
         if len(tasks) < (2 if existing is None or repo in pins else 1):
             continue
         window = reviews(repo, today)
-        if existing is None and not slots(window, [], datetime.now(UTC), repo):
+        if existing is None and not slots(window, claims, now, repo):
             continue
         result.append(dict(repo=repo, tasks=tasks, window=window))
     result.sort(
@@ -319,6 +320,9 @@ def render(week, projects, claims, now, override, lang):
         "[EN](board.md) · [RU](board.ru.md) · [ES](board.es.md) · [Guide](../../guide.md)",
         "",
     ]
+    weekly_goal = override.get("goal", {}).get(lang)
+    if weekly_goal:
+        lines.extend([weekly_goal, ""])
     for p in projects:
         repo = p["repo"]
         w = p["window"]
@@ -376,7 +380,7 @@ def render(week, projects, claims, now, override, lang):
             + [f"- [{c['pr']}]({c['pr']})" for c in items]
             + [""]
         )
-    return "\n".join(lines).rstrip()+"\n"
+    return "\n".join(lines).rstrip() + "\n"
 
 
 def refresh_claims(claims, now):
@@ -396,19 +400,20 @@ def run(now):
     folder = DIR / "archive" / week
     folder.mkdir(parents=True, exist_ok=True)
     board = folder / "projects.json"
+    ledger = load(DIR / "ledger.json", {"claims": [], "receipts": {}})
+    claims = ledger["claims"]
+    refresh_claims(claims, now)
     projects = select(
-        now.date(),
+        now,
         {
             "exclude": editor["exclude"] + override.get("exclude", []),
             "override": override,
         },
         load(folder / "selection.json", load(board, None)),
+        claims,
     )
     if not (folder / "selection.json").exists():
         save(folder / "selection.json", projects)
-    ledger = load(DIR / "ledger.json", {"claims": [], "receipts": {}})
-    claims = ledger["claims"]
-    refresh_claims(claims, now)
     for request in inbox():
         key = str(request["number"])
         if not request["title"].startswith("qfg ") or key in ledger["receipts"]:

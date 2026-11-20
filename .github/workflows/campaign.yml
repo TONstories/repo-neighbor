@@ -17,7 +17,7 @@ permissions:
   issues: write
 jobs:
   reconcile:
-    if: github.event_name != 'issues' || startsWith(github.event.issue.title, 'qfg ')
+    if: github.repository == 'TONstories/quota-for-good' && (github.event_name != 'issues' || startsWith(github.event.issue.title, 'qfg '))
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

@@ -30,6 +30,7 @@ Edit `editor.json` in the GitHub web editor and commit to main. Use the ISO week
   "exclude": ["example/excluded"],
   "weeks": {
     "2027-W01": {
+      "goal": {"en": "Improve first-run examples", "ru": "Упростить первый запуск", "es": "Mejorar los primeros ejemplos"},
       "pin": ["example/pinned"],
       "exclude": [],
       "descriptions": {
