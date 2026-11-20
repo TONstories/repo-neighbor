@@ -11,6 +11,8 @@ import sys
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from urllib.parse import urlencode
+from urllib.error import HTTPError
+from urllib.request import Request, urlopen
 
 sys.path.insert(
     0, str(Path(__file__).resolve().parents[1] / "skills/repo-neighbor/scripts")
@@ -76,11 +78,35 @@ def compatible(items, item):
     return True
 
 
+def qualify(source, repo, user, detail):
+    if source == "maintainer":
+        matches = re.findall(r"https://github[.]com/" + re.escape(repo)
+                             + r"/issues/([1-9][0-9]{0,9})\b", detail, re.I)
+        if len(matches) != 1 or int(matches[0]) > 2147483647:
+            return False
+        owner, name = repo.split("/")
+        query = """query($o:String!,$n:String!,$i:Int!){repository(owner:$o,name:$n){
+          issue(number:$i){author{login} authorAssociation body labels(first:30){nodes{name}}}}}"""
+        issue = (graph(query, o=owner, n=name, i=int(matches[0]))["repository"] or {}).get("issue") or {}
+        return ((issue.get("author") or {}).get("login", "").casefold() == user.casefold()
+                and issue.get("authorAssociation") in {"OWNER", "MEMBER", "COLLABORATOR"}
+                and any(label["name"].casefold() == "repo-neighbor"
+                        for label in issue["labels"]["nodes"])
+                and f"I invite Repo Neighbor to contribute to {repo}" in issue.get("body", ""))
+    if not any(path.rsplit("/", 1)[-1] == "CONTRIBUTING.md" and content.strip()
+               for path, content in detail.items()):
+        return False
+    candidates = discover([], repo, 10, datetime.now(UTC).date(), 180, 10)["candidates"]
+    return any(compatible([a], b) for i, a in enumerate(candidates) for b in candidates[i+1:])
+
+
 def select(now, editor, existing, claims):
     today = now.date()
     excluded = {r.lower() for r in editor.get("exclude", [])}
     ranked = editor.get("ranked", [])
     by_repo = {}
+    proposals = editor.get("proposals", {})
+    previous_caps = {p["repo"].casefold(): p.get("review_limit", 3) for p in existing or []}
     skipped = editor.setdefault("skipped", {})
     if existing is None:
         def add(name):
@@ -90,6 +116,13 @@ def select(now, editor, existing, claims):
 
         for name in ranked:
             add(name)
+        for name, proposal in proposals.items():
+            if name in excluded or not proposal.get("tasks"):
+                continue
+            meta, files = metadata(name)
+            items = [assess(issue, meta["nameWithOwner"], meta, files, today, minutes=180)
+                     for issue in live_issues(proposal["tasks"][:18])] if meta else []
+            by_repo[name] = [item for item in items if item]
         rotation = community.start(now).date().toordinal() // 7
         for tags in balance.TOPICS.values():
             tag = tags[rotation % len(tags)]
@@ -119,7 +152,14 @@ def select(now, editor, existing, claims):
             skipped[repo] = "No eligible issues"
             continue
         canonical = rows[0]["repo"]
-        category = balance.track(metadata(canonical)[0])
+        meta, files = metadata(canonical)
+        category = balance.track(meta)
+        if (existing is None and editor.get("version") == 2
+            and proposals.get(repo.lower(), {}).get("source") != "maintainer"
+            and not any(path.rsplit("/", 1)[-1] == "CONTRIBUTING.md" and content.strip()
+                        for path, content in files.items())):
+            skipped[repo] = "No published contribution rules or verified maintainer proposal"
+            continue
         tasks = []
         for row in rows:
             if category == "defensive-security" and row.get("kind") != "docs":
@@ -131,14 +171,24 @@ def select(now, editor, existing, claims):
         if len(tasks) < (2 if existing is None else 1):
             skipped[repo] = "Insufficient independent tasks"
             continue
+        review_limit = proposals.get(repo.casefold(), {}).get("review_limit", previous_caps.get(repo.casefold(), 3))
         window = reviews(repo, today)
+        window = dict(window, limit=min(window["limit"], review_limit))
         if existing is None and not slots(window, claims, now, repo):
             skipped[repo] = "No review capacity"
             continue
+        if existing is None and editor.get("version") == 2:
+            tasks = tasks[:max(2, 2 * slots(window, claims, now, repo))]
         result.append(dict(repo=canonical, tasks=tasks, window=window,
-                           track=category))
+                           track=category, review_limit=review_limit))
     if existing is not None:
         return result
+    if editor.get("version") == 2:
+        editor["pool"] = [dict(repo=p["repo"], track=p["track"], tasks=[
+            {"score": t["score"], "minutes": t.get("minutes")} for t in p["tasks"]]) for p in result]
+        chosen, editor["reasons"] = balance.allocate_minutes(
+            result, ranked, editor["limit"], editor["history"], editor["replacement"])
+        return chosen
     editor["pool"] = [dict(repo=p["repo"], track=p["track"], tasks=[{"score": t["score"]} for t in p["tasks"][:2]]) for p in result]
     return balance.allocate(result, ranked, editor.get("limit", 3), editor.get("history", []))
 
@@ -247,7 +297,7 @@ def transition(command, user, claims, week, projects, now, requires=None, body="
     ]
     if any(c["issue"] == url for c in active):
         return "Already taken. Choose another issue."
-    if any(c["user"] == user and c["status"] == "held" for c in active):
+    if any(c["user"].casefold() == user.casefold() and c["status"] == "held" for c in active):
         return "Finish or release your current reservation."
     project = next(
         (p for p in projects if any(t["url"] == url for t in p["tasks"])), None
@@ -262,12 +312,14 @@ def transition(command, user, claims, week, projects, now, requires=None, body="
     if blockers:
         return "Waiting for accepted prerequisites: " + " ".join(blockers)
     issue = live_issue(url)
-    if not issue or not assess(
-        issue, repo, *metadata(repo), now.date(), minutes=int(arg), reserve=0
-    ):
+    eligible = issue and assess(issue, repo, *metadata(repo), now.date(), minutes=int(arg), reserve=0)
+    if not eligible:
         return "Issue is unavailable or does not fit this session."
     window = reviews(repo, now.date())
-    if slots(window, claims, now, repo) < 1:
+    review_limit = project.get("review_limit", 3)
+    window = dict(window, limit=min(window["limit"], review_limit))
+    if (sum(c["repo"].casefold() == repo.casefold() for c in active) >= review_limit
+            or slots(window, claims, now, repo) < 1):
         return "Review capacity is full or unknown."
     task = next(t for t in project["tasks"] if t["url"] == url)
     if any(
@@ -472,6 +524,29 @@ def refresh_claims(claims, now):
                 c["merged_at"] = pr.get("mergedAt")
 
 
+def desk_command(secret, **data):
+    request = Request("https://repo-neighbor.fil-support-bot.workers.dev/api/campaign",
+                      data=json.dumps(data).encode(), headers={
+                          "Authorization": "Bearer " + secret,
+                          "Content-Type": "application/json", "User-Agent": "Repo-Neighbor-Campaign/1.0",
+                      })
+    try:
+        with urlopen(request, timeout=15) as response:
+            if json.load(response).get("ok") is not True:
+                raise ValueError("Missing desk acknowledgement")
+            return True
+    except HTTPError as error:
+        error.close()
+        if error.code == 409:
+            return False
+        raise
+
+
+def reconcile_hold(secret, claim):
+    if secret and claim.get("bridge") and claim["status"] != "held":
+        desk_command(secret, id=claim["bridge"], op="review" if claim["status"] == "open" else "release")
+
+
 def run(now):
     week = week_key(now)
     editor = load(DIR / "editor.json", {})
@@ -481,6 +556,9 @@ def run(now):
     board = folder / "projects.json"
     ledger = load(DIR / "ledger.json", {"claims": [], "receipts": {}})
     claims = ledger["claims"]
+    bridge = os.getenv("RN_CAMPAIGN_BRIDGE")
+    if os.getenv("GITHUB_ACTIONS") == "true" and not bridge:
+        raise RuntimeError("Shared desk bridge is required for published campaign claims.")
     if os.getenv("RN_IMPORT_MOBILE") == "1":
         from mobile import read_export
         try:
@@ -488,13 +566,17 @@ def run(now):
             ledger.pop("mobile_stale", None)
         except (OSError, ValueError, KeyError, TypeError):
             ledger["mobile_stale"] = True
+    active_before = [(c, c["status"]) for c in claims if c["status"] in ("held", "open", "closed")]
     refresh_claims(claims, now)
+    for claim, old_state in active_before:
+        if claim["status"] != old_state:
+            reconcile_hold(bridge, claim)
     requests = list(inbox())
     for request in requests:
         key = str(request["number"])
         title = request["title"]
         if key in ledger["receipts"] or not title.startswith(
-            ("rn nominate ", "rn vote ", "rn pledge ")
+            ("rn nominate ", "rn propose ", "rn vote ", "rn pledge ")
         ):
             continue
         user = (request["author"] or {}).get("login")
@@ -505,7 +587,8 @@ def run(now):
                 or now.isoformat()
             )
             ledger["receipts"][key] = community.command(
-                title, user, at, ledger, metadata, issue_number=request["number"]
+                title, user, at, ledger, metadata, issue_number=request["number"],
+                body=request.get("body") or "", qualify=qualify
             )
     election = ledger.setdefault("elections", {}).setdefault(
         week, {"nominees": {}, "votes": {}}
@@ -519,17 +602,28 @@ def run(now):
     selection = load(selection_file, load(board, []))
     complete = bool(selection) and all(balance.finished(p, claims, now) for p in selection)
     audit_path = folder / "audit.json"
-    audit = load(audit_path, dict(version=1, shares=balance.SHARES, prior=[p["repo"] for p in selection], rounds=[]))
+    version = 2 if week >= community.RULES_WEEK else 1
+    audit = load(audit_path, dict(version=version, shares=balance.SHARES, prior=[p["repo"] for p in selection], rounds=[]))
     before_search = time.monotonic()
     first_call = len(GRAPH_CALLS)
     if not selection or complete:
         past = [t for k, e in ledger["elections"].items() if k <= week for t in e.get("tracks", {}).values()]
-        options = dict(exclude=[p["repo"] for p in selection], ranked=community.ranking(election),
+        if audit["version"] == 2:
+            past = {category: 0 for category in balance.SHARES}
+            for offset in range(1, 5):
+                key = week_key(now - timedelta(weeks=offset))
+                for project in load(DIR / "archive" / key / "selection.json", []):
+                    past[project.get("track", "general")] += balance.workload(project)
+            for project in selection:
+                past[project.get("track", "general")] += balance.workload(project)
+        options = dict(version=audit["version"], replacement=complete, proposals=election["nominees"], exclude=[p["repo"] for p in selection], ranked=community.ranking(election),
                        limit=1 if complete else limit, history=past)
         additions = select(now, options, None, claims)
         record = dict(ballot=copy.deepcopy({k: election[k] for k in ("nominees", "votes")}),
                       history=past, limit=options["limit"], pool=options["pool"],
                       skipped=options["skipped"], selected=[p["repo"] for p in additions])
+        if audit["version"] == 2:
+            record.update(replacement=complete, reasons=options["reasons"])
         if not audit["rounds"] or audit["rounds"][-1] != record:
             audit["rounds"].append(record)
         selection.extend(additions)
@@ -558,17 +652,28 @@ def run(now):
             continue
         user = (request["author"] or {}).get("login")
         if user:
-            ledger["receipts"][key] = transition(
-                request["title"],
-                user,
-                claims,
-                week,
-                projects,
-                now,
-                override.get("requires", {}),
-                request.get("body") or "",
-                request["number"],
+            before = len(claims)
+            previous_status = {id(c): c["status"] for c in claims}
+            receipt = transition(
+                request["title"], user, claims, week, projects, now,
+                override.get("requires", {}), request.get("body") or "", request["number"],
             )
+            if bridge and len(claims) > before:
+                claim = claims[-1]
+                admitted = desk_command(
+                    bridge, op="claim", id=key, issue=claim["issue"].casefold(),
+                    repo=claim["repo"].casefold(), login=claim["user"].casefold(),
+                    until=int(community.parse(claim["until"]).timestamp() * 1000),
+                )
+                if admitted:
+                    claim["bridge"] = key
+                else:
+                    claims.pop()
+                    receipt = "A task or review slot is already occupied in the shared desk."
+            for claim in claims[:before]:
+                if claim["status"] != previous_status[id(claim)]:
+                    reconcile_hold(bridge, claim)
+            ledger["receipts"][key] = receipt
     community.reports(DIR, ledger, projects, now, override)
     save(board, projects)
     save(DIR / "ledger.json", ledger)

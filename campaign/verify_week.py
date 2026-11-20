@@ -9,19 +9,22 @@ import community
 
 
 def verify(snapshot):
-    if snapshot["version"] != 1 or snapshot["shares"] != balance.SHARES:
+    version = snapshot["version"]
+    if version not in (1, 2) or snapshot["shares"] != balance.SHARES:
         raise ValueError("Unsupported allocation rules")
     chosen = list(snapshot["prior"])
     for round_ in snapshot["rounds"]:
         for vote in round_["ballot"]["votes"].values():
-            if "credits" in vote and vote["weight"] != 1 + len(set(vote["credits"])):
+            if "credits" in vote and vote["weight"] != community.credit_weight(vote["credits"], version):
                 raise ValueError("Vote weight differs from credited tasks")
-        picks = balance.allocate(
-            list(round_["pool"]),
-            community.ranking(round_["ballot"]),
-            round_["limit"],
-            round_["history"],
-        )
+        args = (list(round_["pool"]), community.ranking(round_["ballot"]),
+                round_["limit"], round_["history"])
+        if version == 2:
+            picks, reasons = balance.allocate_minutes(*args, round_["replacement"])
+            if reasons != round_["reasons"]:
+                raise ValueError("Allocation reasons differ")
+        else:
+            picks = balance.allocate(*args)
         names = [p["repo"] for p in picks]
         if names != round_["selected"] or set(names).intersection(chosen):
             raise ValueError("Allocation mismatch")

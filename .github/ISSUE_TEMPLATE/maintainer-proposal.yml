@@ -1,6 +1,6 @@
 name: "Project proposal / Заявка владельца / Propuesta"
 description: "Share your roadmap and a week of reviewable work. План продукта и задачи на неделю."
-title: "rn nominate OWNER/REPO"
+title: "rn propose OWNER/REPO"
 body:
   - type: markdown
     attributes:
@@ -43,5 +43,20 @@ body:
     attributes:
       label: "Review and rules / Ревью и правила / Revisión y reglas"
       description: "Your role, GitHub reviewer, weekly PR capacity, contribution and AI rules. Кто примет работу и сколько PR сможет проверить? ¿Quién revisará los PR y cuántos puede revisar?"
+    validations:
+      required: true
+  - type: dropdown
+    id: review_capacity
+    attributes:
+      label: "Review capacity / Лимит ревью / Capacidad de revisión"
+      description: "Maximum simultaneous reserved tasks and PRs awaiting review."
+      options: ["1", "2", "3"]
+    validations:
+      required: true
+  - type: textarea
+    id: permission
+    attributes:
+      label: "Permission / Разрешение / Permiso"
+      description: "Write ‘I invite Repo Neighbor’ and confirm that AI-assisted drafts and Repo Neighbor attribution are allowed. For an organization or collaborator account, include a link to an upstream issue you authored labeled repo-neighbor, with ‘I invite Repo Neighbor to contribute to owner/repo’ using the lowercase repository name."
     validations:
       required: true

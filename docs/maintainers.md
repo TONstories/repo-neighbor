@@ -5,7 +5,7 @@
 ## Русский
 
 1. **Подготовьте задачи в своем репозитории.** Для недельного отбора нужны открытый активный репозиторий с распознанной лицензией и хотя бы две независимые подходящие задачи. Дайте на них прямые ссылки. Если вы действительно приглашаете внешних участников, отметьте задачи меткой `help wanted` или `good first issue`: по этим меткам работает поиск. Проверьте, что задачи свободны, а правила проекта допускают предложенный формат работы и указание Repo Neighbor в PR.
-2. **Заполните форму от своего GitHub-аккаунта.** В заголовке замените `OWNER/REPO` на точное имя. Например, для вымышленного проекта TinyIndex заголовок будет `rn nominate example/tinyindex`. В пяти полях опишите продукт, план развития, цель недели, отдельные задачи и условия ревью. Если срок или команда проверки еще неизвестны, укажите, что нужно уточнить и кто это решит.
+2. **Заполните форму от своего GitHub-аккаунта.** В заголовке замените `OWNER/REPO` на точное имя. Например, для вымышленного проекта TinyIndex заголовок будет `rn propose example/tinyindex`. В форме опишите продукт, план развития, цель недели, отдельные задачи и условия ревью. Укажите разрешение на работу с ИИ и атрибуцию. Если репозиторий принадлежит организации или вы коллаборатор, приложите ссылку на свою issue в исходном репозитории с меткой `repo-neighbor` и фразой `I invite Repo Neighbor to contribute to owner/repo` и точным именем репозитория в нижнем регистре.
 3. **После отправки проверьте голосование.** В журнале результат обработки указан под номером вашей issue. Бот закрывает обработанную заявку; ее текст остается доступен по ссылке рядом с кандидатом. Отдельный голос подается командой `rn vote OWNER/REPO`. Один человек может выдвинуть один проект за раунд. Итог зависит от голосов, доступных задач, емкости ревью и [правил распределения](allocation.md). Граница недели — понедельник, 09:15 по Москве. [Журнал](../campaigns/ledger.json) · [Правила](community.md)
 
 ### Пример заполнения
@@ -25,7 +25,7 @@
 
 ## English
 
-Open the form above and replace `OWNER/REPO` in the title. Describe who uses the product, what already works, the next milestone and what depends on it. Choose one outcome for the week and say how a user can verify it. Link at least two independent open issues inviting outside help. For each give priority, affected files, dependencies and an acceptance check. Name the reviewer, their PR capacity and your contribution and AI policies. After processing, find your proposal beside the candidate on the voting board. The nomination and vote are separate actions.
+Open the form above and replace `OWNER/REPO` in the title. Describe who uses the product, what already works, the next milestone and what depends on it. Choose one outcome for the week and say how a user can verify it. Link at least two independent open issues inviting outside help. For each give priority, affected files, dependencies and an acceptance check. Name the reviewer, their PR capacity and your contribution and AI policies. For an organization or collaborator account, link an upstream issue you authored with the required invitation and the `repo-neighbor` label. After processing, find your proposal beside the candidate on the voting board. The nomination and vote are separate actions.
 
 ## Español
 

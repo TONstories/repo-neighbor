@@ -33,7 +33,8 @@ class ResetWindowTests(unittest.TestCase):
 
     def test_reminder_suppresses_repeat_and_rechecks_before_start(self):
         with TemporaryDirectory() as tmp, patch.object(window.sys.stdin, "isatty", return_value=True), \
-             patch.object(window, "prepare", return_value="draft"), patch.object(window, "launch") as launch:
+             patch.object(window, "desk_tasks", return_value=[dict(title="Translate", lang="French", repo="org/docs")]), \
+             patch.object(window, "series") as launch:
             args = SimpleNamespace(account_id="a", period="weekly", output=Path(tmp),
                                    minutes=45, issue="https://github.com/test/docs/issues/1")
             reset = int(time.time()) + 3000
@@ -45,6 +46,32 @@ class ResetWindowTests(unittest.TestCase):
             with patch("builtins.input", return_value="start"), patch.object(window, "status_now", return_value=("reserve", None)):
                 window.suggest(args, reset)
             launch.assert_not_called()
+
+    def test_series_requires_receipt_before_next_model_request(self):
+        tasks = [dict(id=f"task-{i}", repo="org/docs", title="Translate",
+                      source="Text", lang="French", available=True) for i in (1, 2)]
+        actions = []
+        def call(path, data=None):
+            if path == "desk":
+                return {"tasks": tasks[1:]}
+            actions.append((path, data["id"]))
+            return dict(id=data["id"], state={"claim": "held", "submit": "pending"}.get(path))
+        def launch(args, reset, prompt, *, output, stop_at):
+            self.assertIn("untrusted", prompt)
+            actions.append(("model", output.stem))
+            output.write_text("Texte")
+        with TemporaryDirectory() as temp, patch.object(window, "status_now", return_value=("ready", 1000)), \
+             patch.object(window, "launch", side_effect=launch), patch.object(window.time, "time", return_value=100):
+            args = SimpleNamespace(output=Path(temp), minutes=45, issue=None)
+            with patch.object(window, "desk_tasks", side_effect=[[tasks[1]], []]):
+                window.series(args, 1000, SimpleNamespace(call=call), tasks[0])
+            self.assertEqual(actions, [(action, task["id"]) for task in tasks
+                                      for action in ("claim", "model", "submit", "release")])
+            actions.clear()
+            with patch.object(window, "launch", side_effect=KeyboardInterrupt):
+                with self.assertRaises(KeyboardInterrupt):
+                    window.series(args, 1000, SimpleNamespace(call=call), tasks[0])
+            self.assertEqual(actions, [("claim", tasks[0]["id"]), ("release", tasks[0]["id"])])
 
     def test_account_change(self):
         args = SimpleNamespace(account_id="original")

@@ -65,6 +65,23 @@ class ElectionTests(unittest.TestCase):
                 self.assertIn(c.BASE + "/issues/42", (root / "reports" / page).read_text())
         self.assertEqual(c.proposal_link({"user": "previous contributor"}), "")
 
+    def test_maintainer_proposal_verifies_org_permission_and_freezes_cap(self):
+        fields = {"Product": "A docs app", "Roadmap": "Next release", "Weekly outcome": "Examples",
+                  "Work packages": f"{ISSUE} and {ISSUE}2",
+                  "Review and rules": "Reviewer checks both examples", "Review capacity": "2",
+                  "Permission": "I invite Repo Neighbor to help."}
+        body = "\n".join(f"### {key} / translation\n\n{value}" for key, value in fields.items())
+        ledger = {"claims": []}
+        def lookup(repo):
+            return dict(META, nameWithOwner=repo), {}
+        def submit(user, qualify):
+            return c.command("rn propose " + REPO, user, NOW, ledger, lookup,
+                             body=body, qualify=qualify)
+        self.assertIn("upstream confirmation", submit("stranger", lambda *_: False))
+        self.assertIn("Nominated", submit("maintainer", lambda *_: True))
+        vote = ledger["elections"][c.week(NOW + dt.timedelta(days=7))]
+        self.assertEqual(vote["nominees"][REPO.casefold()]["review_limit"], 2)
+
     def test_impact_unique_merged_pr(self):
         row = dict(pr="test", estimate=[30, 90])
         self.assertEqual(c.impact(c.unique_prs([row, row]).values()), ("$30–$90", 0))

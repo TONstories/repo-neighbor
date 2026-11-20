@@ -4,6 +4,7 @@ from collections import Counter
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 import re
+from math import isqrt
 import json
 from balance import SHARES
 from urllib.parse import quote
@@ -11,6 +12,7 @@ from urllib.parse import quote
 MSK = timezone(timedelta(hours=3))
 RATE = 60  # Scenario assumption, USD per engineering hour.
 SLUG = re.compile(r"[a-zA-Z0-9][a-zA-Z0-9-]{0,38}/[a-zA-Z0-9_.-]{1,100}")
+RULES_WEEK = "2026-W49"
 BASE = "https://github.com/TONstories/repo-neighbor"
 
 
@@ -44,11 +46,17 @@ def credited_issues(user, claims, opening, mobile=()):
     return sorted({key.casefold() for key in accepted})
 
 
+def credit_weight(credits, version):
+    count = len(set(credits))
+    return 1 + (isqrt(count) if version >= 2 else count)
+
+
 def weight(user, claims, opening, mobile=()):
-    return 1 + len(credited_issues(user, claims, opening, mobile))
+    version = 2 if week(opening + timedelta(days=7)) >= RULES_WEEK else 1
+    return credit_weight(credited_issues(user, claims, opening, mobile), version)
 
 
-def command(title, user, at, ledger, repo_lookup, issue_number=None):
+def command(title, user, at, ledger, repo_lookup, issue_number=None, *, body="", qualify=None):
     verb, _, target = title[3:].partition(" ")
     if verb == "pledge":
         if not re.fullmatch(r"[a-f0-9]{32}", target):
@@ -58,19 +66,20 @@ def command(title, user, at, ledger, repo_lookup, issue_number=None):
         )
         return "Encrypted offer listed for owner verification. Revoke at the provider to withdraw."
     if not SLUG.fullmatch(target):
-        return "Use rn nominate OWNER/REPO or rn vote OWNER/REPO."
+        return "Use rn nominate, rn propose or rn vote followed by OWNER/REPO."
     target = target.lower()
+    target_week = week(at + timedelta(days=7))
     ballot = ledger.setdefault("elections", {}).setdefault(
-        week(at + timedelta(days=7)), {"nominees": {}, "votes": {}}
+        target_week, {"nominees": {}, "votes": {}}
     )
     if ballot.get("closed"):
         return "This election has closed."
-    if verb == "nominate":
+    if verb in ("nominate", "propose"):
         if target in ballot["nominees"]:
             return "Already nominated."
         if any(e["user"].lower() == user.lower() for e in ballot["nominees"].values()):
             return "One nomination per person per round."
-        meta, _ = repo_lookup(target)
+        meta, files = repo_lookup(target)
         if (
             not meta
             or meta["isPrivate"]
@@ -83,7 +92,29 @@ def command(title, user, at, ledger, repo_lookup, issue_number=None):
         canonical = meta["nameWithOwner"].lower()
         if canonical in ballot["nominees"]:
             return "Already nominated."
-        ballot["nominees"][canonical] = {"user": user, "at": at.isoformat()}
+        proposal = {}
+        if verb == "propose":
+            expected = ("Product", "Roadmap", "Weekly outcome", "Work packages", "Review and rules", "Review capacity", "Permission")
+            fields = {label.partition(" / ")[0]: answer.strip() for label, answer in
+                      re.findall(r"^### ([^\n]+)\n(.*?)(?=^### |\Z)", body, re.M | re.S)}
+            if any(not fields.get(key) or fields[key] == "_No response_" for key in expected):
+                return "Complete the owner proposal form, including permission and review capacity."
+            issue_urls = list(dict.fromkeys(url.casefold() for url in re.findall(
+                r"https://github[.]com/" + re.escape(canonical) + r"/issues/[1-9][0-9]{0,8}\b",
+                fields["Work packages"], re.I)))
+            cap = fields["Review capacity"]
+            if not re.fullmatch(r"[1-3]", cap):
+                return "Use a review capacity of 1, 2 or 3."
+            proposal = {"tasks": issue_urls, "review_limit": int(cap)}
+            if len(issue_urls) < 2 or "I invite Repo Neighbor" not in fields["Permission"]:
+                return "Link two upstream issues and confirm the permission checkbox."
+            if user.casefold() != canonical.split("/")[0] and (
+                not qualify or not qualify("maintainer", canonical, user, fields["Permission"])
+            ):
+                return "Provide an upstream confirmation from your maintainer account."
+        elif qualify and target_week >= RULES_WEEK and not qualify("community", canonical, user, files):
+            return "Find two eligible issues and published contribution rules, or ask a maintainer to submit a proposal."
+        ballot["nominees"][canonical] = {"user": user, "at": at.isoformat(), "source": "maintainer" if verb == "propose" else "community", **proposal}
         if issue_number is not None:
             ballot["nominees"][canonical]["issue"] = int(issue_number)
         return "Nominated for next week's selection."
@@ -94,7 +125,7 @@ def command(title, user, at, ledger, repo_lookup, issue_number=None):
         ballot["votes"][user.lower()] = {
             "credits": credits,
             "repo": target,
-            "weight": 1 + len(credits),
+            "weight": credit_weight(credits, 2 if target_week >= RULES_WEEK else 1),
             "at": at.isoformat(),
         }
         return "Ballot recorded. A later vote replaces this one."

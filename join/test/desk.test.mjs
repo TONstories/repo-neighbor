@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { timingSafeEqual } from "node:crypto";
 import { DatabaseSync } from "node:sqlite";
 import { build } from "esbuild";
 
@@ -36,9 +37,13 @@ test("identity, distinct reservations, review capacity and idempotent receipts",
       return { toArray: () => rows };
     },
   };
+  Object.defineProperty(crypto.subtle, "timingSafeEqual", { value: timingSafeEqual, configurable: true });
+  t.after(() => delete crypto.subtle.timingSafeEqual);
+  const bridgeSecret = "b".repeat(64);
   const desk = new Desk(
-    { storage: { sql } },
+    { storage: { sql, transactionSync: (fn) => fn() } },
     {
+      CAMPAIGN_BRIDGE: bridgeSecret,
       REVIEWER_IDS: "alice,reviewer",
       GITHUB_CLIENT_ID: "fixture-client",
       GITHUB_CLIENT_SECRET: "fixture-only",
@@ -139,6 +144,26 @@ test("identity, distinct reservations, review capacity and idempotent receipts",
     (await request("claim", "alice", { id }, "https://other.example")).status,
     403,
   );
+  const campaign = (body, secret = bridgeSecret) =>
+    desk.fetch(new Request("https://desk.example/api/campaign", {
+      method: "POST", headers: { Authorization: "Bearer " + secret }, body: JSON.stringify(body),
+    }));
+  const external = { id: "101", op: "claim", issue: "https://github.com/org/docs/issues/1",
+                     repo: "org/docs", login: "alice", until: Date.now() + 60000 };
+  assert.equal((await campaign(external, "invalid")).status, 401);
+  assert.equal((await campaign(external)).status, 200);
+  assert.equal((await campaign(external)).status, 200);
+  assert.equal((await request("claim", "alice", { id })).status, 409);
+  assert.equal((await campaign({ ...external, id: "102", login: "bob" })).status, 409);
+  await campaign({ id: external.id, op: "release" });
+  const lease = "a".repeat(32);
+  assert.equal((await request("claim", "alice", { id, lease })).status, 200);
+  assert.equal((await campaign(external)).status, 409);
+  assert.equal((await request("claim", "alice", { id, lease })).status, 200);
+  assert.equal((await request("claim", "alice", { id })).status, 409);
+  assert.equal((await request("submit", "alice", { id, draft })).status, 409);
+  assert.equal((await (await request("release", "alice", { id })).json()).state, "held");
+  assert.equal((await (await request("release", "alice", { id, lease })).json()).state, "released");
   assert.equal((await request("claim", "alice", { id })).status, 200);
   assert.equal((await request("claim", "bob", { id })).status, 409);
   for (let i = 0; i < 2; i++)

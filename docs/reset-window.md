@@ -31,7 +31,7 @@ python3 skills/repo-neighbor/scripts/reset_window.py watch --period weekly --bef
 
 The reserve is sampled during the run (about every 30 seconds). A single request can cross the threshold. The time box limits local execution. Disable paid overage in the provider account before using watch. The tool does not set billing controls or infer whether your personal queue is empty. No PR or issue is posted.
 
-### Предложить одну задачу перед сбросом
+### Запустить серию небольших переводов перед сбросом
 
 На компьютере с подключенным Codex отключите у провайдера платное превышение лимита и откройте терминал:
 
@@ -39,4 +39,12 @@ The reserve is sampled during the run (about every 30 seconds). A single request
 python3 skills/repo-neighbor/scripts/reset_window.py suggest --included-only
 ```
 
-Оставьте терминал открытым. За 12 часов до подтвержденного недельного сброса программа предложит одну задачу по документации, если во всех известных окнах осталось больше 30%. Команда показывает остаток, ссылку и максимальное время работы. Введите `start`, чтобы запустить локальный клиент Codex после повторной проверки аккаунта и квоты. `later` откладывает предложение на 30 минут, `skip` пропускает сброс. При выборе `later` оставьте терминал открытым: программа сама вернется к проверке. После запуска или пропуска наблюдение завершается. Если данные провайдера неизвестны, можно вручную вызвать скилл. Прежний режим `watch` сохраняет автоматический старт для тех, кто его явно включил. Смартфон использует собственный GPU и работает в открытой вкладке.
+Оставьте терминал открытым. За 12 часов до подтвержденного недельного сброса программа предложит одну задачу, если во всех известных окнах осталось больше 30%. `later` откладывает предложение на 30 минут, `skip` пропускает сброс. После `start` подтвердите GitHub однократным Gist. Удалите Gist после входа.
+
+Далее Codex бронирует и выполняет по одному переводу из той же очереди, которую видит участник в браузере. Готовый текст отправляется на внутреннее ревью, после квитанции предлагается следующая доступная задача, сначала из того же репозитория. У всей серии общий лимит 45 минут. `--minutes`, `--before-hours` и `--reserve-percent` меняют настройки. Аккаунт, квота и время сброса проверяются перед каждым вызовом. Чтобы остановить серию, нажмите Ctrl+C. Черновики и журнал событий сохраняются локально, незавершенная бронь освобождается или истекает. Сессия GitHub хранится в памяти процесса.
+
+Прежний режим `watch --issue` сохраняет запуск одного локального черновика по конкретной GitHub issue. Если данные провайдера о сбросе недоступны, остается ручной вызов скилла. На телефоне локальная модель работает в открытой вкладке.
+
+**English.** One opt-in starts a bounded translation series. Sign in with the one-time Gist proof, then Codex claims and submits one task at a time to the shared browser review desk. The series stops on Ctrl+C, deadline, reserve, account change, or no available work. The legacy `watch --issue` command still drafts one explicit upstream issue locally.
+
+**Español.** Una confirmación inicia una serie de traducciones. Verifica tu identidad mediante un Gist de un solo uso. Codex reserva y envía las tareas una por una a la cola de revisión compartida con el navegador. Pulsa Ctrl+C para detener la serie.

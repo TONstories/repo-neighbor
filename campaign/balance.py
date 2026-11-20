@@ -50,3 +50,35 @@ def allocate(pool, ranked, limit, history):
         counts[pick["track"]] += 1
         chosen.append(pick)
     return chosen
+
+
+def workload(project):
+    # Count the frozen work package once, including tasks still awaiting a volunteer.
+    return sum((lo + hi) // 2 for lo, hi in
+               (task.get("minutes") or (15, 45) for task in project["tasks"]))
+
+
+def allocate_minutes(pool, ranked, limit, history, replacement=False):
+    remaining = list(pool)
+    totals = Counter(history)
+    ranks = {repo.casefold(): index for index, repo in enumerate(ranked)}
+    chosen, reasons = [], []
+    while remaining and len(chosen) < limit:
+        first = not chosen
+        has_voted = any(p["repo"].casefold() in ranks for p in remaining)
+        ballot = first and has_voted
+        def priority(p):
+            category = p["track"]
+            rank = ranks.get(p["repo"].casefold(), len(ranks))
+            deficit = SHARES[category] * (sum(totals.values()) + 30) - 100 * totals[category]
+            return (rank if ballot else 0, -deficit, rank,
+                    -sum(t["score"] for t in p["tasks"][:2]), p["repo"].casefold())
+        pick = min(remaining, key=priority)
+        key = priority(pick)
+        remaining.remove(pick)
+        totals[pick["track"]] += workload(pick)
+        chosen.append(pick)
+        reasons.append(dict(repo=pick["repo"], minutes=workload(pick),
+                            rule=("next-ballot" if replacement else "ballot") if ballot else "workload",
+                            deficit=-key[1]))
+    return chosen, reasons

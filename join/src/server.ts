@@ -33,7 +33,9 @@ type Env = {
   REVIEWER_IDS?: string;
   GITHUB_CLIENT_ID?: string;
   GITHUB_CLIENT_SECRET?: string;
+  CAMPAIGN_BRIDGE?: string;
 };
+type CampaignHold = { id: string; issue: string; repo: string; login: string; until: number };
 type Row = {
   id: string;
   user: string;
@@ -60,6 +62,8 @@ export class Desk extends DurableObject<Env> {
     this.sql.exec(
       "CREATE TABLE IF NOT EXISTS tasks (id TEXT PRIMARY KEY,user TEXT,uid TEXT,state TEXT,draft TEXT,claimed INTEGER,submitted INTEGER,reviewed INTEGER,reviewer TEXT,note TEXT,metrics TEXT)",
     );
+    this.sql.exec("CREATE TABLE IF NOT EXISTS campaign_holds (id TEXT PRIMARY KEY, issue TEXT, repo TEXT, login TEXT, until INTEGER)");
+    this.sql.exec("CREATE TABLE IF NOT EXISTS leases (id TEXT PRIMARY KEY, token TEXT NOT NULL)");
   }
   session(account: { id: number; login: string }, now: number) {
     const session = token();
@@ -73,10 +77,62 @@ export class Desk extends DurableObject<Env> {
     );
     return setCookie("rn_session", session, 86400);
   }
+  campaignHolds(now: number) {
+    return this.sql.exec<CampaignHold>("SELECT * FROM campaign_holds WHERE until>?", now).toArray();
+  }
+  async campaign(r: Request, now: number) {
+    const expected = this.env.CAMPAIGN_BRIDGE;
+    const provided = r.headers.get("Authorization") || "";
+    const enc = new TextEncoder();
+    if (!expected || !/^Bearer [a-f0-9]{64}$/.test(provided) || expected.length !== 64 ||
+        !crypto.subtle.timingSafeEqual(enc.encode("Bearer " + expected), enc.encode(provided)))
+      return json({ error: "Unauthorized" }, 401);
+    const raw = await r.text();
+    if (raw.length > 2400) return json({ error: "Too large" }, 413);
+    let b;
+    try { b = JSON.parse(raw); } catch { return json({ error: "Invalid JSON" }, 400); }
+    if (!b || typeof b.id !== "string" || !/^\d{1,16}$/.test(b.id))
+      return json({ error: "Invalid request" }, 400);
+    if (b.op === "release") {
+      this.sql.exec("DELETE FROM campaign_holds WHERE id=?", b.id);
+      return json({ ok: true });
+    }
+    if (b.op === "review") {
+      this.sql.exec("UPDATE campaign_holds SET until=? WHERE id=?", 4102444800000, b.id);
+      return json({ ok: true });
+    }
+    if (b.op !== "claim" || typeof b.issue !== "string" || typeof b.repo !== "string" ||
+        typeof b.login !== "string" || !/^[a-z0-9-]{1,39}$/.test(b.login) ||
+        !/^[a-z0-9_.-]+\/[a-z0-9_.-]+$/.test(b.repo) ||
+        b.issue.slice(0, b.issue.lastIndexOf("/")) !== "https://github.com/" + b.repo + "/issues" ||
+        !/\/[1-9]\d*$/.test(b.issue) ||
+        !Number.isSafeInteger(b.until) || b.until <= now || b.until > now + 86400000)
+      return json({ error: "Invalid hold" }, 400);
+    const campaign = this.campaignHolds(now);
+    const existing = campaign.find((hold) => hold.id === b.id);
+    if (existing)
+      return existing.issue === b.issue && existing.login === b.login
+        ? json({ ok: true }) : json({ error: "Conflicting claim ID" }, 409);
+    const mobile = this.busy(now);
+    if (campaign.some((hold) => hold.issue === b.issue ||
+          (hold.login === b.login && hold.until < 4102444800000)) ||
+        mobile.some((row) => (row.user.toLowerCase() === b.login && row.state === "held") ||
+          taskById.get(row.id)?.issue.toLowerCase() === b.issue) ||
+        campaign.filter((hold) => hold.repo === b.repo).length +
+          mobile.filter((row) => taskById.get(row.id)?.repo.toLowerCase() === b.repo).length >= 3)
+      return json({ error: "Task or review slots are occupied" }, 409);
+    this.sql.exec("DELETE FROM campaign_holds WHERE until<=?", now);
+    this.sql.exec("INSERT INTO campaign_holds VALUES(?,?,?,?,?)", b.id, b.issue, b.repo, b.login, b.until);
+    return json({ ok: true });
+  }
+  busy(now: number) {
+    return this.sql.exec<Row>("SELECT * FROM tasks WHERE state IN ('pending','revision') OR (state='held' AND claimed>?)", now-3600000).toArray();
+  }
   async fetch(r: Request) {
     const u = new URL(r.url),
       path = u.pathname,
       now = Date.now();
+    if (path === "/api/campaign" && r.method === "POST") return this.campaign(r, now);
     if (r.method === "POST" && r.headers.get("Origin") !== u.origin)
       return json({ error: "Origin mismatch" }, 403);
     const sid = cookie(r, "rn_session") || "";
@@ -262,14 +318,7 @@ export class Desk extends DurableObject<Env> {
           })),
       );
     if (path === "/api/desk" && r.method === "GET") {
-      const all = rows(),
-        held = all.filter(
-          (x) =>
-            x.state === "pending" ||
-            x.state === "revision" ||
-            (x.state === "held" && x.claimed > now - 3600000),
-        );
-
+      const all = rows(), held = this.busy(now), campaign = this.campaignHolds(now);
       return json({
         user: me?.login,
         reviewer,
@@ -282,7 +331,9 @@ export class Desk extends DurableObject<Env> {
                 x.id === t.id &&
                 (x.state !== "held" || x.claimed > now - 3600000),
             ) &&
-            held.filter((x) => taskById.get(x.id)?.repo === t.repo).length < 3,
+            !campaign.some((hold) => hold.issue === t.issue.toLowerCase()) &&
+            held.filter((x) => taskById.get(x.id)?.repo === t.repo).length +
+              campaign.filter((hold) => hold.repo === t.repo.toLowerCase()).length < 3,
         })),
         mine: all.filter((x) => x.uid === me?.uid),
         queue: reviewer ? all.filter((x) => x.state === "pending") : [],
@@ -312,16 +363,28 @@ export class Desk extends DurableObject<Env> {
     const all = rows(),
       old = all.find((x) => x.id === b.id),
       mine = old?.uid === me.uid;
+    if (b.lease !== undefined && (typeof b.lease !== "string" || !/^[a-f0-9]{32}$/.test(b.lease)))
+      return json({ error: "Invalid reservation identifier" }, 400);
+    const lease = this.sql.exec<{token: string}>("SELECT token FROM leases WHERE id=?", b.id).toArray()[0]?.token;
+    const active = old?.state === "held" && old.claimed > now - 3600000;
+    if (path === "/api/release") {
+      if (!mine || !active || lease !== b.lease)
+        return json({ id: b.id, state: old?.state });
+      this.ctx.storage.transactionSync(() => {
+        this.sql.exec("DELETE FROM tasks WHERE id=?", b.id);
+        this.sql.exec("DELETE FROM leases WHERE id=?", b.id);
+      });
+      return json({ id: b.id, state: "released" });
+    }
     if (path === "/api/claim") {
       if (mine && old?.state !== "held")
         return json({ id: b.id, state: old?.state });
-      const busy = all.filter(
-        (x) =>
-          x.state === "pending" ||
-          x.state === "revision" ||
-          (x.state === "held" && x.claimed > now - 3600000),
-      );
+      const busy = this.busy(now), campaign = this.campaignHolds(now);
+      const task = taskById.get(b.id)!;
       if (
+        campaign.some((hold) => hold.issue === task.issue.toLowerCase() ||
+          (hold.login === me.login.toLowerCase() && hold.until < 4102444800000)) ||
+        (active && lease !== b.lease) ||
         (old &&
           !mine &&
           (old.state !== "held" || old.claimed > now - 3600000)) ||
@@ -332,21 +395,23 @@ export class Desk extends DurableObject<Env> {
           (x) =>
             x.id !== b.id &&
             taskById.get(x.id)?.repo === taskById.get(b.id)?.repo,
-        ).length >= 3
+        ).length + campaign.filter((hold) => hold.repo === task.repo.toLowerCase()).length >= 3
       )
         return json({ error: "Task or review slots are occupied" }, 409);
       if (!mine || !old || old.claimed <= now - 3600000)
-        this.sql.exec(
-          "INSERT OR REPLACE INTO tasks VALUES(?,?,?,'held','',?,0,0,'','','{}')",
-          b.id,
-          me.login,
-          me.uid,
-          now,
-        );
+        this.ctx.storage.transactionSync(() => {
+          this.sql.exec(
+            "INSERT OR REPLACE INTO tasks VALUES(?,?,?,'held','',?,0,0,'','','{}')",
+            b.id, me.login, me.uid, now,
+          );
+          this.sql.exec("DELETE FROM leases WHERE id=?", b.id);
+          if (b.lease)
+            this.sql.exec("INSERT INTO leases VALUES(?,?)", b.id, b.lease);
+        });
       return json({ id: b.id, state: "held" });
     }
     if (path === "/api/submit") {
-      if (!old || !mine)
+      if (!old || !mine || (old.state === "held" && lease !== b.lease))
         return json(
           { error: "Reservation belongs to another participant" },
           409,
