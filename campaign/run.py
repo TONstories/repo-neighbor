@@ -513,7 +513,12 @@ def run(now):
         projects = select(now, {}, [p for p in selection if not balance.finished(p, claims, now)], claims)
     election.update(closed=True, selected=[p["repo"] for p in selection])
     tracks = election.setdefault("tracks", {})
-    tracks.update({p["repo"]: p["track"] for p in projects})
+    for p in selection:
+        repo = p["repo"]
+        if repo not in tracks:
+            tracks[repo] = p.get("track") or balance.track(metadata(repo)[0])
+    for p in projects:
+        p["track"] = tracks[p["repo"]]
     for request in requests:
         key = str(request["number"])
         if (
