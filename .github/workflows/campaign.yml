@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['campaigns/editor.json', 'campaigns/costs.json']
+    paths: ['campaigns/editor.json', 'campaigns/costs.json', 'campaigns/local-work.json']
   issues:
     types: [opened]
 concurrency:

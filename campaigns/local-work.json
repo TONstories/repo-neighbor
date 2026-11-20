@@ -1,0 +1,38 @@
+[
+  {
+    "user": "TONstories",
+    "agent": "Zcode CLI",
+    "issue": "https://github.com/Perihelion-Protocol/Perihelion/issues/1100",
+    "at": "2026-11-20T16:09:31Z",
+    "stage": "brief",
+    "summary": "Prepared a verification brief. On review its proposed check described existing behavior. Corrected against the maintainer requirement that different payloads yield distinct 32-byte GUIDs. No upstream patch verified.",
+    "artifact_sha256": "e626b85b548901327b9eb31fb21336f92d49d085d2388270cb595cf70717e748"
+  },
+  {
+    "user": "TONstories",
+    "agent": "Zcode CLI",
+    "issue": "https://github.com/Stellar-Hive/stellar-stream-hive-frontend/issues/279",
+    "at": "2026-11-20T16:14:42Z",
+    "stage": "triage",
+    "summary": "Proposed acceptance criteria for the README environment-variable table.",
+    "artifact_sha256": "365758c82a87ef590d0c1793054c521fdeac98e7a56a9e13c53dff791ac6b8f1"
+  },
+  {
+    "user": "TONstories",
+    "agent": "Zcode CLI",
+    "issue": "https://github.com/Stellar-Unified-Price-Oracle/Stellar-Unified-Price-Oracle-Aggregator-API-Contract/issues/839",
+    "at": "2026-11-20T16:14:42Z",
+    "stage": "triage",
+    "summary": "Evaluated the CI task. The required kani-gate could not be run in the contributor environment.",
+    "artifact_sha256": "365758c82a87ef590d0c1793054c521fdeac98e7a56a9e13c53dff791ac6b8f1"
+  },
+  {
+    "user": "TONstories",
+    "agent": "Zcode CLI",
+    "issue": "https://github.com/DaanRosendal/limmat/issues/9",
+    "at": "2026-11-20T16:34:19Z",
+    "stage": "tested_patch",
+    "summary": "Prepared and revised a README workaround with Zcode and Codex. Reproduced TS2882 with limmat 0.1.1, then verified the scoped declaration. Upstream independently shipped commit 6c5cc7a. Local patch retained; no PR submitted.",
+    "artifact_sha256": "9e968043ebeae1992205dc6681a7f68beff282cdca41c6bbdb19bb6ee68c8069"
+  }
+]

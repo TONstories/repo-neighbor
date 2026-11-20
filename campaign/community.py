@@ -133,6 +133,22 @@ def impact(rows):
     return f"${low:,.0f}–${high:,.0f}", unknown
 
 
+def local_work(directory):
+    path = directory / "local-work.json"
+    rows = json.loads(path.read_text()) if path.exists() else []
+    seen = set()
+    for row in rows:
+        key = (row["user"].casefold(), row["issue"].casefold(), row["stage"])
+        if (key in seen or row["stage"] not in {"triage", "brief", "tested_patch"}
+                or not re.fullmatch(r"https://github\.com/[\w.-]+/[\w.-]+/issues/[1-9]\d*", row["issue"])
+                or not re.fullmatch(r"[a-zA-Z0-9-]{1,39}", row["user"])
+                or not re.fullmatch(r"[a-f0-9]{64}", row["artifact_sha256"])
+                or parse(row["at"]).tzinfo is None):
+            raise ValueError("Invalid or duplicate local work receipt")
+        seen.add(key)
+    return rows
+
+
 def reports(directory, ledger, projects, now, override):
     claims = ledger["claims"]
     elections = ledger.get("elections", {})
@@ -143,11 +159,22 @@ def reports(directory, ledger, projects, now, override):
     prs = unique_prs(claims)
     accepted = [c for c in prs.values() if c.get("merged_at")]
     mobile = ledger.get("mobile", [])
+    local = local_work(directory)
     people = {}
     for c in [*claims, *mobile]:
         if c.get("claimed_at"):
             u = c["user"]
             people[u] = min(people.get(u, c["claimed_at"]), c["claimed_at"])
+    for row in local:
+        u = row["user"]
+        people[u] = min(people.get(u, row["at"]), row["at"], key=parse)
+    # GitHub logins are case-insensitive across the desk, reservations and local work.
+    first = {}
+    for user, stamp in people.items():
+        key = user.casefold()
+        if key not in first or parse(stamp) < parse(first[key][1]):
+            first[key] = (user, stamp)
+    people = dict(first.values())
     costfile = directory / "costs.json"
     costs = json.loads(costfile.read_text()) if costfile.is_file() else {}
     today = now.astimezone(MSK).date().isoformat()
@@ -159,6 +186,10 @@ def reports(directory, ledger, projects, now, override):
                 stamp = parse(c[k])
                 days.add(stamp.astimezone(MSK).date().isoformat())
                 weeks.add(week(stamp))
+    for entry in local:
+        stamp = parse(entry["at"])
+        days.add(stamp.astimezone(MSK).date().isoformat())
+        weeks.add(week(stamp))
     for row in mobile:
         for field in ("claimed_at", "submitted_at", "reviewed_at"):
             if row.get(field):
@@ -189,7 +220,7 @@ def reports(directory, ledger, projects, now, override):
             "",
             "| Metric / Показатель | Total |",
             "|---|---:|",
-            f"| Участники, впервые взявшие задачу / New participants | {sum(inside(t) for t in people.values())} |",
+            f"| Новые участники / New participants | {sum(inside(t) for t in people.values())} |",
             f"| Брони / Reservations | {sum(inside(c.get('claimed_at')) for c in claims)} |",
             f"| Переданные на ревью PR / Submitted PRs | {len(submitted)} |",
             f"| Принятые PR / Merged PRs | {len(merged)} |",
@@ -197,6 +228,12 @@ def reports(directory, ledger, projects, now, override):
             f"| Без оценки в USD / Unpriced merges | {unknown} |",
             "",
         ]
+        work = [row for row in local if inside(row["at"])]
+        if work:
+            out.extend(["## Работа участников до отправки PR / Local work", ""])
+            for row in work:
+                out.append(f"- {row['user']} · {row['agent']} · {row['stage']} · [{row['issue'].split('github.com/')[1]}]({row['issue']}) · {row['summary']}")
+            out.append("")
         from statistics import median
         drafts = [c for c in mobile if inside(c["submitted_at"])]
         decisions = [c for c in mobile if inside(c["reviewed_at"])]
@@ -341,9 +378,10 @@ def reports(directory, ledger, projects, now, override):
         "",
     ]
     for u in sorted(people):
-        own = [c for c in accepted if c["user"] == u]
+        own = [c for c in accepted if c["user"].casefold() == u.casefold()]
+        count = len({r["issue"].casefold() for r in local if r["user"].casefold() == u.casefold()})
         out.append(
-            f"- {u} · {len(own)} merges · {impact(own)[0]} · ballot weight {weight(u, claims, start(now), mobile)}"
+            f"- {u} · {count} issues with documented local work · {len(own)} merges · {impact(own)[0]} · ballot weight {weight(u, claims, start(now), mobile)}"
         )
     out += ["", "## Текущие задачи и исполнители / Current work", ""]
     deps = override.get("requires", {})

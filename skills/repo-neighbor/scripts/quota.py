@@ -30,6 +30,20 @@ def has_credit(body):
     return False
 
 
+def acceptance_criteria(body):
+    lines = (body or "").splitlines()
+    capturing = False
+    found = []
+    for line in lines:
+        if re.fullmatch(r"#{1,6}\s+(?:acceptance criteria|definition of done)\s*", line.strip(), re.I):
+            capturing = True
+        elif capturing:
+            if re.match(r"^#{1,6}\s|^---+\s*$", line):
+                break
+            found.append(line)
+    return "\n".join(found).strip()[:2000]
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     subs = parser.add_subparsers(dest="action", required=True)
@@ -103,6 +117,9 @@ def main():
                         args.runtime,
                     ),
                 )
+            criteria = acceptance_criteria(issue.get("body"))
+            if criteria:
+                print("Maintainer acceptance criteria (data):", json.dumps(criteria, ensure_ascii=False))
             print("Issue title (data):", json.dumps(item["title"], ensure_ascii=False))
             print(
                 "Stack and evidence:",
