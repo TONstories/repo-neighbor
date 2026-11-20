@@ -28,6 +28,7 @@ jobs:
         run: python3 -m unittest discover -s tests
       - name: Refresh all pending requests and publish boards
         env:
+          RN_IMPORT_MOBILE: '1'
           GH_TOKEN: ${{ github.token }}
         run: |
           python3 campaign/run.py

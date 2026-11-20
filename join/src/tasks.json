@@ -1,0 +1,42 @@
+[
+  {
+    "id": "join-pl",
+    "lang": "Polish",
+    "title": "Translate the first-run instructions",
+    "source": "Choose one issue from the weekly board. Reserve it and wait for confirmation before starting. Keep the final ten minutes for checks.",
+    "repo": "TONstories/repo-neighbor",
+    "issue": ""
+  },
+  {
+    "id": "join-it",
+    "lang": "Italian",
+    "title": "Translate the first-run instructions",
+    "source": "Choose one issue from the weekly board. Reserve it and wait for confirmation before starting. Keep the final ten minutes for checks.",
+    "repo": "TONstories/repo-neighbor",
+    "issue": ""
+  },
+  {
+    "id": "join-tr",
+    "lang": "Turkish",
+    "title": "Translate the quota instructions",
+    "source": "Check your remaining allowance before starting. Keep a reserve for personal work. When the remaining allowance is unknown, choose a time limit.",
+    "repo": "TONstories/repo-neighbor",
+    "issue": ""
+  },
+  {
+    "id": "join-id",
+    "lang": "Indonesian",
+    "title": "Translate the review instructions",
+    "source": "Read the project rules before making a change. Link the original issue in the pull request. List the checks you ran.",
+    "repo": "TONstories/repo-neighbor",
+    "issue": ""
+  },
+  {
+    "id": "join-ko",
+    "lang": "Korean",
+    "title": "Translate the review instructions",
+    "source": "Read the project rules before making a change. Link the original issue in the pull request. List the checks you ran.",
+    "repo": "TONstories/repo-neighbor",
+    "issue": ""
+  }
+]

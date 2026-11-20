@@ -74,11 +74,15 @@ META = """repositoryTopics(first:50){nodes{topic{name}}} nameWithOwner isPrivate
 )
 
 
+GRAPH_CALLS = []
+
+
 def graph(query, **params):
     cmd = ["gh", "api", "--hostname", "github.com", "graphql", "-f", "query=" + query]
     for k, v in params.items():
         cmd += ["-F" if isinstance(v, int) else "-f", f"{k}={v}"]
     for attempt in range(3):
+        GRAPH_CALLS.append(hash(tuple(cmd)))
         try:
             res = subprocess.run(cmd, capture_output=True, text=True, timeout=40)
         except subprocess.TimeoutExpired:

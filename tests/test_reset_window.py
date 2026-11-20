@@ -31,6 +31,21 @@ class ResetWindowTests(unittest.TestCase):
             self.assertEqual(window.decision(dict(usage(), ordinaryUsageAllowed=value),
                                              "weekly", 12, 30, 100)[0], "unavailable")
 
+    def test_reminder_suppresses_repeat_and_rechecks_before_start(self):
+        with TemporaryDirectory() as tmp, patch.object(window.sys.stdin, "isatty", return_value=True), \
+             patch.object(window, "prepare", return_value="draft"), patch.object(window, "launch") as launch:
+            args = SimpleNamespace(account_id="a", period="weekly", output=Path(tmp),
+                                   minutes=45, issue="https://github.com/test/docs/issues/1")
+            reset = int(time.time()) + 3000
+            with patch("builtins.input", return_value="skip") as answer:
+                window.suggest(args, reset)
+                window.suggest(args, reset)
+                self.assertEqual(answer.call_count, 1)
+            args.account_id = "b"
+            with patch("builtins.input", return_value="start"), patch.object(window, "status_now", return_value=("reserve", None)):
+                window.suggest(args, reset)
+            launch.assert_not_called()
+
     def test_account_change(self):
         args = SimpleNamespace(account_id="original")
         with patch.object(window, "limits", return_value=usage()):

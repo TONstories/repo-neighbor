@@ -3,3 +3,7 @@ __pycache__/
 .env
 .env.*
 *.agekey
+join/node_modules/
+join/dist/
+join/.wrangler/
+join/test-results/

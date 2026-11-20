@@ -2,7 +2,10 @@
 
 import balance
 import community
+import time
+import copy
 import json
+import os
 import re
 import sys
 from datetime import datetime, timezone, timedelta
@@ -13,6 +16,7 @@ sys.path.insert(
     0, str(Path(__file__).resolve().parents[1] / "skills/repo-neighbor/scripts")
 )
 from finder import (
+    GRAPH_CALLS,
     URL,
     assess,
     discover,
@@ -77,6 +81,7 @@ def select(now, editor, existing, claims):
     excluded = {r.lower() for r in editor.get("exclude", [])}
     ranked = editor.get("ranked", [])
     by_repo = {}
+    skipped = editor.setdefault("skipped", {})
     if existing is None:
         def add(name):
             if name.lower() in excluded or name.lower() in by_repo:
@@ -108,8 +113,10 @@ def select(now, editor, existing, claims):
     result = []
     for repo, rows in by_repo.items():
         if repo.lower() in excluded:
+            skipped[repo] = "Already selected"
             continue
         if not rows:
+            skipped[repo] = "No eligible issues"
             continue
         canonical = rows[0]["repo"]
         category = balance.track(metadata(canonical)[0])
@@ -122,14 +129,17 @@ def select(now, editor, existing, claims):
             if len(tasks) == 18:
                 break
         if len(tasks) < (2 if existing is None else 1):
+            skipped[repo] = "Insufficient independent tasks"
             continue
         window = reviews(repo, today)
         if existing is None and not slots(window, claims, now, repo):
+            skipped[repo] = "No review capacity"
             continue
         result.append(dict(repo=canonical, tasks=tasks, window=window,
                            track=category))
     if existing is not None:
         return result
+    editor["pool"] = [dict(repo=p["repo"], track=p["track"], tasks=[{"score": t["score"]} for t in p["tasks"][:2]]) for p in result]
     return balance.allocate(result, ranked, editor.get("limit", 3), editor.get("history", []))
 
 
@@ -471,6 +481,13 @@ def run(now):
     board = folder / "projects.json"
     ledger = load(DIR / "ledger.json", {"claims": [], "receipts": {}})
     claims = ledger["claims"]
+    if os.getenv("RN_IMPORT_MOBILE") == "1":
+        from mobile import read_export
+        try:
+            ledger["mobile"] = read_export()
+            ledger.pop("mobile_stale", None)
+        except (OSError, ValueError, KeyError, TypeError):
+            ledger["mobile_stale"] = True
     refresh_claims(claims, now)
     requests = list(inbox())
     for request in requests:
@@ -501,16 +518,29 @@ def run(now):
     selection_file = folder / "selection.json"
     selection = load(selection_file, load(board, []))
     complete = bool(selection) and all(balance.finished(p, claims, now) for p in selection)
+    audit_path = folder / "audit.json"
+    audit = load(audit_path, dict(version=1, shares=balance.SHARES, prior=[p["repo"] for p in selection], rounds=[]))
+    before_search = time.monotonic()
+    first_call = len(GRAPH_CALLS)
     if not selection or complete:
         past = [t for k, e in ledger["elections"].items() if k <= week for t in e.get("tracks", {}).values()]
         options = dict(exclude=[p["repo"] for p in selection], ranked=community.ranking(election),
                        limit=1 if complete else limit, history=past)
         additions = select(now, options, None, claims)
+        record = dict(ballot=copy.deepcopy({k: election[k] for k in ("nominees", "votes")}),
+                      history=past, limit=options["limit"], pool=options["pool"],
+                      skipped=options["skipped"], selected=[p["repo"] for p in additions])
+        if not audit["rounds"] or audit["rounds"][-1] != record:
+            audit["rounds"].append(record)
         selection.extend(additions)
         projects = additions
         save(selection_file, selection)
     else:
         projects = select(now, {}, [p for p in selection if not balance.finished(p, claims, now)], claims)
+    save(audit_path, audit)
+    calls = GRAPH_CALLS[first_call:]
+    save(folder / "discovery-metrics.json", dict(seconds=round(time.monotonic()-before_search, 2),
+                                               requests=len(calls), repeated=len(calls)-len(set(calls))))
     election.update(closed=True, selected=[p["repo"] for p in selection])
     tracks = election.setdefault("tracks", {})
     for p in selection:

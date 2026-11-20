@@ -1,5 +1,8 @@
 """Opt-in, foreground pre-reset sessions for the subscription used by Codex CLI."""
 import argparse
+import hashlib
+import sqlite3
+import sys
 from datetime import date, datetime, timezone
 import json
 import os
@@ -10,7 +13,7 @@ import tempfile
 import threading
 import time
 
-from finder import URL, assess, live_issue, metadata
+from finder import URL, assess, discover, live_issue, metadata
 
 DURATIONS = {"five-hour": (300, 300), "weekly": (10080, 10080), "monthly": (40320, 44640)}
 
@@ -158,7 +161,7 @@ def status_now(args):
         return "unavailable", None
     args.account_id = data["accountId"]
     outcome = decision(data, args.period, args.before_hours, args.reserve_percent, time.time())
-    if args.mode == "check" and outcome[0] != "unavailable":
+    if args.mode in ("check", "suggest") and outcome[0] != "unavailable":
         bucket = codex_bucket(data)
         for key in ("primary", "secondary"):
             w = bucket.get(key)
@@ -167,11 +170,44 @@ def status_now(args):
     return outcome
 
 
+def suggest(args, reset):
+    if not sys.stdin.isatty():
+        print("Open an interactive terminal to decide. No model request started.")
+        return
+    directory = args.output.expanduser().resolve()
+    directory.mkdir(mode=0o700, parents=True, exist_ok=True)
+    account = hashlib.sha256(args.account_id.encode()).hexdigest()
+    key = f"{account}:{args.period}:{reset}"
+    with sqlite3.connect(directory / "reminders.sqlite") as history:
+        history.execute("CREATE TABLE IF NOT EXISTS reminder (id TEXT PRIMARY KEY, until INTEGER)")
+        history.execute("BEGIN IMMEDIATE")
+        if history.execute("SELECT 1 FROM reminder WHERE id=? AND until>?", (key, time.time())).fetchone():
+            return
+        history.execute("INSERT OR REPLACE INTO reminder VALUES (?,?)", (key, min(reset, time.time()+1800)))
+        history.commit()
+        if not args.issue:
+            matches = discover([], None, 4, date.today(), args.minutes, 0, kind="docs")["candidates"]
+            task = next((row for row in matches if row["fit"] == "fits"), None)
+            if not task:
+                print("No suitable documentation issue found.")
+                return
+            args.issue = task["url"]
+            print(task["title"])
+        prompt = prepare(args.issue, args.minutes)
+        print(f"{args.issue} · up to {args.minutes} minutes")
+        answer = input("Start using included quota [start], snooze 30 minutes [later], skip this reset [skip]: ").strip().lower()
+        if answer in ("start", "skip"):
+            history.execute("UPDATE reminder SET until=? WHERE id=?", (reset, key))
+            history.commit()
+        if answer == "start" and status_now(args) == ("ready", reset):
+            launch(args, reset, prompt)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("mode", choices=["check", "watch"])
+    parser.add_argument("mode", choices=["check", "watch", "suggest"])
     parser.add_argument("--period", choices=DURATIONS, default="weekly")
-    parser.add_argument("--before-hours", type=float, default=10)
+    parser.add_argument("--before-hours", type=float)
     parser.add_argument("--reserve-percent", type=int, default=30)
     parser.add_argument("--minutes", type=int, default=45)
     parser.add_argument("--issue")
@@ -179,14 +215,18 @@ def main():
     parser.add_argument("--included-only", action="store_true",
                         help="Confirm you disabled paid overage with your provider.")
     args = parser.parse_args()
+    if args.before_hours is None:
+        args.before_hours = 12 if args.mode == "suggest" else 10
     args.account_id = None
-    if args.mode == "watch" and not args.included_only:
+    if args.mode != "check" and not args.included_only:
         parser.error("Disable paid overage first, then confirm with --included-only.")
     if not (0 < args.before_hours <= 744 and 1 <= args.reserve_percent <= 99 and 1 <= args.minutes <= 120):
         parser.error("Check lead time, reserve (1..99%) and session length (1..120 min).")
     if args.mode == "watch" and (not args.issue or not URL.fullmatch(args.issue)
                                   or URL.fullmatch(args.issue)[2] != "issues"):
         parser.error("Watch requires --issue with a public GitHub documentation issue URL.")
+    if args.issue and (not URL.fullmatch(args.issue) or URL.fullmatch(args.issue)[2] != "issues"):
+        parser.error("Expected a public GitHub issue URL.")
     original_reset = None
     while True:
         state, reset = status_now(args)
@@ -198,6 +238,9 @@ def main():
             return
         original_reset = reset
         if state == "ready":
+            if args.mode == "suggest":
+                suggest(args, reset)
+                return
             prompt = prepare(args.issue, args.minutes)
             if status_now(args) == ("ready", reset):
                 launch(args, reset, prompt)

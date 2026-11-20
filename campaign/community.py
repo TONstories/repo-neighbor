@@ -30,7 +30,7 @@ def week(when):
     return f"{y}-W{w:02d}"
 
 
-def weight(user, claims, opening):
+def weight(user, claims, opening, mobile=()):
     accepted = {
         c["issue"]
         for c in claims
@@ -39,7 +39,9 @@ def weight(user, claims, opening):
         and parse(c["merged_at"]) < opening
         and parse(c.get("submitted_at", c["merged_at"])) < opening
     }
-    return 1 + len(accepted)
+    accepted.update(c["issue"] for c in mobile if c["user"].casefold() == user.casefold()
+                    and c["state"] == "accepted" and parse(c["reviewed_at"]) < opening)
+    return 1 + len({key.casefold() for key in accepted})
 
 
 def command(title, user, at, ledger, repo_lookup, issue_number=None):
@@ -86,7 +88,7 @@ def command(title, user, at, ledger, repo_lookup, issue_number=None):
             return "Nominate this repository first."
         ballot["votes"][user.lower()] = {
             "repo": target,
-            "weight": weight(user, ledger["claims"], start(at)),
+            "weight": weight(user, ledger["claims"], start(at), ledger.get("mobile", [])),
             "at": at.isoformat(),
         }
         return "Ballot recorded. A later vote replaces this one."
@@ -134,8 +136,9 @@ def reports(directory, ledger, projects, now, override):
     base.mkdir(exist_ok=True, parents=True)
     prs = unique_prs(claims)
     accepted = [c for c in prs.values() if c.get("merged_at")]
+    mobile = ledger.get("mobile", [])
     people = {}
-    for c in claims:
+    for c in [*claims, *mobile]:
         if c.get("claimed_at"):
             u = c["user"]
             people[u] = min(people.get(u, c["claimed_at"]), c["claimed_at"])
@@ -148,6 +151,12 @@ def reports(directory, ledger, projects, now, override):
         for k in ("claimed_at", "submitted_at", "merged_at"):
             if c.get(k):
                 stamp = parse(c[k])
+                days.add(stamp.astimezone(MSK).date().isoformat())
+                weeks.add(week(stamp))
+    for row in mobile:
+        for field in ("claimed_at", "submitted_at", "reviewed_at"):
+            if row.get(field):
+                stamp = parse(row[field])
                 days.add(stamp.astimezone(MSK).date().isoformat())
                 weeks.add(week(stamp))
     for e in elections.values():
@@ -182,6 +191,25 @@ def reports(directory, ledger, projects, now, override):
             f"| Без оценки в USD / Unpriced merges | {unknown} |",
             "",
         ]
+        from statistics import median
+        drafts = [c for c in mobile if inside(c["submitted_at"])]
+        decisions = [c for c in mobile if inside(c["reviewed_at"])]
+        accepted_count = sum(c["state"] == "accepted" for c in decisions)
+        out += [f"Mobile drafts submitted: {len(drafts)} · community acceptances: {accepted_count}.",
+                f"Accepted among reviewed: {accepted_count}/{len(decisions)}."]
+        for field in ("firstTaskMs", "loadMs", "generationMs"):
+            values = [c["metrics"][field] / 1000 for c in drafts if field in c["metrics"]]
+            if values:
+                out.append(f"- {field} · median {median(values):.1f} s")
+        waits = [(parse(c["reviewed_at"])-parse(c["submitted_at"])).total_seconds() for c in decisions if parse(c["reviewed_at"]) >= parse(c["submitted_at"])]
+        if waits:
+            out.append(f"- Review wait · median {median(waits)/3600:.1f} h")
+        if period in (today, week(now)):
+            pending = [c for c in mobile if c["state"] == "pending"]
+            age = max(((now-parse(c["submitted_at"])).total_seconds()/3600 for c in pending), default=0)
+            out.append(f"Pending mobile review: {len(pending)} · oldest {age:.1f} h.")
+        if ledger.get("mobile_stale"):
+            out.append("Mobile export unavailable at refresh. Showing the last snapshot.")
         booked = sum(
             (
                 Decimal(str(v))
@@ -309,7 +337,7 @@ def reports(directory, ledger, projects, now, override):
     for u in sorted(people):
         own = [c for c in accepted if c["user"] == u]
         out.append(
-            f"- {u} · {len(own)} merges · {impact(own)[0]} · ballot weight {weight(u, claims, start(now))}"
+            f"- {u} · {len(own)} merges · {impact(own)[0]} · ballot weight {weight(u, claims, start(now), mobile)}"
         )
     out += ["", "## Текущие задачи и исполнители / Current work", ""]
     deps = override.get("requires", {})

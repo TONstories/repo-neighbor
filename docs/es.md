@@ -1,5 +1,7 @@
 # Repo Neighbor — dedica tu cuota disponible al código abierto
 
+**[Participar desde el móvil o el ordenador](https://repo-neighbor.fil-support-bot.workers.dev/)**
+
 [Consultar la cuota de Codex y activar una sesión antes del reinicio](reset-window.md)
 
 

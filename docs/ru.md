@@ -1,5 +1,7 @@
 # Repo Neighbor — свободный лимит агента для open source
 
+**[Начать с телефона или компьютера](https://repo-neighbor.fil-support-bot.workers.dev/)**
+
 [Проверить квоту Codex и включить запуск перед сбросом](reset-window.md)
 
 

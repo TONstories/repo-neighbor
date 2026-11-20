@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#f6f3ec" />
+    <title>Доска переводов · Repo Neighbor</title>
+  </head>
+  <body>
+    <header>
+      <a class="brand" href="https://github.com/TONstories/repo-neighbor"
+        ><b>↗</b> Repo Neighbor</a
+      ><span id="account"></span>
+    </header>
+    <main>
+      <section class="intro">
+        <p class="kicker">МАСТЕРСКАЯ ПЕРЕВОДОВ</p>
+        <h1>Одна небольшая<br /><em>правка.</em></h1>
+        <p>
+          Помогите следующему участнику прочитать инструкцию на своем языке.
+          Выберите задачу и отправьте перевод на проверку.
+        </p>
+      </section>
+      <section class="sheet">
+        <label for="tasks">Задача</label
+        ><select id="tasks"></select>
+        <h2 id="target"></h2>
+        <label>Исходный фрагмент · English</label>
+        <blockquote id="source"></blockquote>
+        <p>
+          Критерий приемки — сохранить смысл, порядок действий, числа и команды.
+        </p>
+        <details>
+          <summary>Как выглядит готовый перевод?</summary>
+          Например, фразу “Reserve one issue” можно перевести на русский как
+          «Забронируйте одну задачу».
+        </details>
+        <label for="draft">Ваш перевод</label
+        ><textarea
+          id="draft"
+          rows="5"
+          maxlength="6000"
+          placeholder="Введите перевод или воспользуйтесь локальной моделью"
+        ></textarea>
+        <div class="actions">
+          <button id="reserve" class="secondary">Закрепить на час</button
+          ><button id="send">Отправить на проверку</button
+          ><button id="generate" class="secondary">
+            Выполнить и отправить
+          </button>
+        </div>
+        <p class="hint">
+          В очередь сообщества уйдут перевод, имя GitHub и время выполнения.
+          Черновик хранится в этом браузере до отправки.
+        </p>
+        <button hidden id="recover" class="plain">
+          Сохранить текст и отменить повторную отправку
+        </button>
+        <p id="notice" role="status" aria-live="polite"></p>
+      </section>
+      <section class="sheet">
+        <h2>Модель на устройстве</h2>
+        <label for="platform">Ваша система</label
+        ><select id="platform">
+          <option>iOS</option>
+          <option>Android</option>
+          <option>Windows</option>
+          <option>macOS</option>
+          <option>Linux</option>
+        </select>
+        <p id="guide"></p>
+        <p id="device">Проверяем WebGPU…</p>
+        <p>
+          Qwen2.5-1.5B · около 0,88 ГБ файлов модели плюс движок. Ориентир
+          видеопамяти — 1,63 ГБ. Для ручного перевода загрузка не требуется.
+        </p>
+        <div class="actions">
+          <button id="load" class="secondary">Загрузить модель</button
+          ><button id="remove" class="plain">Удалить модель</button>
+        </div>
+        <p id="progress" role="status"></p>
+      </section>
+      <section class="sheet" id="receipts">
+        <h2>Мои квитанции</h2>
+        <div id="history"></div>
+      </section>
+      <section class="sheet" id="review" hidden>
+        <h2>На проверке</h2>
+        <div id="queue"></div>
+      </section>
+    </main>
+    <footer>
+      <a
+        href="https://github.com/TONstories/repo-neighbor/blob/main/docs/community.md"
+        >Правила сообщества</a
+      >
+      ·
+      <a href="https://github.com/TONstories/repo-neighbor/issues"
+        >Сообщить о проблеме</a
+      >
+    </footer>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -4,6 +4,8 @@
 
 # Repo Neighbor
 
+**[Start on your phone or computer](https://repo-neighbor.fil-support-bot.workers.dev/)**
+
 Have an hour left on your AI plan? Give your coding agent one open-source issue. You set the time budget, review the patch and decide when to send it. The community picks projects each week.
 
 **[Pick a task](campaigns/README.md)** · **[Nominate a project](docs/maintainers.md)** · **[See community results](campaigns/reports/README.md)**
