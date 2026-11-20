@@ -129,6 +129,8 @@ class ElectionTests(unittest.TestCase):
             for i, t in enumerate(["Improve docs", "Add parser tests"])
         ]
         with (
+            patch.object(run, "metadata", return_value=(META, FILES)),
+            patch.object(run, "graph", return_value={"search": {"nodes": []}}),
             patch.object(run, "discover", return_value={"candidates": tasks}),
             patch.object(run, "reviews", return_value=WINDOW),
         ):

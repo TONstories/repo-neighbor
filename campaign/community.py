@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 import re
 import json
+from balance import SHARES
 from urllib.parse import quote
 
 MSK = timezone(timedelta(hours=3))
@@ -272,8 +273,17 @@ def reports(directory, ledger, projects, now, override):
             out += ["", "Selected: " + (", ".join(selected) or "none")]
         out += ["", "## Итоги проектов / Project outcomes", ""]
         rows = [c for c in prs.values() if c["week"] == w]
+        if e.get("capacity"):
+            out.append(f"Initial capacity: {e['capacity']} · selected including reserves: {len(selected)}")
+        if e.get("tracks"):
+            counts = Counter(e["tracks"].values())
+            out.extend(["", "| Track | Target | Selected projects |", "|---|---:|---:|"])
+            out.extend(f"| {k} | {pct}% | {counts[k]} |" for k, pct in SHARES.items())
+            out.append("")
         for repo in sorted(set(selected) | {c["repo"] for c in rows}):
-            out.append(f"- {repo}{proposal_link(e.get('nominees', {}).get(repo, {}))}")
+            out.append(f"- {repo}{proposal_link(e.get('nominees', {}).get(repo.lower(), {}))}")
+            if repo in e.get("tracks", {}):
+                out.append(f"  - {e['tracks'][repo]}")
             contributions = [c for c in rows if c["repo"] == repo]
             if not contributions:
                 out.append("  - 0 PR")

@@ -192,6 +192,7 @@ class CampaignTests(TestCase):
         with (
             tempfile.TemporaryDirectory() as path,
             patch.object(run, "DIR", Path(path)),
+            patch.object(run, "graph", return_value={"search": {"nodes": []}}),
             patch.object(run, "discover", return_value={"candidates": pair}),
             patch.object(run, "live_issues", return_value=[ROW, other]),
             patch.object(run, "inbox", return_value=requests),

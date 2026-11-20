@@ -19,33 +19,11 @@ rn submit https://github.com/OWNER/PROJECT/issues/123 https://github.com/OWNER/P
 
 ## How a week works
 
-Monday at 09:15 Moscow time is the intended release. GitHub can delay scheduled jobs. Up to three repositories with at least two distinct tasks qualify. We compare mentioned file paths and similar titles; the contributor must confirm the change is independent. A repository without sufficient review bandwidth waits. External PR decisions over the last 28 days set the weekly limit: round up decisions/4, clamp to 1–5, subtract current open external PRs and unsubmitted active reservations. Owner/member/collaborator PRs and recognized bot accounts are excluded. A bounded review sample with incomplete coverage yields zero slots. An open submitted PR counts only through the upstream queue. Results follow the original week after merge. The board is a snapshot; command processing checks live eligibility. The additional reconciliation runs every six hours.
+Monday at 09:15 Moscow time is the intended release. GitHub can delay scheduled jobs. Each new project needs at least two distinct tasks. We compare mentioned file paths and similar titles; the contributor must confirm the change is independent. A repository without sufficient review bandwidth waits. External PR decisions over the last 28 days set the weekly limit: round up decisions/4, clamp to 1–5, subtract current open external PRs and unsubmitted active reservations. Owner/member/collaborator PRs and recognized bot accounts are excluded. A bounded review sample with incomplete coverage yields zero slots. An open submitted PR counts only through the upstream queue. Results follow the original week after merge. The board is a snapshot; command processing checks live eligibility. The additional reconciliation runs every six hours.
 
-## Owner edits and project exclusions
+## Community allocation / Распределение / Selección
 
-Edit `editor.json` in the GitHub web editor and commit to main. Use the ISO week in Moscow time. Up to three pins are evaluated before automatically chosen targets; pins must still pass eligibility. `exclude` at the root applies across weeks. To request exclusion, open an issue here and identify the repository. The owner adds it to the exclusion list. Previously issued reservations remain in the ledger.
-
-```json
-{
-  "exclude": ["example/excluded"],
-  "weeks": {
-    "2027-W01": {
-      "goal": {"en": "Improve first-run examples", "ru": "Упростить первый запуск", "es": "Mejorar los primeros ejemplos"},
-      "pin": ["example/pinned"],
-      "exclude": [],
-      "descriptions": {
-        "example/pinned": {
-          "en": "Make the examples run on a fresh install.",
-          "ru": "Проверить запуск примеров после чистой установки.",
-          "es": "Probar los ejemplos en una instalación limpia."
-        }
-      }
-    }
-  }
-}
-```
-
-After four releases compare accepted changes, outstanding external reviews and expired reservations before adjusting the pilot limits.
+[Rules, capacity, priorities and volunteer computing](../docs/allocation.md)
 
 ### Передача незавершенной работы / Handoff / Relevo
 

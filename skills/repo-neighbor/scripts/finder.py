@@ -56,7 +56,7 @@ FILES = (
         "yarn.lock",
     ]
 )
-META = """nameWithOwner isPrivate isFork isArchived isDisabled pushedAt
+META = """repositoryTopics(first:50){nodes{topic{name}}} nameWithOwner isPrivate isFork isArchived isDisabled pushedAt
  licenseInfo{spdxId} primaryLanguage{name} defaultBranchRef{name} """ + " ".join(
     'f%d:object(expression:"HEAD:%s"){... on Blob{%s}}'
     % (

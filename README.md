@@ -1,5 +1,7 @@
 # Repo Neighbor
 
+[Community allocation and volunteer computing · Правила выбора и кластер · Selección y computación](docs/allocation.md)
+
 [Русский](docs/ru.md) · [Español](docs/es.md)
 
 Turn spare AI coding-agent quota into a reviewed open-source contribution. If your own queue is empty, give your agent a time box, find a GitHub issue where maintainers are asking for help, and spend the session on one change they can actually use.

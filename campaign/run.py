@@ -1,5 +1,6 @@
 """Publish and reconcile the Repo Neighbor board. Run from the repository root."""
 
+import balance
 import community
 import json
 import re
@@ -12,7 +13,6 @@ sys.path.insert(
     0, str(Path(__file__).resolve().parents[1] / "skills/repo-neighbor/scripts")
 )
 from finder import (
-    SLUG,
     URL,
     assess,
     discover,
@@ -75,33 +75,24 @@ def compatible(items, item):
 def select(now, editor, existing, claims):
     today = now.date()
     excluded = {r.lower() for r in editor.get("exclude", [])}
-    overrides = editor["override"]
-    pins = overrides.get("pin", [])
-    for name in [*pins, *excluded]:
-        if not re.fullmatch(SLUG, name):
-            raise ValueError("Invalid editor repository")
-    if len(set(pins)) != len(pins) or len(pins) > 3:
-        raise ValueError("Up to 3 unique pins")
+    ranked = editor.get("ranked", [])
     by_repo = {}
-    preferences = list(pins)
     if existing is None:
-        preferences += [
-            r
-            for r in editor.get("ranked", [])
-            if r.lower() not in {p.lower() for p in pins} and r.lower() not in excluded
-        ]
-    seat_order = []
-    for repo in preferences[:12]:
-        rows = discover([], repo, 100, today, 180, 10)["candidates"]
-        if rows:
-            canonical = rows[0]["repo"]
-            if canonical not in seat_order:
-                seat_order.append(canonical)
-            by_repo[canonical] = list(rows)
-    preferences = seat_order
-    if existing is None:
+        def add(name):
+            if name.lower() in excluded or name.lower() in by_repo:
+                return
+            by_repo[name.lower()] = list(discover([], name, 60, today, 180, 10)["candidates"])
+
+        for name in ranked:
+            add(name)
+        rotation = community.start(now).date().toordinal() // 7
+        for tags in balance.TOPICS.values():
+            tag = tags[rotation % len(tags)]
+            query = "query($q:String!){search(type:REPOSITORY,first:3,query:$q){nodes{... on Repository{nameWithOwner}}}}"
+            for node in graph(query, q=f"topic:{tag} archived:false fork:false good-first-issues:>0 sort:updated")["search"]["nodes"]:
+                add(node["nameWithOwner"])
         for row in discover([], None, 150, today, 180, 10)["candidates"]:
-            by_repo.setdefault(row["repo"], []).append(row)
+            by_repo.setdefault(row["repo"].lower(), []).append(row)
     else:
         for project in existing:
             name = project["repo"]
@@ -113,36 +104,33 @@ def select(now, editor, existing, claims):
                     item = assess(row, name, *metadata(name), today, minutes=180)
                     if item:
                         fresh.append(item)
-            if len(fresh) < 2 and len(project["tasks"]) >= 2:
-                fresh.extend(discover([], name, 36, today, 180, 10)["candidates"])
             by_repo[name] = fresh
     result = []
     for repo, rows in by_repo.items():
         if repo.lower() in excluded:
             continue
+        if not rows:
+            continue
+        canonical = rows[0]["repo"]
+        category = balance.track(metadata(canonical)[0])
         tasks = []
         for row in rows:
+            if category == "defensive-security" and row.get("kind") != "docs":
+                continue
             if row["url"] not in [t["url"] for t in tasks] and compatible(tasks, row):
                 tasks.append(row)
             if len(tasks) == 18:
                 break
-        if len(tasks) < (2 if existing is None or repo in pins else 1):
+        if len(tasks) < (2 if existing is None else 1):
             continue
         window = reviews(repo, today)
         if existing is None and not slots(window, claims, now, repo):
             continue
-        result.append(dict(repo=repo, tasks=tasks, window=window))
-    result.sort(
-        key=lambda p: (
-            preferences.index(p["repo"])
-            if p["repo"] in preferences
-            else len(preferences),
-            -min(5, len(p["tasks"])),
-            -sum(t["score"] for t in p["tasks"][:2]),
-            p["repo"],
-        )
-    )
-    return result[:3]
+        result.append(dict(repo=canonical, tasks=tasks, window=window,
+                           track=category))
+    if existing is not None:
+        return result
+    return balance.allocate(result, ranked, editor.get("limit", 3), editor.get("history", []))
 
 
 def upstream_pr(url):
@@ -402,6 +390,8 @@ def render(week, projects, claims, now, override, lang):
                 "",
                 note.get(lang, goal),
                 "",
+                p.get("track", "general"),
+                "",
                 f"{capacity} · {decisions}: {w['decisions']} · {opened}: {len(w['open'])} · **{free}: {slots(w, claims, now, repo)}**.",
                 "",
             ]
@@ -503,20 +493,27 @@ def run(now):
     election = ledger.setdefault("elections", {}).setdefault(
         week, {"nominees": {}, "votes": {}}
     )
-    projects = select(
-        now,
-        {
-            "exclude": editor["exclude"] + override.get("exclude", []),
-            "override": override,
-            "ranked": community.ranking(election),
-        },
-        load(folder / "selection.json", load(board, None)),
-        claims,
-    )
-    if not (folder / "selection.json").exists():
-        save(folder / "selection.json", projects)
-    if not election.get("closed"):
-        election.update(closed=True, selected=[p["repo"] for p in projects])
+    previous_week = week_key(now - timedelta(days=7))
+    previous = load(DIR / "archive" / previous_week / "selection.json", [])
+    opening = community.start(now)
+    last = ledger["elections"].get(previous_week, {})
+    limit = election.setdefault("capacity", balance.capacity(previous, claims, opening, last.get("capacity", 3)))
+    selection_file = folder / "selection.json"
+    selection = load(selection_file, load(board, []))
+    complete = bool(selection) and all(balance.finished(p, claims, now) for p in selection)
+    if not selection or complete:
+        past = [t for k, e in ledger["elections"].items() if k <= week for t in e.get("tracks", {}).values()]
+        options = dict(exclude=[p["repo"] for p in selection], ranked=community.ranking(election),
+                       limit=1 if complete else limit, history=past)
+        additions = select(now, options, None, claims)
+        selection.extend(additions)
+        projects = additions
+        save(selection_file, selection)
+    else:
+        projects = select(now, {}, [p for p in selection if not balance.finished(p, claims, now)], claims)
+    election.update(closed=True, selected=[p["repo"] for p in selection])
+    tracks = election.setdefault("tracks", {})
+    tracks.update({p["repo"]: p["track"] for p in projects})
     for request in requests:
         key = str(request["number"])
         if (
