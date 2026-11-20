@@ -27,7 +27,7 @@ HOME = "TONstories/repo-neighbor"
 BASE = "https://github.com/" + HOME
 DIR = Path("campaigns")
 COMMAND = re.compile(
-    r"(?:rn|qfg) (claim|release|submit) (https://github\.com/\S+)(?: (\S+))?", re.ASCII
+    r"(?:rn|qfg) (claim|release|submit|handoff|feedback) (https://github\.com/\S+)(?: (\S+))?", re.ASCII
 )
 UTC = timezone.utc
 
@@ -152,19 +152,30 @@ def upstream_pr(url):
     owner, repo = match[1].split("/")
     return graph(
         """query($o:String!,$n:String!,$i:Int!){repository(owner:$o,name:$n){
-      pullRequest(number:$i){state mergedAt url body author{login} closingIssuesReferences(first:50){nodes{url}}}}}""",
+      pullRequest(number:$i){state mergedAt mergedBy{login} url body author{login} closingIssuesReferences(first:50){nodes{url}}}}}""",
         o=owner,
         n=repo,
         i=int(match[3]),
     )["repository"]["pullRequest"]
 
 
-def transition(command, user, claims, week, projects, now, requires=None):
+def transition(command, user, claims, week, projects, now, requires=None, body="", number=None):
     match = COMMAND.fullmatch(command)
     if not match:
         return "Invalid command. See the campaign guide."
     op, url, arg = match.groups()
     source = URL.fullmatch(url)
+    if op == "feedback":
+        row = next((c for c in claims if c.get("pr") == url and c.get("merged_at")), None)
+        values = re.fullmatch(r"(solved|partial|unresolved) ([0-9]{1,5}) ([0-9]{1,5})", " ".join(body.split()))
+        if not row or arg or not values or not number:
+            return "Use a recorded merged PR. Body: solved|partial|unresolved saved_minutes review_minutes."
+        pr = upstream_pr(url)
+        merger = ((pr or {}).get("mergedBy") or {}).get("login", "")
+        if user.casefold() not in {row["repo"].split("/")[0].casefold(), merger.casefold()}:
+            return "Only the repository owner or the GitHub merge actor can report the outcome."
+        row["feedback"] = dict(outcome=values[1], saved=int(values[2]), review=int(values[3]), by=user, issue=number)
+        return "Feedback recorded."
     if not source or source[2] != "issues":
         return "Expected a GitHub issue URL."
     repo = source[1]
@@ -212,6 +223,17 @@ def transition(command, user, claims, week, projects, now, requires=None):
             merged_at=pr.get("mergedAt"),
         )
         return "PR recorded."
+    if op == "handoff":
+        latest = next((c for c in reversed(claims) if c["issue"] == url), None)
+        if not latest or latest["user"] != user or latest["status"] not in ("held", "expired"):
+            return "Only the latest reservation holder can hand off unfinished work."
+        fields = [line.strip() for line in body.splitlines() if line.strip()]
+        if arg or not number or len(fields) != 3 or not re.fullmatch(
+            r"https://github[.]com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/(?:pull/[0-9]+|(?:tree|commit)/[^\s]+)", fields[0]
+        ):
+            return "Supply three lines: public branch, commit or draft PR URL; checks and result; next step."
+        latest.update(status="released", handoff=number)
+        return "Handoff recorded. Reservation released."
     if op == "release":
         if not owned or arg:
             return "No matching reservation to release."
@@ -275,14 +297,15 @@ def transition(command, user, claims, week, projects, now, requires=None):
             until=until.isoformat(),
         )
     )
-    return "Reserved until " + until.isoformat()
+    handoff = next((c["handoff"] for c in reversed(claims) if c["issue"] == url and c.get("handoff")), None)
+    return "Reserved until " + until.isoformat() + (f". Handoff: {BASE}/issues/{handoff}" if handoff else "")
 
 
 def inbox():
     owner, name = HOME.split("/")
     q = """query($o:String!,$n:String!,$cursor:String){repository(owner:$o,name:$n){
       issues(first:100,states:OPEN,after:$cursor,orderBy:{field:CREATED_AT,direction:ASC}){
-      nodes{number title createdAt lastEditedAt author{login}} pageInfo{endCursor hasNextPage}}}}"""
+      nodes{number title body createdAt lastEditedAt author{login}} pageInfo{endCursor hasNextPage}}}}"""
     args = {"o": owner, "n": name}
     while True:
         page = graph(q, **args)["repository"]["issues"]
@@ -416,6 +439,15 @@ def render(week, projects, claims, now, override, lang):
             lines.append(
                 f"  {stack}: {safe(', '.join(t['stack']) or '?')} · {check}: {safe(' / '.join(t['checks']) or unknown)}"
             )
+            why, notes = {"en": ("Selection signals", "Handoff"), "ru": ("Основания отбора", "Передача работы"), "es": ("Criterios de selección", "Relevo")}[lang]
+            signals = list(t.get("signals") or []) + list(t.get("evidence") or [])[:1]
+            if t.get("minutes"):
+                signals.append("–".join(map(str, t["minutes"])) + " min")
+            if signals:
+                lines.append(f"  <br>{why}: {safe(' · '.join(signals))}")
+            handoff = next((c["handoff"] for c in reversed(claims) if c["issue"] == t["url"] and c.get("handoff")), None)
+            if handoff:
+                lines.append(f"  <br>[{notes}]({BASE}/issues/{handoff})")
         lines.append("")
     if not projects:
         lines.extend([empty, ""])
@@ -502,6 +534,8 @@ def run(now):
                 projects,
                 now,
                 override.get("requires", {}),
+                request.get("body") or "",
+                request["number"],
             )
     community.reports(DIR, ledger, projects, now, override)
     save(board, projects)

@@ -46,3 +46,23 @@ Edit `editor.json` in the GitHub web editor and commit to main. Use the ISO week
 ```
 
 After four releases compare accepted changes, outstanding external reviews and expired reservations before adjusting the pilot limits.
+
+### Передача незавершенной работы / Handoff / Relevo
+
+Откройте issue в Repo Neighbor с заголовком `rn handoff ISSUE_URL`. В теле укажите три строки:
+
+1. Публичная ссылка на ветку, коммит или draft PR с вашей работой.
+2. Какие проверки выполнены и с каким результатом. Если не запускали, укажите это.
+3. Что именно должен сделать следующий участник.
+
+Последний владелец брони может передать задачу и после истечения времени, пока ее не взял другой участник. Доска и квитанция следующей брони ведут на эти заметки. Пишите только публичные сведения.
+
+**EN** — Open an issue titled `rn handoff ISSUE_URL`. Use three body lines for the public branch/commit/draft PR URL, checks and results, and the next step.
+**ES** — Abre un issue con el titulo `rn handoff ISSUE_URL`. Escribe tres lineas con el enlace publico a la rama, commit o PR, las pruebas y su resultado, y el proximo paso.
+
+### Отзыв после merge / Outcome feedback / Resultado
+
+GitHub-пользователь, который влил PR, или владелец персонального репозитория может открыть issue с заголовком `rn feedback PR_URL`. Пример тела: `solved 120 20`. Первое поле — результат (solved, partial, unresolved), второе — оценка минут работы, которую заменило изменение, третье — минуты ревью. Указывайте целые числа от 0 до 99999. Повторная команда обновляет отзыв. Результат появится в отчете недели, когда задачу забронировали, рядом с заявкой и PR. Расчетная стоимость и вес голосов сохраняют прежнюю методику.
+
+**EN** — After merge, the merger or personal repository owner can submit `rn feedback PR_URL` with `solved|partial|unresolved saved_minutes review_minutes`. A newer report replaces the previous one.
+**ES** — Despues de integrar el PR, quien lo integro o el propietario del repositorio personal puede enviar `rn feedback PR_URL` con el resultado y dos cifras en minutos (trabajo ahorrado y revision).

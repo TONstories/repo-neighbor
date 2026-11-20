@@ -221,3 +221,27 @@ class CampaignTests(TestCase):
             self.assertEqual(
                 run.load(run.DIR / "ledger.json", {})["claims"][0]["status"], "expired"
             )
+
+
+class CommunityFollowupTests(TestCase):
+    def test_handoff_validates_before_release(self):
+        row = dict(user="dev", issue=ISSUE, status="expired")
+        args = ([row], "2026-W47", [], NOW)
+        command = "rn handoff " + ISSUE
+        notes = PR + "\nTests pass\nReview the examples"
+        run.transition(command, "other", *args, body=notes, number=4)
+        run.transition(command, "dev", *args, body=PR, number=4)
+        self.assertEqual(row["status"], "expired")
+        run.transition(command, "dev", *args, body=notes, number=4)
+        self.assertEqual((row["status"], row["handoff"]), ("released", 4))
+
+    @patch.object(run, "upstream_pr", return_value={"mergedBy": {"login": "Editor"}})
+    def test_feedback_checks_identity_and_amounts(self, lookup):
+        row = dict(repo=REPO, pr=PR, merged_at=NOW.isoformat())
+        args = ([row], "2026-W47", [], NOW)
+        command = "rn feedback " + PR
+        run.transition(command, "dev", *args, body="solved 60 5", number=5)
+        run.transition(command, "editor", *args, body="solved -3 5", number=5)
+        self.assertNotIn("feedback", row)
+        run.transition(command, "editor", *args, body="partial 60 10", number=5)
+        self.assertEqual(row["feedback"], dict(outcome="partial", saved=60, review=10, by="editor", issue=5))

@@ -270,6 +270,20 @@ def reports(directory, ledger, projects, now, override):
         selected = e.get("selected", [])
         if e.get("closed"):
             out += ["", "Selected: " + (", ".join(selected) or "none")]
+        out += ["", "## Итоги проектов / Project outcomes", ""]
+        rows = [c for c in prs.values() if c["week"] == w]
+        for repo in sorted(set(selected) | {c["repo"] for c in rows}):
+            out.append(f"- {repo}{proposal_link(e.get('nominees', {}).get(repo, {}))}")
+            contributions = [c for c in rows if c["repo"] == repo]
+            if not contributions:
+                out.append("  - 0 PR")
+            for c in contributions:
+                detail = f"  - [PR]({c['pr']}) · {c['status']}"
+                feedback = c.get("feedback")
+                if feedback:
+                    detail += (f" · [{feedback['outcome']}]({BASE}/issues/{feedback['issue']})"
+                               f" · saved {feedback['saved']} min · review {feedback['review']} min")
+                out.append(detail)
         (base / (w + ".md")).write_text("\n".join(out).rstrip() + "\n")
     total, unknown = impact(accepted)
     out = [
