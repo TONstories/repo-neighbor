@@ -12,6 +12,40 @@
         ><b>↗</b> Repo Neighbor</a
       ><span id="account"></span>
     </header>
+    <dialog id="gist-login" aria-labelledby="gist-title">
+      <h2 id="gist-title">Войти через GitHub Gist</h2>
+      <p>
+        Скопируйте строку и вставьте ее в содержимое нового Gist под своим
+        аккаунтом GitHub. Это подтверждает вход в этот браузер. Используйте
+        только строку, которую получили здесь сами.
+      </p>
+      <label for="gist-proof">Ваша строка на 10 минут</label
+      ><textarea id="gist-proof" readonly rows="3"></textarea>
+      <button id="gist-copy">Скопировать строку</button>
+      <p>
+        <a
+          href="https://gist.github.com/"
+          rel="noopener noreferrer"
+          target="_blank"
+          >Открыть GitHub Gist ↗</a
+        >
+        · Выберите «Create secret gist». Достаточно одного файла, имя
+        произвольное.
+      </p>
+      <form id="gist-form">
+        <label for="gist-url">Ссылка на созданный Gist</label>
+        <input
+          id="gist-url"
+          required
+          type="url"
+          placeholder="https://gist.github.com/…"
+          autocomplete="off"
+        />
+        <button type="submit">Подтвердить вход</button>
+      </form>
+      <p id="gist-message" role="status"></p>
+      <button id="gist-close">Закрыть</button>
+    </dialog>
     <main>
       <section class="intro">
         <p class="kicker">МАСТЕРСКАЯ ПЕРЕВОДОВ</p>

@@ -12,6 +12,21 @@ const cookie = (r: Request, k: string) =>
 const setCookie = (key: string, v: string, age: number) =>
   key + "=" + v + "; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=" + age;
 const token = () => crypto.randomUUID() + crypto.randomUUID();
+async function gistStatement(seed: string, origin: string) {
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(seed),
+  );
+  const proof = Array.from(new Uint8Array(digest), (b) =>
+    b.toString(16).padStart(2, "0"),
+  ).join("");
+  return (
+    "I am signing in to " +
+    origin +
+    " in my own browser. Repo Neighbor verification: " +
+    proof
+  );
+}
 type Env = {
   DESK: DurableObjectNamespace;
   ASSETS: Fetcher;
@@ -40,8 +55,23 @@ export class Desk extends DurableObject<Env> {
       "CREATE TABLE IF NOT EXISTS sessions (token TEXT PRIMARY KEY, uid TEXT, login TEXT, expires INTEGER)",
     );
     this.sql.exec(
+      "CREATE TABLE IF NOT EXISTS gist_proofs (challenge TEXT PRIMARY KEY, expires INTEGER)",
+    );
+    this.sql.exec(
       "CREATE TABLE IF NOT EXISTS tasks (id TEXT PRIMARY KEY,user TEXT,uid TEXT,state TEXT,draft TEXT,claimed INTEGER,submitted INTEGER,reviewed INTEGER,reviewer TEXT,note TEXT,metrics TEXT)",
     );
+  }
+  session(account: { id: number; login: string }, now: number) {
+    const session = token();
+    this.sql.exec("DELETE FROM sessions WHERE expires<=?", now);
+    this.sql.exec(
+      "INSERT INTO sessions VALUES(?,?,?,?)",
+      session,
+      String(account.id),
+      account.login,
+      now + 86400000,
+    );
+    return setCookie("rn_session", session, 86400);
   }
   async fetch(r: Request) {
     const u = new URL(r.url),
@@ -54,7 +84,11 @@ export class Desk extends DurableObject<Env> {
       .exec<{
         uid: string;
         login: string;
-      }>("SELECT uid, login FROM sessions WHERE token=? AND expires>?", sid, now)
+      }>(
+        "SELECT uid, login FROM sessions WHERE token=? AND expires>?",
+        sid,
+        now,
+      )
       .toArray()[0];
     const reviewer =
       !!me &&
@@ -62,6 +96,91 @@ export class Desk extends DurableObject<Env> {
         .split(",")
         .map((s) => s.trim())
         .includes(me.uid);
+    if (path === "/api/gist-start" && r.method === "POST") {
+      const seed = now + "." + token();
+      const response = json({ statement: await gistStatement(seed, u.origin) });
+      response.headers.append(
+        "Set-Cookie",
+        setCookie("__Host-rn_proof", seed, 600),
+      );
+      return response;
+    }
+    if (path === "/api/gist-finish" && r.method === "POST") {
+      const seed = cookie(r, "__Host-rn_proof") || "";
+      const issued = Number(seed.split(".")[0]);
+      if (
+        !/^\d{13}\.[a-f0-9-]{72}$/.test(seed) ||
+        issued > now ||
+        now - issued >= 600000
+      )
+        return json(
+          { error: "Время подтверждения истекло. Начните вход заново." },
+          403,
+        );
+      // The public proof is browser-bound. Never follow an address supplied by the client.
+      const id = u.searchParams.get("id") || "";
+      if (!/^[a-f0-9]{32}$/.test(id))
+        return json({ error: "Проверьте ссылку на Gist." }, 400);
+      const gh = await fetch("https://api.github.com/gists/" + id, {
+        headers: {
+          "User-Agent": "Repo-Neighbor",
+          Accept: "application/vnd.github+json",
+        },
+      });
+      if (!gh.ok)
+        return json(
+          {
+            error:
+              gh.status === 404
+                ? "GitHub не нашел Gist. Проверьте ссылку."
+                : "GitHub временно недоступен. Попробуйте позже.",
+          },
+          gh.status === 404 ? 404 : 503,
+        );
+      const gist = (await gh.json()) as {
+        owner?: { id: number; login: string };
+        files?: Record<string, { content?: string; truncated?: boolean }>;
+      };
+      const statement = await gistStatement(seed, u.origin);
+      if (
+        !gist.owner ||
+        !Number.isSafeInteger(gist.owner.id) ||
+        !/^[a-z0-9-]{1,39}$/i.test(gist.owner.login) ||
+        !Object.values(gist.files || {}).some(
+          (file) => !file.truncated && file.content?.trim() === statement,
+        )
+      )
+        return json(
+          {
+            error:
+              "В этом Gist нет строки подтверждения для текущего браузера.",
+          },
+          403,
+        );
+      const finished = Date.now();
+      this.sql.exec("DELETE FROM gist_proofs WHERE expires<=?", finished);
+      if (
+        finished >= issued + 600000 ||
+        !this.sql
+          .exec(
+            "INSERT OR IGNORE INTO gist_proofs VALUES(?,?) RETURNING challenge",
+            statement,
+            issued + 600000,
+          )
+          .toArray().length
+      )
+        return json(
+          { error: "Подтверждение уже использовано или истекло." },
+          403,
+        );
+      const response = json({ ok: true });
+      response.headers.append("Set-Cookie", this.session(gist.owner, finished));
+      response.headers.append(
+        "Set-Cookie",
+        setCookie("__Host-rn_proof", "", 0),
+      );
+      return response;
+    }
     // OAuth uses identity-only scope; the browser never receives a GitHub token.
     if (path === "/auth/github") {
       if (!this.env.GITHUB_CLIENT_ID || !this.env.GITHUB_CLIENT_SECRET)
@@ -118,17 +237,8 @@ export class Desk extends DurableObject<Env> {
       });
       if (!who.ok) return json({ error: "GitHub identity unavailable" }, 502);
       const account = (await who.json()) as { id: number; login: string };
-      const session = token();
-      this.sql.exec("DELETE FROM sessions WHERE expires<=?", now);
-      this.sql.exec(
-        "INSERT INTO sessions VALUES(?,?,?,?)",
-        session,
-        String(account.id),
-        account.login,
-        now + 86400000,
-      );
       const h = new Headers({ Location: "/", "Cache-Control": "no-store" });
-      h.append("Set-Cookie", setCookie("rn_session", session, 86400));
+      h.append("Set-Cookie", this.session(account, now));
       h.append("Set-Cookie", setCookie("rn_state", "", 0));
       return new Response(null, { status: 302, headers: h });
     }

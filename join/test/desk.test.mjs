@@ -55,7 +55,13 @@ test("identity, distinct reservations, review capacity and idempotent receipts",
   const callback =
     "https://desk.example/auth/callback?code=fixture&state=" + state;
   assert.equal((await desk.fetch(new Request(callback))).status, 403);
+  let gistContent = "";
   t.mock.method(globalThis, "fetch", async (url) => {
+    if (String(url).startsWith("https://api.github.com/gists/"))
+      return Response.json({
+        owner: { id: 99, login: "gist-author" },
+        files: { proof: { content: gistContent } },
+      });
     if (url === "https://github.com/login/oauth/access_token")
       return Response.json({ access_token: "fixture-only" });
     assert.equal(url, "https://api.github.com/user");
@@ -75,6 +81,34 @@ test("identity, distinct reservations, review capacity and idempotent receipts",
     }),
   );
   assert.equal((await signedDesk.json()).user, "participant");
+  const post = (path, cookie = "") =>
+    desk.fetch(
+      new Request("https://desk.example/api/" + path, {
+        method: "POST",
+        headers: { Origin: "https://desk.example", Cookie: cookie },
+      }),
+    );
+  const proof = await post("gist-start");
+  const binding = proof.headers.getSetCookie()[0].split(";")[0];
+  const statement = (await proof.json()).statement;
+  const finish = "gist-finish?id=" + "a".repeat(32);
+  assert.equal((await post(finish, binding)).status, 403);
+  gistContent = statement;
+  assert.equal((await post(finish)).status, 403);
+  const other = await post("gist-start");
+  assert.equal(
+    (await post(finish, other.headers.getSetCookie()[0].split(";")[0])).status,
+    403,
+  );
+  const verified = await post(finish, binding);
+  assert.equal(verified.status, 200);
+  const signedGist = await desk.fetch(
+    new Request("https://desk.example/api/desk", {
+      headers: { Cookie: verified.headers.getSetCookie()[0].split(";")[0] },
+    }),
+  );
+  assert.equal((await signedGist.json()).user, "gist-author");
+  assert.equal((await post(finish, binding)).status, 403);
   for (const login of ["alice", "bob", "reviewer", "carol"])
     sql.exec(
       "INSERT INTO sessions VALUES(?,?,?,?)",

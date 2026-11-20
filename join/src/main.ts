@@ -215,12 +215,59 @@ function render() {
     l.href = "/auth/github";
     l.textContent = "Войти через GitHub";
     if (desk.loginReady) a.append(l);
-    else a.append(node("span", "Вход настраивается"));
+    else {
+      const b = node("button", "Войти через GitHub Gist");
+      b.onclick = act(async () => {
+        const result = await api("gist-start", {});
+        el<HTMLTextAreaElement>("gist-proof").value = result.statement;
+        el<HTMLInputElement>("gist-url").value = "";
+        el("gist-message").textContent = "";
+        el<HTMLDialogElement>("gist-login").showModal();
+      });
+      a.append(b);
+    }
   }
   entries("history", desk.mine);
   el("review").hidden = !desk.reviewer;
   entries("queue", desk.queue, true);
 }
+const dialog = el<HTMLDialogElement>("gist-login");
+el("gist-close").onclick = () => dialog.close();
+el("gist-copy").onclick = async () => {
+  const field = el<HTMLTextAreaElement>("gist-proof");
+  try {
+    await navigator.clipboard.writeText(field.value);
+    el("gist-message").textContent = "Строка скопирована.";
+  } catch {
+    field.select();
+    el("gist-message").textContent = "Скопируйте выделенную строку.";
+  }
+};
+el<HTMLFormElement>("gist-form").onsubmit = async (event) => {
+  event.preventDefault();
+  const url = el<HTMLInputElement>("gist-url").value.trim();
+  const match = url.match(
+    /^https:\/\/gist\.github\.com\/(?:[a-z0-9-]+\/)?([a-f0-9]{32})\/?$/i,
+  );
+  const msg = el("gist-message");
+  if (!match) {
+    msg.textContent =
+      "Вставьте ссылку вида https://gist.github.com/имя/идентификатор";
+    return;
+  }
+  const submit = el<HTMLFormElement>("gist-form").querySelector("button")!;
+  submit.disabled = true;
+  try {
+    await api("gist-finish?id=" + match[1].toLowerCase(), {});
+    await refresh();
+    dialog.close();
+    notice.textContent = "Вы вошли как " + desk.user;
+  } catch (e) {
+    msg.textContent = String(e);
+  } finally {
+    submit.disabled = false;
+  }
+};
 async function refresh() {
   desk = await api("desk");
   const mine = desk.mine.find(
