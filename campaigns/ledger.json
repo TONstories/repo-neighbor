@@ -10,7 +10,8 @@
         "cubrid-lab/sqlalchemy-cubrid"
       ],
       "tracks": {
-        "cubrid-lab/cubrid-cookbook-python": "general"
+        "cubrid-lab/cubrid-cookbook-python": "general",
+        "cubrid-lab/sqlalchemy-cubrid": "general"
       },
       "votes": {}
     }
