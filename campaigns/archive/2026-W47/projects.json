@@ -1,6 +1,7 @@
 [
   {
     "repo": "cubrid-lab/cubrid-cookbook-python",
+    "review_limit": 3,
     "tasks": [
       {
         "checks": [],
@@ -119,7 +120,7 @@
     "window": {
       "complete": true,
       "decisions": 67,
-      "limit": 5,
+      "limit": 3,
       "open": [
         "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/578",
         "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/586",
