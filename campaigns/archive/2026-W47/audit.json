@@ -1,0 +1,15 @@
+{
+  "prior": [
+    "cubrid-lab/cubrid-cookbook-python",
+    "cubrid-lab/sqlalchemy-cubrid"
+  ],
+  "rounds": [],
+  "shares": {
+    "defensive-security": 15,
+    "fun": 20,
+    "general": 10,
+    "public-good": 40,
+    "science": 15
+  },
+  "version": 1
+}
