@@ -372,7 +372,7 @@ def reports(directory, ledger, projects, now, override):
         "",
         f"[Today / Сегодня]({today}.md) · [This week / Эта неделя]({week(now)}.md) · [Next ballot / Голосование]({nextweek}.md)",
         "",
-        f"Lifetime: {len(people)} participants · {len(prs)} PRs · {len(accepted)} merged · **{total} estimated replacement value** · {unknown} unpriced.",
+        f"Lifetime: {len(people)} {'participant' if len(people) == 1 else 'participants'} · {len(prs)} PRs · {len(accepted)} merged · **{total} estimated replacement value** · {unknown} unpriced.",
         "",
         "## Участники / Contributors",
         "",

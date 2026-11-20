@@ -28,7 +28,7 @@ class LocalWorkTest(unittest.TestCase):
                 text = (root / "reports" / (period + ".md")).read_text()
                 self.assertEqual(text.count("Verified local patch"), 1)
             report = (root / "reports/README.md").read_text()
-            self.assertIn("1 participants · 0 PRs · 0 merged", report)
+            self.assertIn("1 participant · 0 PRs · 0 merged", report)
             self.assertIn("ballot weight 1", report)
             path.write_text(json.dumps([row, dict(row, user="alice")]))
             with self.assertRaises(ValueError):
