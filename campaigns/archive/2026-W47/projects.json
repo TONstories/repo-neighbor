@@ -1,0 +1,330 @@
+[
+  {
+    "repo": "cubrid-lab/cubrid-cookbook-python",
+    "tasks": [
+      {
+        "checks": [],
+        "evidence": [
+          "scripts/example_requirements.py"
+        ],
+        "fit": "fits",
+        "kind": "code",
+        "license": "MIT",
+        "minutes": [
+          45,
+          120
+        ],
+        "repo": "cubrid-lab/cubrid-cookbook-python",
+        "scope": [
+          "CONTRIBUTING.md/AGENTS.md",
+          "github.com/cubrid-lab/cubrid-cookbook-python/blob/main/scripts/example_requirements.py",
+          "github.com/cubrid-lab/cubrid-cookbook-python/blob/main/tests/test_example_requirements.py",
+          "scripts/example_requirements.py",
+          "tests/test_example_requirements.py"
+        ],
+        "score": 76,
+        "signals": [
+          "good first issue",
+          "help wanted"
+        ],
+        "stack": [
+          "Python"
+        ],
+        "stack_source": "issue",
+        "title": "bug: honor environment markers in cookbook dependency preflight",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope.",
+          "Inspect the project's CI for its exact check."
+        ],
+        "updated": "2026-11-20T13:16:42Z",
+        "url": "https://github.com/cubrid-lab/cubrid-cookbook-python/issues/581"
+      },
+      {
+        "checks": [],
+        "evidence": [
+          "quickstart/first-cubrid/04_cleanup.py"
+        ],
+        "fit": "fits",
+        "kind": "tests",
+        "license": "MIT",
+        "minutes": [
+          30,
+          90
+        ],
+        "repo": "cubrid-lab/cubrid-cookbook-python",
+        "scope": [
+          "github.com/cubrid-lab/cubrid-cookbook-python/blob/main/quickstart/first-cubrid/04_cleanup.py",
+          "github.com/cubrid-lab/cubrid-cookbook-python/blob/main/tests/test_quickstart_cleanup.py",
+          "quickstart/first-cubrid/04_cleanup.py",
+          "tests/test_first_cubrid_cleanup.py",
+          "tests/test_quickstart_cleanup.py"
+        ],
+        "score": 76,
+        "signals": [
+          "good first issue",
+          "help wanted"
+        ],
+        "stack": [
+          "Python"
+        ],
+        "stack_source": "issue",
+        "title": "test: protect first-CUBRID tutorial cleanup ownership with offline fakes",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope.",
+          "Inspect the project's CI for its exact check."
+        ],
+        "updated": "2026-11-20T13:16:50Z",
+        "url": "https://github.com/cubrid-lab/cubrid-cookbook-python/issues/582"
+      },
+      {
+        "checks": [],
+        "evidence": [
+          "scripts/check_expected_coverage.py"
+        ],
+        "fit": "fits",
+        "kind": "code",
+        "license": "MIT",
+        "minutes": [
+          45,
+          120
+        ],
+        "repo": "cubrid-lab/cubrid-cookbook-python",
+        "scope": [
+          "github.com/cubrid-lab/cubrid-cookbook-python/blob/main/scripts/check_expected_coverage.py",
+          "github.com/cubrid-lab/cubrid-cookbook-python/blob/main/tests/test_check_expected_coverage.py",
+          "scripts/check_expected_coverage.py",
+          "tests/test_check_expected_coverage.py"
+        ],
+        "score": 76,
+        "signals": [
+          "good first issue",
+          "help wanted"
+        ],
+        "stack": [
+          "Python"
+        ],
+        "stack_source": "issue",
+        "title": "bug: give an actionable error for golden checks outside the repository",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope.",
+          "Inspect the project's CI for its exact check."
+        ],
+        "updated": "2026-11-20T13:21:28Z",
+        "url": "https://github.com/cubrid-lab/cubrid-cookbook-python/issues/583"
+      },
+      {
+        "checks": [],
+        "evidence": [
+          "fundamentals/pycubrid/19_pagination.py"
+        ],
+        "fit": "fits",
+        "kind": "code",
+        "license": "MIT",
+        "minutes": [
+          45,
+          120
+        ],
+        "repo": "cubrid-lab/cubrid-cookbook-python",
+        "scope": [
+          "fundamentals/pycubrid/19_pagination.py",
+          "github.com/cubrid-lab/cubrid-cookbook-python/blob/main/fundamentals/pycubrid/19_pagination.py",
+          "github.com/cubrid-lab/cubrid-cookbook-python/blob/main/tests/test_pagination_recipe.py",
+          "tests/test_pagination_recipe.py"
+        ],
+        "score": 76,
+        "signals": [
+          "good first issue",
+          "help wanted"
+        ],
+        "stack": [
+          "Python"
+        ],
+        "stack_source": "issue",
+        "title": "bug: reject invalid page numbers in both pagination recipes",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope.",
+          "Inspect the project's CI for its exact check."
+        ],
+        "updated": "2026-11-20T13:21:57Z",
+        "url": "https://github.com/cubrid-lab/cubrid-cookbook-python/issues/584"
+      },
+      {
+        "checks": [],
+        "evidence": [
+          "fundamentals/pycubrid/12_pool_retry_worker.py"
+        ],
+        "fit": "fits",
+        "kind": "code",
+        "license": "MIT",
+        "minutes": [
+          45,
+          120
+        ],
+        "repo": "cubrid-lab/cubrid-cookbook-python",
+        "scope": [
+          "fundamentals/pycubrid/12_pool_retry_worker.py",
+          "github.com/cubrid-lab/cubrid-cookbook-python/blob/main/fundamentals/pycubrid/12_pool_retry_worker.py",
+          "github.com/cubrid-lab/cubrid-cookbook-python/blob/main/tests/test_pool_retry_recipe.py",
+          "tests/test_pool_retry_recipe.py"
+        ],
+        "score": 76,
+        "signals": [
+          "help wanted"
+        ],
+        "stack": [
+          "Python"
+        ],
+        "stack_source": "issue",
+        "title": "bug: close failed pool connections in the retry-worker teaching recipe",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope.",
+          "Inspect the project's CI for its exact check."
+        ],
+        "updated": "2026-11-20T13:26:16Z",
+        "url": "https://github.com/cubrid-lab/cubrid-cookbook-python/issues/585"
+      }
+    ],
+    "window": {
+      "complete": true,
+      "decisions": 67,
+      "limit": 5,
+      "open": [
+        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/578",
+        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/586"
+      ]
+    }
+  },
+  {
+    "repo": "cubrid-lab/sqlalchemy-cubrid",
+    "tasks": [
+      {
+        "checks": [
+          "make test (CONTRIBUTING.md)",
+          "make test-fast (CONTRIBUTING.md)",
+          "make test-repo (CONTRIBUTING.md)"
+        ],
+        "evidence": [
+          "samples/create_engine.py"
+        ],
+        "fit": "fits",
+        "kind": "code",
+        "license": "MIT",
+        "minutes": [
+          45,
+          120
+        ],
+        "repo": "cubrid-lab/sqlalchemy-cubrid",
+        "scope": [
+          "github.com/cubrid-lab/sqlalchemy-cubrid/blob/main/samples/create_engine.py",
+          "github.com/cubrid-lab/sqlalchemy-cubrid/blob/main/test/test_samples_create_engine.py",
+          "samples/create_engine.py",
+          "test/test_samples_create_engine.py"
+        ],
+        "score": 84,
+        "signals": [
+          "good first issue",
+          "help wanted"
+        ],
+        "stack": [
+          "Python"
+        ],
+        "stack_source": "issue",
+        "title": "bug: avoid database access when importing the basic engine sample",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope."
+        ],
+        "updated": "2026-11-20T13:22:01Z",
+        "url": "https://github.com/cubrid-lab/sqlalchemy-cubrid/issues/1380"
+      },
+      {
+        "checks": [
+          "make test (CONTRIBUTING.md)",
+          "make test-fast (CONTRIBUTING.md)",
+          "make test-repo (CONTRIBUTING.md)"
+        ],
+        "evidence": [
+          "samples/async_basic.py"
+        ],
+        "fit": "fits",
+        "kind": "code",
+        "license": "MIT",
+        "minutes": [
+          45,
+          120
+        ],
+        "repo": "cubrid-lab/sqlalchemy-cubrid",
+        "scope": [
+          "github.com/cubrid-lab/sqlalchemy-cubrid/blob/main/samples/async_basic.py",
+          "github.com/cubrid-lab/sqlalchemy-cubrid/blob/main/test/test_samples_async_basic.py",
+          "samples/async_basic.py",
+          "test/test_samples_async_basic.py"
+        ],
+        "score": 84,
+        "signals": [
+          "good first issue",
+          "help wanted"
+        ],
+        "stack": [
+          "Python"
+        ],
+        "stack_source": "issue",
+        "title": "bug: always dispose the engine when the async sample fails",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope."
+        ],
+        "updated": "2026-11-20T13:21:16Z",
+        "url": "https://github.com/cubrid-lab/sqlalchemy-cubrid/issues/1381"
+      },
+      {
+        "checks": [
+          "make test (CONTRIBUTING.md)",
+          "make test-fast (CONTRIBUTING.md)",
+          "make test-repo (CONTRIBUTING.md)"
+        ],
+        "evidence": [
+          "scripts/reflection_probe.py"
+        ],
+        "fit": "fits",
+        "kind": "code",
+        "license": "MIT",
+        "minutes": [
+          45,
+          120
+        ],
+        "repo": "cubrid-lab/sqlalchemy-cubrid",
+        "scope": [
+          "github.com/cubrid-lab/sqlalchemy-cubrid/blob/main/scripts/reflection_probe.py",
+          "github.com/cubrid-lab/sqlalchemy-cubrid/blob/main/test/test_reflection_probe.py",
+          "scripts/reflection_probe.py",
+          "test/test_reflection_probe.py"
+        ],
+        "score": 84,
+        "signals": [
+          "good first issue",
+          "help wanted"
+        ],
+        "stack": [
+          "Python"
+        ],
+        "stack_source": "issue",
+        "title": "bug: report multiple model metadata registries in reflection comparison",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope."
+        ],
+        "updated": "2026-11-20T13:21:19Z",
+        "url": "https://github.com/cubrid-lab/sqlalchemy-cubrid/issues/1382"
+      }
+    ],
+    "window": {
+      "complete": true,
+      "decisions": 260,
+      "limit": 5,
+      "open": [
+        "https://github.com/cubrid-lab/sqlalchemy-cubrid/pull/1120",
+        "https://github.com/cubrid-lab/sqlalchemy-cubrid/pull/1362",
+        "https://github.com/cubrid-lab/sqlalchemy-cubrid/pull/1376",
+        "https://github.com/cubrid-lab/sqlalchemy-cubrid/pull/1379"
+      ]
+    }
+  }
+]

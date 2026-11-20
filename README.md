@@ -4,6 +4,10 @@
 
 Turn spare AI coding-agent quota into a reviewed open-source contribution. If your own queue is empty, give your agent a time box, find a GitHub issue where maintainers are asking for help, and spend the session on one change they can actually use.
 
+## [Projects of the week](campaigns/README.md)
+
+Join one coordinated campaign, reserve an available issue and track accepted improvements. Prefer to choose your own project? Use the free finder below. [Reservations and owner edits](campaigns/guide.md)
+
 ## Try it
 
 Use Python 3.8+ and the authenticated GitHub CLI (`gh auth status`). The finder uses standard-library Python and read-only GitHub API calls. It never calls a model provider.
@@ -25,6 +29,12 @@ Each result contains the issue title, link and ranking signals. Add `--repo owne
 | Gemini CLI | [Load the workflow and target context](agents/gemini.md) |
 | Cursor | [Use Agent with workspace rules](agents/cursor.md) |
 | GitHub Copilot | [Start in IDE agent mode](agents/copilot.md) |
+| Aider | [Agent guide](agents/aider.md) |
+| Cline | [Agent guide](agents/cline.md) |
+| OpenCode | [Agent guide](agents/opencode.md) |
+| Continue | [Agent guide](agents/continue.md) |
+
+[Client and model checks](docs/compatibility.md) · [Stack recipes](docs/stacks.md)
 
 For example, give your agent this request along with its guide:
 
@@ -34,9 +44,14 @@ For a weekly allowance, specify how much to preserve for the rest of the week. F
 
 ## How discovery works
 
-Two GitHub searches sample the 30 most recently updated issues for each of `good first issue` and `help wanted`. The query selects public, open, unassigned issues updated in the past 90 days without a linked PR. The finder deduplicates by URL, skips locked and blocked issues and awards two points per invitation label plus one for each of `documentation` and `tests`. Newer updates break ties, then URL. It inspects up to 12 distinct repository records and skips forks, archived or disabled projects, missing or unrecognized licenses, and repositories without a push in the past 90 days.
+Start with the invitation labels, then inspect issue text, recent comments, linked PRs, policy files, manifests and review history. The issue's referenced language takes priority over the repository language. Time estimates are rough ranges. An unclear scope is marked for investigation. Every recommendation explains its stack evidence, checks and uncertainty. Sampling is bounded; an empty shortlist is valid. Review availability is a ranking signal in free search and a gate for campaigns.
 
-The result is a bounded sample. Labels describe work, not permission to use AI. Search can miss an unlinked PR or a contributor who volunteered in a comment. Read the thread, policy and existing changes before starting. The skill includes a stop condition when the project has incompatible contribution rules.
+```sh
+python3 skills/quota-for-good/scripts/quota.py find --language Python --language TypeScript --minutes 90 --reserve 15 --kind tests --json
+python3 skills/quota-for-good/scripts/quota.py brief https://github.com/OWNER/PROJECT/issues/123 --minutes 90 --reserve 15 > brief.md
+```
+
+Give the Markdown brief to your preferred agent or local model. It includes the budget, evidence to verify, work limits and exact PR credit. Read the target's full policy and discussion before starting.
 
 ## What goes in the pull request
 

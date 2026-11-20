@@ -4,6 +4,17 @@
 
 Cuando termines tus propias tareas, puedes dedicar una parte de tu cuota a una contribución revisable. Consulta el saldo en tu proveedor y fija una reserva. Por ejemplo, si faltan 35 minutos para el siguiente período de cinco horas, dedica 25 al cambio y 10 a revisarlo. Con una cuota semanal o mensual, reserva capacidad para tu trabajo futuro.
 
+## [Proyectos de la semana](../campaigns/README.md)
+
+Reserva una tarea de la selección semanal o utiliza la búsqueda libre. Puedes indicar varios lenguajes, tiempo disponible, reserva y tipo de tarea. El comando brief genera una instrucción portátil para cualquier agente o modelo local.
+
+[Aider](../agents/aider.md) · [Cline](../agents/cline.md) · [OpenCode](../agents/opencode.md) · [Continue](../agents/continue.md)
+
+```sh
+python3 skills/quota-for-good/scripts/quota.py find --language Python --language TypeScript --kind tests --minutes 90 --reserve 15
+python3 skills/quota-for-good/scripts/quota.py brief https://github.com/OWNER/PROJECT/issues/123 > brief.md
+```
+
 ## Primer uso
 
 Necesitas Python 3.8+ y GitHub CLI autenticado. Ejecuta:
@@ -14,7 +25,7 @@ cd quota-for-good
 python3 skills/quota-for-good/scripts/quota.py find --language Python --limit 3
 ```
 
-Añade `--repo propietario/proyecto` para limitar la búsqueda o `--json` para obtener datos estructurados. El buscador consulta hasta 60 incidencias con dos etiquetas de invitación, elimina duplicados y filtra por asignación, PR vinculado, licencia y actividad. Cada etiqueta de invitación suma dos puntos y cada etiqueta de documentación o pruebas suma uno. En caso de empate, tiene prioridad la actualización más reciente. Se consultan hasta 12 repositorios.
+Añade `--repo propietario/proyecto` para limitar la búsqueda o `--json` para obtener datos estructurados.
 
 ## Elige tu agente
 

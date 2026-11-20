@@ -1,0 +1,24 @@
+{
+  "exclude": [],
+  "weeks": {
+    "2026-W47": {
+      "descriptions": {
+        "cubrid-lab/cubrid-cookbook-python": {
+          "en": "Make the Python cookbook examples reproducible and their failure messages actionable.",
+          "ru": "Помочь читателям воспроизводить примеры из Python Cookbook и понимать ошибки запуска.",
+          "es": "Hacer reproducibles los ejemplos del recetario Python y aclarar sus errores."
+        },
+        "Agrisettle/HarvestLock": {
+          "en": "Improve contributor-facing docs and accessibility across the client applications.",
+          "ru": "Улучшить документацию и доступность клиентских приложений.",
+          "es": "Mejorar la documentación y la accesibilidad de las aplicaciones cliente."
+        },
+        "cubrid-lab/sqlalchemy-cubrid": {
+          "en": "Make SQLAlchemy samples safe to import and predictable when connections fail.",
+          "ru": "Убрать побочные эффекты при импорте примеров SQLAlchemy и проверить обработку сбоев подключения.",
+          "es": "Evitar efectos secundarios al importar ejemplos de SQLAlchemy y verificar los fallos de conexión."
+        }
+      }
+    }
+  }
+}
