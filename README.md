@@ -6,6 +6,8 @@
 
 **[Start on your phone or computer](https://repo-neighbor.fil-support-bot.workers.dev/)**
 
+[Map an unfamiliar repository and verify a change](docs/repo-field-guide.md)
+
 Have an hour left on your AI plan? Give your coding agent one open-source issue. You set the time budget, review the patch and decide when to send it. The community picks projects each week.
 
 **[Pick a task](campaigns/README.md)** · **[Nominate a project](docs/maintainers.md)** · **[See community results](campaigns/reports/README.md)**
@@ -34,7 +36,7 @@ For a coordinated session, reserve your issue on the weekly board and wait for c
 |---|---|
 | Terminal | [Codex](agents/codex.md) · [Claude Code](agents/claude.md) · [Gemini CLI](agents/gemini.md) · [Aider](agents/aider.md) · [OpenCode](agents/opencode.md) |
 | Editor | [Cursor](agents/cursor.md) · [GitHub Copilot](agents/copilot.md) · [Cline](agents/cline.md) · [Continue](agents/continue.md) |
-| Other clients | [Goose](agents/goose.md) · [Mistral Vibe](agents/vibe.md) · [Qwen Code](agents/qwen-code.md) |
+| Other clients | [Goose](agents/goose.md) · [Mistral Vibe](agents/vibe.md) · [Qwen Code](agents/qwen-code.md) · [Zcode CLI](agents/zcode.md) |
 
 **Before your Codex quota resets.** Check the actual allowance or opt into a foreground watch. You choose the reserve and the issue. The watch can prepare one local documentation draft. [Pre-reset setup](docs/reset-window.md)
 

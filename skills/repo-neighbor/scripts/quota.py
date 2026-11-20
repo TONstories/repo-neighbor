@@ -65,7 +65,23 @@ def main():
     subs.add_parser("credit", help="print the required PR paragraph")
     check = subs.add_parser("check-pr", help="check a Markdown file before submitting")
     check.add_argument("body", type=Path)
+    scan = subs.add_parser("scan", help="map a local checkout at its current commit")
+    scan.add_argument("checkout", type=Path)
+    scan.add_argument("--path", help="repository-relative file or directory")
+    scan.add_argument("--term", help="literal symbol or error message in source")
+    scan.add_argument("--json", action="store_true")
     args = parser.parse_args()
+    if args.action == "scan":
+        from repo_scan import map_repo, display
+        try:
+            result = map_repo(args.checkout, args.path, args.term)
+        except (ValueError, OSError, subprocess.SubprocessError) as exc:
+            parser.exit(1, f"Scan failed: {exc}\n")
+        if args.json:
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+        else:
+            display(result)
+        return
     if args.action == "credit":
         print(CREDIT)
     elif args.action == "check-pr":

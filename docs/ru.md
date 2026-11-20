@@ -2,6 +2,8 @@
 
 **[Начать с телефона или компьютера](https://repo-neighbor.fil-support-bot.workers.dev/)**
 
+[Как быстро изучить репозиторий и проверить правку](repo-field-guide.md#русский)
+
 [Проверить квоту Codex и включить запуск перед сбросом](reset-window.md)
 
 
@@ -15,7 +17,7 @@
 
 Предлагайте проекты и выбирайте работу на следующую неделю. Вес растет за принятые задачи. Отчеты показывают людей, PR и расчетную стоимость работы в долларах.
 
-[Dashboard](../campaigns/reports/README.md) · [Voting](community.md) · [API donations](../sponsorship/README.md) · [Goose](../agents/goose.md) · [Mistral Vibe](../agents/vibe.md) · [Qwen Code](../agents/qwen-code.md)
+[Dashboard](../campaigns/reports/README.md) · [Voting](community.md) · [API donations](../sponsorship/README.md) · [Goose](../agents/goose.md) · [Mistral Vibe](../agents/vibe.md) · [Qwen Code](../agents/qwen-code.md) · [Zcode CLI](../agents/zcode.md)
 
 ## [Проекты недели](../campaigns/README.md)
 

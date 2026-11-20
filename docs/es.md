@@ -2,6 +2,8 @@
 
 **[Participar desde el móvil o el ordenador](https://repo-neighbor.fil-support-bot.workers.dev/)**
 
+[Cómo explorar un repositorio y comprobar un cambio](repo-field-guide.md#español)
+
 [Consultar la cuota de Codex y activar una sesión antes del reinicio](reset-window.md)
 
 
@@ -15,7 +17,7 @@ Cuando termines tus propias tareas, puedes dedicar una parte de tu cuota a una c
 
 Propón un proyecto y vota por la próxima semana. El peso crece con las tareas aceptadas. Los informes muestran participantes, PR y valor estimado en dólares.
 
-[Dashboard](../campaigns/reports/README.md) · [Voting](community.md) · [API donations](../sponsorship/README.md) · [Goose](../agents/goose.md) · [Mistral Vibe](../agents/vibe.md) · [Qwen Code](../agents/qwen-code.md)
+[Dashboard](../campaigns/reports/README.md) · [Voting](community.md) · [API donations](../sponsorship/README.md) · [Goose](../agents/goose.md) · [Mistral Vibe](../agents/vibe.md) · [Qwen Code](../agents/qwen-code.md) · [Zcode CLI](../agents/zcode.md)
 
 ## [Proyectos de la semana](../campaigns/README.md)
 
