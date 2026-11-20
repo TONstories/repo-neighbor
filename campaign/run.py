@@ -557,8 +557,10 @@ def run(now):
     ledger = load(DIR / "ledger.json", {"claims": [], "receipts": {}})
     claims = ledger["claims"]
     bridge = os.getenv("RN_CAMPAIGN_BRIDGE")
-    if os.getenv("GITHUB_ACTIONS") == "true" and not bridge:
-        raise RuntimeError("Shared desk bridge is required for published campaign claims.")
+    if os.getenv("RN_REQUIRE_BRIDGE") == "1":
+        # GitHub issue numbers start at one. This checks credentials without releasing real work.
+        if not bridge or not desk_command(bridge, op="release", id="0"):
+            raise RuntimeError("Shared desk bridge is required for published campaign claims.")
     if os.getenv("RN_IMPORT_MOBILE") == "1":
         from mobile import read_export
         try:

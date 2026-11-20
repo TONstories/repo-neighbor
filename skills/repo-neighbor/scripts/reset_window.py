@@ -5,6 +5,7 @@ import http.cookiejar
 import re
 import sqlite3
 import sys
+from contextlib import closing
 from datetime import date, datetime, timezone
 import json
 import os
@@ -280,7 +281,7 @@ def suggest(args, reset):
     directory.mkdir(mode=0o700, parents=True, exist_ok=True)
     account = hashlib.sha256(args.account_id.encode()).hexdigest()
     key = f"{account}:{args.period}:{reset}"
-    with sqlite3.connect(directory / "reminders.sqlite") as history:
+    with closing(sqlite3.connect(directory / "reminders.sqlite")) as history, history:
         history.execute("CREATE TABLE IF NOT EXISTS reminder (id TEXT PRIMARY KEY, until INTEGER)")
         history.execute("BEGIN IMMEDIATE")
         if history.execute("SELECT 1 FROM reminder WHERE id=? AND until>?", (key, time.time())).fetchone():
