@@ -3,7 +3,7 @@ import test from "node:test";
 import { DatabaseSync } from "node:sqlite";
 import { build } from "esbuild";
 
-test("identity, distinct reservations, review capacity and idempotent receipts", async () => {
+test("identity, distinct reservations, review capacity and idempotent receipts", async (t) => {
   const bundle = await build({
     entryPoints: ["src/server.ts"],
     bundle: true,
@@ -36,7 +36,45 @@ test("identity, distinct reservations, review capacity and idempotent receipts",
       return { toArray: () => rows };
     },
   };
-  const desk = new Desk({ storage: { sql } }, { REVIEWER_IDS: "alice,reviewer" });
+  const desk = new Desk(
+    { storage: { sql } },
+    {
+      REVIEWER_IDS: "alice,reviewer",
+      GITHUB_CLIENT_ID: "fixture-client",
+      GITHUB_CLIENT_SECRET: "fixture-only",
+    },
+  );
+  const login = await desk.fetch(
+    new Request("https://desk.example/auth/github"),
+  );
+  assert.equal(login.status, 302);
+  const state = new URL(login.headers.get("Location")).searchParams.get(
+    "state",
+  );
+  assert.ok(state);
+  const callback =
+    "https://desk.example/auth/callback?code=fixture&state=" + state;
+  assert.equal((await desk.fetch(new Request(callback))).status, 403);
+  t.mock.method(globalThis, "fetch", async (url) => {
+    if (url === "https://github.com/login/oauth/access_token")
+      return Response.json({ access_token: "fixture-only" });
+    assert.equal(url, "https://api.github.com/user");
+    return Response.json({ id: 1234, login: "participant" });
+  });
+  const signed = await desk.fetch(
+    new Request(callback, { headers: { Cookie: "rn_state=" + state } }),
+  );
+  assert.equal(signed.status, 302);
+  const session = signed.headers
+    .getSetCookie()
+    .find((s) => s.startsWith("rn_session="))
+    .split(";")[0];
+  const signedDesk = await desk.fetch(
+    new Request("https://desk.example/api/desk", {
+      headers: { Cookie: session },
+    }),
+  );
+  assert.equal((await signedDesk.json()).user, "participant");
   for (const login of ["alice", "bob", "reviewer", "carol"])
     sql.exec(
       "INSERT INTO sessions VALUES(?,?,?,?)",

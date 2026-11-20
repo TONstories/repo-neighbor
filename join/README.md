@@ -14,7 +14,7 @@ Add agreed documentation or translation tasks to `src/tasks.json`. Use a permane
 |---|---|---|
 | iOS | Safari, keep the tab visible | Pending |
 | Android | Chrome, keep the tab visible | Pending |
-| macOS | Chrome or Safari with WebGPU | Pending |
+| macOS | Chrome or Safari with WebGPU | Apple M1 Max, macOS 27.0.1, Chrome 157.0.8103.79. Loaded Qwen and generated a Polish translation. Receipt verified against an isolated queue. |
 | Windows | Edge or Chrome with hardware acceleration | Pending |
 | Linux | WebGPU-capable browser and graphics driver | Pending |
 

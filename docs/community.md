@@ -18,6 +18,14 @@
 
 **Español.** Cada cuenta puede proponer un repositorio y elegir un proyecto por ronda. Su voto vale uno más el número de tareas distintas con un PR registrado y aceptado antes de abrir la ronda. Se puede cambiar la elección. Los proyectos más votados pasan por los mismos controles de capacidad y elegibilidad. Las donaciones no compran votos.
 
+### Вклад с телефона / Mobile contributions / Contribuciones móviles
+
+Независимая приемка перевода до открытия раунда также добавляет автору один голос. Если тот же перевод вошел в PR по той же задаче, зачет остается один. Координатор указывает исходную задачу и автора в PR. В денежной оценке учитываются только принятые исходным проектом PR с известной оценкой.
+
+An independently accepted desk task adds one credit before the next ballot opens. Set its canonical issue in the task catalog to link later PRs to the same work. Receipts preserve the original contributor. Each new ballot records the credited tasks. Replay the weekly allocation offline with `campaign/verify-week YYYY-Www`. Contest an input by opening an issue with the week, task and proposed correction.
+
+Una traducción aceptada por otra persona aporta un crédito. La misma tarea conserva un único crédito cuando se integra en un PR. La valoración en dólares se calcula al incorporar el PR al proyecto de origen.
+
 ## Divide a goal into reviewable work
 
 Use a project-week as the shared goal and upstream issue URLs as work-package IDs. For a larger issue the finder inspects GitHub sub-issues; it offers eligible open children instead of assigning the parent to several people. Each child has its own owner, scope, acceptance criteria and PR. For projects asking for one atomic PR, keep the issue with one contributor. Active claims and open reviews block duplicate tasks and known file overlaps; an expired reservation frees capacity. Coordinate unlisted file overlap with the maintainer before editing.

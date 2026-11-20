@@ -199,6 +199,10 @@ def suggest(args, reset):
         if answer in ("start", "skip"):
             history.execute("UPDATE reminder SET until=? WHERE id=?", (reset, key))
             history.commit()
+        if answer == "later":
+            until = min(reset, time.time() + 1800)
+            history.execute("UPDATE reminder SET until=? WHERE id=?", (until, key))
+            return until if until < reset else None
         if answer == "start" and status_now(args) == ("ready", reset):
             launch(args, reset, prompt)
 
@@ -239,7 +243,10 @@ def main():
         original_reset = reset
         if state == "ready":
             if args.mode == "suggest":
-                suggest(args, reset)
+                until = suggest(args, reset)
+                if until:
+                    time.sleep(max(0, until - time.time()))
+                    continue
                 return
             prompt = prepare(args.issue, args.minutes)
             if status_now(args) == ("ready", reset):
