@@ -113,6 +113,8 @@ def select(now, editor, existing, claims):
                     item = assess(row, name, *metadata(name), today, minutes=180)
                     if item:
                         fresh.append(item)
+            if len(fresh) < 2 and len(project["tasks"]) >= 2:
+                fresh.extend(discover([], name, 36, today, 180, 10)["candidates"])
             by_repo[name] = fresh
     result = []
     for repo, rows in by_repo.items():
@@ -122,7 +124,7 @@ def select(now, editor, existing, claims):
         for row in rows:
             if row["url"] not in [t["url"] for t in tasks] and compatible(tasks, row):
                 tasks.append(row)
-            if len(tasks) == 6:
+            if len(tasks) == 18:
                 break
         if len(tasks) < (2 if existing is None or repo in pins else 1):
             continue

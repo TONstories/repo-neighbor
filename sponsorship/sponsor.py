@@ -1,6 +1,7 @@
 """Encrypted, donor-funded inference. No secrets are available to the public workflow."""
 
 import argparse
+import base64
 import contextlib
 import datetime as dt
 import decimal
@@ -36,11 +37,11 @@ def call(cmd, data=None):
     return result.stdout
 
 
-def gh(endpoint, payload=None):
+def gh(endpoint, payload=None, method="POST"):
     cmd = ["gh", "api", "--hostname", "github.com", endpoint]
     data = None
     if payload is not None:
-        cmd += ["--method", "POST", "--input", "-"]
+        cmd += ["--method", method, "--input", "-"]
         data = json.dumps(payload).encode()
     return json.loads(call(cmd, data))
 
@@ -208,7 +209,6 @@ def offer(args):
 
 def accept(gid, vault):
     public = gh("repos/" + PROJECT + "/contents/campaigns/ledger.json")
-    import base64
 
     pledges = json.loads(base64.b64decode(public["content"]))["pledges"]
     pledge = pledges.get(gid)
@@ -300,6 +300,56 @@ def assist(gid, vault, issue):
     print(result["choices"][0]["message"]["content"])
 
 
+def aggregates(vault):
+    totals = {}
+    for f in vault.glob("*.json"):
+        if not ID.fullmatch(f.stem):
+            continue
+        s = json.loads(f.read_text())
+        if s.get("pending"):
+            raise ValueError("Reconcile pending usage first.")
+        for r in s["receipts"]:
+            bucket = r["day"] + "/" + r["week"]
+            totals[bucket] = totals.get(bucket, USD(0)) + USD(r["cost_usd"])
+    return {k: str(v) for k, v in sorted(totals.items())}
+
+
+def publish_costs(vault):
+    totals = aggregates(vault)
+    if gh("user")["login"].lower() != PROJECT.split("/")[0].lower():
+        raise ValueError("Use the owner account for aggregate publication.")
+    path = "repos/" + PROJECT + "/contents/campaigns/costs.json"
+    remote = gh(path)
+    current = json.loads(base64.b64decode(remote["content"]))
+    if totals == current:
+        return
+    if any(k not in totals or USD(totals[k]) < USD(str(v)) for k, v in current.items()):
+        raise ValueError(
+            "Published history exceeds local totals. Restore the complete receipt history."
+        )
+    content = base64.b64encode((json.dumps(totals, indent=2) + "\n").encode()).decode()
+    gh(
+        path,
+        {
+            "message": "Publish aggregate sponsored inference charges",
+            "branch": "main",
+            "sha": remote["sha"],
+            "content": content,
+        },
+        "PUT",
+    )
+
+
+def sync_after_charge(vault):
+    try:
+        publish_costs(vault)
+    except (OSError, ValueError, KeyError, subprocess.TimeoutExpired):
+        print(
+            "Charge recorded locally. Retry publish-costs to sync totals without another model call.",
+            file=sys.stderr,
+        )
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     subs = p.add_subparsers(dest="cmd", required=True)
@@ -325,30 +375,29 @@ def main():
                 help="Exact charge from provider history, or zero if confirmed unbilled.",
             )
     subs.add_parser("costs", help="emit aggregate USD/day only for owner publication")
+    subs.add_parser(
+        "publish-costs",
+        help="Retry publishing aggregate receipts without making a model call",
+    )
     a = p.parse_args()
     if a.cmd == "offer":
         return offer(a)
     os.umask(0o077)
     with owner(VAULT):
-        if a.cmd == "costs":
-            totals = {}
-            for f in VAULT.glob("*.json"):
-                if not ID.fullmatch(f.stem):
-                    continue
-                s = json.loads(f.read_text())
-                if s.get("pending"):
-                    raise ValueError("Reconcile pending usage first.")
-                for r in s["receipts"]:
-                    bucket = r["day"] + "/" + r["week"]
-                    totals[bucket] = totals.get(bucket, USD(0)) + USD(r["cost_usd"])
-            print(json.dumps({k: str(v) for k, v in sorted(totals.items())}, indent=2))
+        if a.cmd in ("costs", "publish-costs"):
+            if a.cmd == "costs":
+                print(json.dumps(aggregates(VAULT), indent=2))
+            else:
+                publish_costs(VAULT)
             return
         if not ID.fullmatch(a.id):
             raise ValueError("Invalid grant ID.")
         if a.cmd == "accept":
             return accept(a.id, VAULT)
         if a.cmd == "assist":
-            return assist(a.id, VAULT, a.issue)
+            assist(a.id, VAULT, a.issue)
+            sync_after_charge(VAULT)
+            return
         path = VAULT / (a.id + ".json")
         state = json.loads(path.read_text())
         if a.cmd == "revoke":
@@ -360,6 +409,8 @@ def main():
             state["receipts"].append(dict(state["pending"], cost_usd=str(cost)))
             state["pending"] = None
         write(path, state)
+        if a.cmd == "reconcile":
+            sync_after_charge(VAULT)
 
 
 if __name__ == "__main__":

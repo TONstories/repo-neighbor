@@ -264,3 +264,44 @@ class DonationTests(unittest.TestCase):
             self.assertNotIn(g["key"], state)
             with self.assertRaises(ValueError):
                 sponsor.accept(gid, vault)
+
+    def test_cost_publication_only_aggregate_and_compare_and_swap(self):
+        import base64
+
+        with tempfile.TemporaryDirectory() as d:
+            vault = Path(d)
+            sponsor.write(
+                vault / ("e" * 32 + ".json"),
+                dict(
+                    envelope="ciphertext",
+                    pending=None,
+                    receipts=[
+                        {
+                            "day": "2026-11-20",
+                            "week": "2026-W47",
+                            "issue": ISSUE,
+                            "cost_usd": "0.08",
+                        }
+                    ],
+                ),
+            )
+            sent = []
+
+            def transport(path, payload=None, method="GET"):
+                if path == "user":
+                    return {"login": "TONstories"}
+                if payload is None:
+                    return {
+                        "sha": "version",
+                        "content": base64.b64encode(b"{}").decode(),
+                    }
+                sent.append((method, payload))
+
+            with patch.object(sponsor, "gh", side_effect=transport):
+                sponsor.publish_costs(vault)
+            method, payload = sent[0]
+            self.assertEqual((method, payload["sha"]), ("PUT", "version"))
+            self.assertEqual(
+                json.loads(base64.b64decode(payload["content"])),
+                {"2026-11-20/2026-W47": "0.08"},
+            )

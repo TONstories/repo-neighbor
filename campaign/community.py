@@ -308,8 +308,11 @@ def reports(directory, ledger, projects, now, override):
                     else "available for eligibility check"
                 )
             )
+            title = re.sub(
+                r"([^\w\s])", r"\\\1", " ".join(t.get("title", "Work package").split())
+            )
             out.append(
-                f"- [{t['url'].split('/')[-1]}]({t['url']}) · {state} · [claim]({issue_link('rn claim ' + t['url'] + ' 90')})"
+                f"- [#{t['url'].split('/')[-1]} {title}]({t['url']}) · {state} · [claim]({issue_link('rn claim ' + t['url'] + ' 90')})"
             )
         out.append("")
     out += [
