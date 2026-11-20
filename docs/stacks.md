@@ -8,6 +8,10 @@
 | Rust | workspace Cargo.toml, feature flags, Cargo.lock | Run the affected crate tests with the feature set used by CI. |
 | Java / Kotlin | Gradle wrapper, settings file, Maven wrapper or pom.xml | Use the repository wrapper, target module and CI's JDK. Check Android SDK and emulator needs before committing to a session. |
 | C# / .NET | solution, csproj, global.json, target frameworks | Use the declared SDK; run dotnet test on the affected test project with CI's framework configuration. |
+| Julia | Project.toml, Manifest.toml, test/runtests.jl | Follow the project environment and its documented Pkg.test target. |
+| Haskell | cabal.project, package .cabal file, stack.yaml | Use the test suite and Cabal or Stack version used in CI. |
+| Clojure | deps.edn, project.clj, test aliases | Read the actual alias or Leiningen test target in CI. |
+| Fortran | fpm.toml, compiler flags in CI | Match the project compiler and run the documented fpm test target. |
 | Ruby | Gemfile, Rakefile | Follow bundle exec rake test or the documented RSpec target. |
 | PHP | composer.json | Inspect Composer scripts and run the affected PHPUnit suite. |
 | Swift | Package.swift | Use the documented Swift toolchain and scoped swift test target. |

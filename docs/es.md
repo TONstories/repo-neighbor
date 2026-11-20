@@ -3,7 +3,7 @@
 [Consultar la cuota de Codex y activar una sesión antes del reinicio](reset-window.md)
 
 
-[English](../README.md) · [Русский](ru.md)
+[English](../README.md) · [Русский](ru.md) · **Español** · [Deutsch](de.md) · [Français](fr.md) · [Português](pt.md) · [简体中文](zh.md) · [日本語](ja.md) · [Українська](uk.md)
 
 Cuando termines tus propias tareas, puedes dedicar una parte de tu cuota a una contribución revisable. Consulta el saldo en tu proveedor y fija una reserva. Por ejemplo, si faltan 35 minutos para el siguiente período de cinco horas, dedica 25 al cambio y 10 a revisarlo. Con una cuota semanal o mensual, reserva capacidad para tu trabajo futuro.
 

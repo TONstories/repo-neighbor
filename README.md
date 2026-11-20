@@ -1,29 +1,16 @@
+![Repo Neighbor — connected workshops represent agents contributing to neighboring open-source projects](docs/images/neighborhood.svg)
+
+**English** · [Русский](docs/ru.md) · [Español](docs/es.md) · [Deutsch](docs/de.md) · [Français](docs/fr.md) · [Português](docs/pt.md) · [简体中文](docs/zh.md) · [日本語](docs/ja.md) · [Українська](docs/uk.md)
+
 # Repo Neighbor
 
-[Check your actual Codex allowance or start an opt-in session before reset](docs/reset-window.md)
+Have an hour left on your AI plan? Give your coding agent one open-source issue. You set the time budget, review the patch and decide when to send it. The community picks projects each week.
 
+**[Pick a task](campaigns/README.md)** · **[Nominate a project](docs/maintainers.md)** · **[See community results](campaigns/reports/README.md)**
 
-[Community allocation and volunteer computing · Правила выбора и кластер · Selección y computación](docs/allocation.md)
+## Find your first issue
 
-[Русский](docs/ru.md) · [Español](docs/es.md)
-
-Turn spare AI coding-agent quota into a reviewed open-source contribution. If your own queue is empty, give your agent a time box, find a GitHub issue where maintainers are asking for help, and spend the session on one change they can actually use.
-
-## Choose the next project
-
-[Submit your project as a maintainer](docs/maintainers.md)
-
-[Community desk, ballots and contributions](campaigns/reports/README.md) · [Nominate and vote](docs/community.md) · [Donate capped inference](sponsorship/README.md)
-
-Propose a repository for next week. A new participant has one vote; each distinct upstream task they helped land before voting opened adds one. Reserve one independent work package at a time. The public reports show contributors, merged PRs and estimated engineering value in USD. Donated compute never increases voting power.
-
-## [Projects of the week](campaigns/README.md)
-
-Join one coordinated campaign, reserve an available issue and track accepted improvements. Prefer to choose your own project? Use the free finder below. [Reservations and owner edits](campaigns/guide.md)
-
-## Try it
-
-Use Python 3.8+ and the authenticated GitHub CLI (`gh auth status`). The finder uses standard-library Python and read-only GitHub API calls. It never calls a model provider.
+With Python 3.8+ and an authenticated GitHub CLI, run this from your terminal:
 
 ```sh
 git clone https://github.com/TONstories/repo-neighbor.git
@@ -31,66 +18,51 @@ cd repo-neighbor
 python3 skills/repo-neighbor/scripts/quota.py find --language Python --limit 3
 ```
 
-Each result contains the issue title, link and ranking signals. Add `--repo owner/name` to stay within one project or `--json` for scored records, license identifiers and partial-search status. No eligible results? Stop, or change the language or repository on your next run.
+The finder reads public GitHub issues and shows up to three candidates with evidence about the language, scope and checks. Change `Python` to the language you want. Discovery makes no model calls. [Supported stacks](docs/stacks.md)
 
-## Hand one issue to your agent
+![Workflow: reserve one issue on the community board, prepare a patch with your agent, then send the PR for maintainer review](docs/images/workflow.svg)
 
-| Agent | Start here |
-| --- | --- |
-| OpenAI Codex | [Invoke the repository skill](agents/codex.md) |
-| Claude Code | [Attach the workflow in a Claude session](agents/claude.md) |
-| Gemini CLI | [Load the workflow and target context](agents/gemini.md) |
-| Cursor | [Use Agent with workspace rules](agents/cursor.md) |
-| GitHub Copilot | [Start in IDE agent mode](agents/copilot.md) |
-| Aider | [Agent guide](agents/aider.md) |
-| Cline | [Agent guide](agents/cline.md) |
-| OpenCode | [Agent guide](agents/opencode.md) |
-| Continue | [Agent guide](agents/continue.md) |
-| Goose | [Agent guide](agents/goose.md) |
-| Mistral Vibe | [Agent guide](agents/vibe.md) |
-| Qwen Code | [Agent guide](agents/qwen-code.md) |
+For a coordinated session, reserve your issue on the weekly board and wait for confirmation. Give your agent the issue link and a time box. For example:
 
-[Client and model checks](docs/compatibility.md) · [Stack recipes](docs/stacks.md)
+> I have 45 minutes. Use Repo Neighbor to fix one documentation issue. Keep the last 10 minutes for checks. Show me the diff and PR description before posting.
 
-For example, give your agent this request along with its guide:
+## Connect your agent
 
-> My queue is empty. I have 35 minutes before my five-hour window resets. Reserve the last 10 minutes for review. Use Repo Neighbor to find one Python documentation issue. Check the project's contribution and AI policies, reproduce the problem, prepare a patch and show me the evidence and PR description. Stop before posting.
+| | Agent instructions |
+|---|---|
+| Terminal | [Codex](agents/codex.md) · [Claude Code](agents/claude.md) · [Gemini CLI](agents/gemini.md) · [Aider](agents/aider.md) · [OpenCode](agents/opencode.md) |
+| Editor | [Cursor](agents/cursor.md) · [GitHub Copilot](agents/copilot.md) · [Cline](agents/cline.md) · [Continue](agents/continue.md) |
+| Other clients | [Goose](agents/goose.md) · [Mistral Vibe](agents/vibe.md) · [Qwen Code](agents/qwen-code.md) |
 
-For a weekly allowance, specify how much to preserve for the rest of the week. For a monthly allowance, give a session time box and keep a reserve for your own work. The user checks the provider dashboard. The tool does not infer remaining tokens from wall-clock time, switch accounts, or enable metered usage.
+**Before your Codex quota resets.** Check the actual allowance or opt into a foreground watch. You choose the reserve and the issue. The watch can prepare one local documentation draft. [Pre-reset setup](docs/reset-window.md)
 
-## How discovery works
+<details>
+<summary>Search filters, portable briefs and local models</summary>
 
-Start with the invitation labels, then inspect issue text, recent comments, linked PRs, policy files, manifests and review history. The issue's referenced language takes priority over the repository language. Time estimates are rough ranges. An unclear scope is marked for investigation. Every recommendation explains its stack evidence, checks and uncertainty. Sampling is bounded; an empty shortlist is valid. Review availability is a ranking signal in free search and a gate for campaigns.
+Filter by repository with `--repo owner/name`, or use `--json` for scored results. The finder checks invitation labels, recent activity, project policy, file references and review capacity. Verify the scope in the target project.
 
 ```sh
 python3 skills/repo-neighbor/scripts/quota.py find --language Python --language TypeScript --minutes 90 --reserve 15 --kind tests --json
-python3 skills/repo-neighbor/scripts/quota.py brief https://github.com/OWNER/PROJECT/issues/123 --minutes 90 --reserve 15 > brief.md
-```
-
-Give the Markdown brief to your preferred agent or local model. It includes the budget, evidence to verify, work limits and exact PR credit. Read the target's full policy and discussion before starting.
-
-## What goes in the pull request
-
-Keep the target project's template. Describe the change, link the issue, list the checks you ran, and include this exact visible paragraph in **every PR initiated through Repo Neighbor**:
-
-I chose to make this contribution because [Repo Neighbor](https://github.com/TONstories/repo-neighbor) prompted me to work on this issue.
-
-Use the [sample body](templates/contribution.md) when the target has no template. If project rules prohibit this attribution, choose a different project. Check the actual file you intend to submit:
-
-```sh
-python3 skills/repo-neighbor/scripts/quota.py credit
-python3 skills/repo-neighbor/scripts/quota.py check-pr pr-body.md
-```
-
-A missing paragraph produces a nonzero exit. Review the rendered body and diff before submitting. The CLI performs discovery and local validation. The contributor controls the agent, reviews the patch and authorizes any external submission.
-
-[Research and design decisions](docs/research.md) · [Contribution guide](CONTRIBUTING.md) · [MIT license](LICENSE)
-
-## Local models
-
-Generate a checklist with your running Ollama or LM Studio model. This optional step uses only loopback and never publishes.
-
-```sh
+python3 skills/repo-neighbor/scripts/quota.py brief ISSUE_URL --minutes 90 --reserve 15 > brief.md
 python3 skills/repo-neighbor/scripts/quota.py brief ISSUE_URL --runtime ollama --model LOCAL_MODEL_ID
-python3 skills/repo-neighbor/scripts/quota.py brief ISSUE_URL --runtime lmstudio --model LOCAL_MODEL_ID
 ```
+
+Replace the issue URL and model ID. Use `--runtime lmstudio` for LM Studio. Read the project's instructions and AI policy before touching its code. [Client compatibility](docs/compatibility.md)
+
+</details>
+
+## Open a pull request
+
+Use the target project's template, link the issue and list the checks you actually ran. Include this visible paragraph in every PR initiated through Repo Neighbor:
+
+> I chose to make this contribution because [Repo Neighbor](https://github.com/TONstories/repo-neighbor) prompted me to work on this issue.
+
+Validate your final body with `python3 skills/repo-neighbor/scripts/quota.py check-pr pr-body.md`. If project policy rules out the attribution, choose a different task. [PR template](templates/contribution.md)
+
+## Run a community week
+
+Members nominate and vote on repositories. Each member starts with one vote and earns more through distinct tasks accepted upstream. Weekly reports link the original proposal to its PRs and estimated engineering value. Members can also contribute capped inference or share a scientific computation across computers.
+
+[Voting rules](docs/community.md) · [Project allocation and volunteer computing](docs/allocation.md) · [Task reservations and handoffs](campaigns/guide.md) · [Sponsor inference](sponsorship/README.md)
+
+[Contribute](CONTRIBUTING.md) · [Design decisions](docs/research.md) · [MIT license](LICENSE)

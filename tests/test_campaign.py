@@ -51,6 +51,21 @@ class FinderTests(TestCase):
         )
         self.assertIsNone(assess(ROW, REPO, META, FILES, NOW.date(), ["Rust"]))
 
+    def test_new_language_evidence(self):
+        for name, path, manifest in [
+            ("Julia", "src/solver.jl", "Project.toml"),
+            ("Haskell", "src/Parser.hs", "cabal.project"),
+            ("Clojure", "src/check.cljc", "deps.edn"),
+            ("Fortran", "src/main.F90", "fpm.toml"),
+        ]:
+            with self.subTest(language=name):
+                item = assess(dict(ROW, title="Docs example", body=path), REPO, META, {}, NOW.date(), [name])
+                self.assertIn(name, item["stack"])
+                self.assertEqual(item["stack_source"], "issue")
+                item = assess(dict(ROW, title="Docs example", body="Fix formatting"), REPO,
+                              META, {manifest: ""}, NOW.date(), [name])
+                self.assertEqual(item["stack_source"], "repository only")
+
     def test_policy_busy_unavailable(self):
         for extra in (
             {"assignees": {"totalCount": 1}},

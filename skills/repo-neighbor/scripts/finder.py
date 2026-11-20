@@ -12,6 +12,10 @@ SLUG = r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+"
 URL = re.compile(r"https://github\.com/(" + SLUG + r")/(issues|pull)/([1-9][0-9]*)")
 BLOCK = {"blocked", "wontfix", "duplicate", "in progress", "invalid", "claimed"}
 LANGS = {
+    "Julia": ("jl", "Project.toml", "Pkg.test()"),
+    "Haskell": ("hs|lhs", "cabal.project", "cabal test"),
+    "Clojure": ("clj|cljs|cljc", "deps.edn", "project test alias"),
+    "Fortran": ("f90|f95|f03|f08|for", "fpm.toml", "fpm test"),
     "Ruby": ("rb|rake", "Gemfile", "bundle exec rake test"),
     "PHP": ("php", "composer.json", "composer test"),
     "Swift": ("swift", "Package.swift", "swift test"),
