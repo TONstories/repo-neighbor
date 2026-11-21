@@ -190,7 +190,7 @@ def status_now(args):
     return outcome
 
 
-DESK = "https://repo-neighbor.fil-support-bot.workers.dev"
+DESK = "https://repo-neighbor-6b014c.appwrite.network"
 
 
 class NoRedirect(HTTPRedirectHandler):

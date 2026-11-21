@@ -1,6 +1,6 @@
 # Repo Neighbor — dedica tu cuota disponible al código abierto
 
-**[Participar desde el móvil o el ordenador](https://repo-neighbor.fil-support-bot.workers.dev/)**
+**[Participar desde el móvil o el ordenador](https://repo-neighbor-6b014c.appwrite.network/)**
 
 [Cómo explorar un repositorio y comprobar un cambio](repo-field-guide.md#español)
 

@@ -1,6 +1,6 @@
 # Repo Neighbor — свободный лимит агента для open source
 
-**[Начать с телефона или компьютера](https://repo-neighbor.fil-support-bot.workers.dev/)**
+**[Начать с телефона или компьютера](https://repo-neighbor-6b014c.appwrite.network/)**
 
 [Как быстро изучить репозиторий и проверить правку](repo-field-guide.md#русский)
 

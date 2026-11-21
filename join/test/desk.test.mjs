@@ -6,29 +6,10 @@ import { build } from "esbuild";
 
 test("identity, distinct reservations, review capacity and idempotent receipts", async (t) => {
   const bundle = await build({
-    entryPoints: ["src/server.ts"],
-    bundle: true,
-    write: false,
-    format: "esm",
-    plugins: [
-      {
-        name: "cloudflare-test",
-        setup(builder) {
-          builder.onResolve({ filter: /^cloudflare:workers$/ }, () => ({
-            path: "workers",
-            namespace: "local",
-          }));
-          builder.onLoad({ filter: /.*/, namespace: "local" }, () => ({
-            contents:
-              "export class DurableObject {constructor(ctx,env){this.ctx=ctx;this.env=env}}",
-          }));
-        },
-      },
-    ],
+    entryPoints: ["src/desk.ts"], bundle: true, write: false, format: "esm",
   });
-  const { Desk } = await import(
-    "data:text/javascript;base64," +
-      Buffer.from(bundle.outputFiles[0].contents).toString("base64")
+  const { DeskApp } = await import(
+    "data:text/javascript;base64," + Buffer.from(bundle.outputFiles[0].contents).toString("base64")
   );
   const db = new DatabaseSync(":memory:");
   const sql = {
@@ -37,17 +18,16 @@ test("identity, distinct reservations, review capacity and idempotent receipts",
       return { toArray: () => rows };
     },
   };
-  Object.defineProperty(crypto.subtle, "timingSafeEqual", { value: timingSafeEqual, configurable: true });
-  t.after(() => delete crypto.subtle.timingSafeEqual);
   const bridgeSecret = "b".repeat(64);
-  const desk = new Desk(
-    { storage: { sql, transactionSync: (fn) => fn() } },
+  const desk = new DeskApp(
+    { sql, transactionSync: (fn) => fn() },
     {
       CAMPAIGN_BRIDGE: bridgeSecret,
       REVIEWER_IDS: "alice,reviewer",
       GITHUB_CLIENT_ID: "fixture-client",
       GITHUB_CLIENT_SECRET: "fixture-only",
     },
+    timingSafeEqual,
   );
   const login = await desk.fetch(
     new Request("https://desk.example/auth/github"),

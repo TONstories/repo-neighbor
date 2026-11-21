@@ -58,7 +58,7 @@ def normalize(rows):
 
 
 def read_export():
-    request = Request("https://repo-neighbor.fil-support-bot.workers.dev/api/export",
+    request = Request("https://repo-neighbor-6b014c.appwrite.network/api/export",
                       headers={"User-Agent": "RepoNeighbor-Campaign/1.0 (+https://github.com/TONstories/repo-neighbor)"})
     with urlopen(request, timeout=20) as response:
         return normalize(json.loads(response.read(4000000)))

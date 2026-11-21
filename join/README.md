@@ -1,6 +1,6 @@
 # First contribution desk
 
-[Open the translation desk](https://repo-neighbor.fil-support-bot.workers.dev/). Pick a language, read the public source and acceptance criterion, then sign in with GitHub. Reserve for one hour before disconnecting. Submit manually or download the optional model, keep the tab open and run it. The browser retains the queued translation until the signed-in account receives a receipt. Reviewers compare both texts and can request a revision. A contributor can never approve their own draft.
+[Open the translation desk](https://repo-neighbor-6b014c.appwrite.network/). Pick a language, read the public source and acceptance criterion, then sign in with GitHub. Reserve for one hour before disconnecting. Submit manually or download the optional model, keep the tab open and run it. The browser retains the queued translation until the signed-in account receives a receipt. Reviewers compare both texts and can request a revision. A contributor can never approve their own draft.
 
 ### Sign in with GitHub Gist
 
@@ -8,7 +8,11 @@ When OAuth is unavailable, choose **Войти через GitHub Gist**. Copy th
 
 ## Hosting and maintenance
 
-The static application and the SQLite-backed Durable Object run on one Workers Free deployment. Use Node 24+ and a Cloudflare CLI signed into the intended free account. From this directory run `npm ci`, `npm test`, `npm run build`, then `wrangler deploy`. Review the target account and Worker name before deploying. Keep the Worker and class migration names stable to retain receipts. Set the immutable numeric GitHub reviewer IDs in `wrangler.jsonc` through a reviewed repository change. The GitHub App needs only public identity, no repository write permissions or webhooks. To enable the optional OAuth shortcut, register once using `python3 register_github.py` while signed in as TONstories. Registration passes the client credentials directly to Worker secrets. Never put credentials in issues or source control.
+The site and API run together on Appwrite Cloud Free. The function uses Node.js 24, the included 0.5 CPU and 512 MB specification, and the private serverless TablesDB table `repo-neighbor/desk`. Its ephemeral key has only `rows.read` and `rows.write` scopes. Each mutation creates a uniquely numbered state row. Concurrent writers retry against the newest row, preserving claim exclusivity and review receipts.
+
+For a release, use the official Appwrite CLI signed into the project recorded in `appwrite.config.json`. Run `npm ci`, `npm test`, `npm run package:appwrite`, then `appwrite functions create-deployment --function-id repo-neighbor --code .appwrite-build --entrypoint main.mjs --activate`. Keep the database and table IDs stable. Verify the active deployment, the public desk, and the campaign workflow.
+
+Set `RN_ORIGIN` to the public site URL and `REVIEWER_IDS` to comma-separated numeric GitHub IDs. Keep `CAMPAIGN_BRIDGE` in Appwrite function secrets and its matching value in the GitHub Actions secret `RN_APPWRITE_BRIDGE`. Redeploy after changing variables. GitHub Gist sign-in is available. The optional GitHub App needs only public identity and can be registered using `python3 register_github.py` while signed in as TONstories. Appwrite Free can pause an inactive project after seven days. The operator can reactivate it from the Console. [Appwrite Free limits](https://appwrite.io/pricing)
 
 Add agreed documentation or translation tasks to `src/tasks.json`. Use a permanent id, upstream repository, target language, public source, and the canonical GitHub issue URL when available. Preserve ids when crediting the resulting PR. For a coordinated PR, include a credit for each contributor and link their source task. Only verified upstream merges enter the USD estimate. For independent verification of a weekly frozen ballot run `campaign/verify-week YYYY-Www` from the repository root. Older seats are explicitly marked as legacy. Open a public issue to contest a snapshot, referencing the week, candidate and disputed input.
 

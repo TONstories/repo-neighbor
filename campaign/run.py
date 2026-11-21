@@ -525,7 +525,7 @@ def refresh_claims(claims, now):
 
 
 def desk_command(secret, **data):
-    request = Request("https://repo-neighbor.fil-support-bot.workers.dev/api/campaign",
+    request = Request("https://repo-neighbor-6b014c.appwrite.network/api/campaign",
                       data=json.dumps(data).encode(), headers={
                           "Authorization": "Bearer " + secret,
                           "Content-Type": "application/json", "User-Agent": "Repo-Neighbor-Campaign/1.0",

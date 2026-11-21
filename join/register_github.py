@@ -1,4 +1,4 @@
-"""One-time operator setup on localhost. Pipe credentials directly to Worker secrets."""
+"""One-time operator setup on localhost. Store credentials in Appwrite function secrets."""
 import html
 import json
 import secrets
@@ -9,7 +9,7 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 
-ORIGIN = "https://repo-neighbor.fil-support-bot.workers.dev"
+ORIGIN = "https://repo-neighbor-6b014c.appwrite.network"
 STATE = secrets.token_urlsafe(32)
 
 
@@ -52,11 +52,16 @@ class Setup(BaseHTTPRequestHandler):
             if app["owner"]["login"].lower() != "tonstories":
                 return self.page("Registration owner must be TONstories.", 403)
             values = {"GITHUB_CLIENT_ID":app["client_id"], "GITHUB_CLIENT_SECRET":app["client_secret"]}
-            subprocess.run(["wrangler","secret","bulk"], input=json.dumps(values), text=True,
-                           cwd=Path(__file__).parent, stdout=subprocess.DEVNULL, check=True, timeout=90)
+            for key, value in values.items():
+                subprocess.run(
+                    ["appwrite", "functions", "create-variable", "--function-id", "repo-neighbor",
+                     "--variable-id", key.lower().replace("_", "-"), "--key", key, "--secret",
+                     "--value", value], cwd=Path(__file__).parent, capture_output=True,
+                    check=True, timeout=60,
+                )
         except Exception:
             return self.page("Registration did not complete. Inspect the app settings before retrying.", 502)
-        self.page("Готово. <a href='"+ORIGIN+"'>Открыть Repo Neighbor</a>")
+        self.page("Секреты сохранены. Повторно разверните функцию. <a href='"+ORIGIN+"'>Открыть Repo Neighbor</a>")
         self.server.done = True
 
 

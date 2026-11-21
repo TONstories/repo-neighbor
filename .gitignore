@@ -7,3 +7,5 @@ join/node_modules/
 join/dist/
 join/.wrangler/
 join/test-results/
+
+join/.appwrite-build/

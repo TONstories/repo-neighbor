@@ -4,7 +4,7 @@
 
 # Repo Neighbor
 
-**[Start on your phone or computer](https://repo-neighbor.fil-support-bot.workers.dev/)**
+**[Start on your phone or computer](https://repo-neighbor-6b014c.appwrite.network/)**
 
 [Map an unfamiliar repository and verify a change](docs/repo-field-guide.md)
 

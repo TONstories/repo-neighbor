@@ -1,5 +1,4 @@
-// The single SQLite-backed object serializes admissions and review decisions.
-import { DurableObject } from "cloudflare:workers";
+// Shared admission and review rules for the translation desk.
 import catalog from "./tasks.json";
 const taskById = new Map(catalog.map((task) => [task.id, task]));
 const json = (data: unknown, status = 200) =>
@@ -28,8 +27,6 @@ async function gistStatement(seed: string, origin: string) {
   );
 }
 type Env = {
-  DESK: DurableObjectNamespace;
-  ASSETS: Fetcher;
   REVIEWER_IDS?: string;
   GITHUB_CLIENT_ID?: string;
   GITHUB_CLIENT_SECRET?: string;
@@ -49,10 +46,19 @@ type Row = {
   note: string;
   metrics: string;
 };
-export class Desk extends DurableObject<Env> {
-  sql = this.ctx.storage.sql;
-  constructor(ctx: DurableObjectState, env: Env) {
-    super(ctx, env);
+export type DeskStorage = {
+  sql: { exec<T>(query: string, ...values: (string | number)[]): { toArray(): T[] } };
+  transactionSync(fn: () => void): void;
+};
+
+export class DeskApp {
+  sql: DeskStorage["sql"];
+  constructor(
+    private storage: DeskStorage,
+    private env: Pick<Env, "REVIEWER_IDS" | "GITHUB_CLIENT_ID" | "GITHUB_CLIENT_SECRET" | "CAMPAIGN_BRIDGE">,
+    private equal: (a: Uint8Array, b: Uint8Array) => boolean,
+  ) {
+    this.sql = storage.sql;
     this.sql.exec(
       "CREATE TABLE IF NOT EXISTS sessions (token TEXT PRIMARY KEY, uid TEXT, login TEXT, expires INTEGER)",
     );
@@ -85,7 +91,7 @@ export class Desk extends DurableObject<Env> {
     const provided = r.headers.get("Authorization") || "";
     const enc = new TextEncoder();
     if (!expected || !/^Bearer [a-f0-9]{64}$/.test(provided) || expected.length !== 64 ||
-        !crypto.subtle.timingSafeEqual(enc.encode("Bearer " + expected), enc.encode(provided)))
+        !this.equal(enc.encode("Bearer " + expected), enc.encode(provided)))
       return json({ error: "Unauthorized" }, 401);
     const raw = await r.text();
     if (raw.length > 2400) return json({ error: "Too large" }, 413);
@@ -370,7 +376,7 @@ export class Desk extends DurableObject<Env> {
     if (path === "/api/release") {
       if (!mine || !active || lease !== b.lease)
         return json({ id: b.id, state: old?.state });
-      this.ctx.storage.transactionSync(() => {
+      this.storage.transactionSync(() => {
         this.sql.exec("DELETE FROM tasks WHERE id=?", b.id);
         this.sql.exec("DELETE FROM leases WHERE id=?", b.id);
       });
@@ -399,7 +405,7 @@ export class Desk extends DurableObject<Env> {
       )
         return json({ error: "Task or review slots are occupied" }, 409);
       if (!mine || !old || old.claimed <= now - 3600000)
-        this.ctx.storage.transactionSync(() => {
+        this.storage.transactionSync(() => {
           this.sql.exec(
             "INSERT OR REPLACE INTO tasks VALUES(?,?,?,'held','',?,0,0,'','','{}')",
             b.id, me.login, me.uid, now,
@@ -473,8 +479,3 @@ export class Desk extends DurableObject<Env> {
     return json({ error: "Unknown route" }, 404);
   }
 }
-export default {
-  async fetch(req: Request, env: Env) {
-    return env.DESK.get(env.DESK.idFromName("community-v1")).fetch(req);
-  },
-};
