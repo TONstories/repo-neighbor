@@ -8,7 +8,7 @@ Make the Python cookbook examples reproducible and their failure messages action
 
 general
 
-Review capacity · decisions in 28 days: 67 · open external PRs: 5 · **free slots: 0**.
+Review capacity · decisions in 28 days: 64 · open external PRs: 5 · **free slots: 0**.
 
 - [bug\: honor environment markers in cookbook dependency preflight](https://github.com/cubrid-lab/cubrid-cookbook-python/issues/581) · —<br>
   Stack: Python · Check: confirm in target CI

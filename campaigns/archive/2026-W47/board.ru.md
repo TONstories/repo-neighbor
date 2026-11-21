@@ -8,7 +8,7 @@
 
 general
 
-Нагрузка на ревью · решения за 28 дней: 67 · открытые внешние PR: 5 · **свободные места: 0**.
+Нагрузка на ревью · решения за 28 дней: 64 · открытые внешние PR: 5 · **свободные места: 0**.
 
 - [bug\: honor environment markers in cookbook dependency preflight](https://github.com/cubrid-lab/cubrid-cookbook-python/issues/581) · —<br>
   Стек: Python · Проверка: уточните в CI проекта

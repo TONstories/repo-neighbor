@@ -8,7 +8,7 @@ Hacer reproducibles los ejemplos del recetario Python y aclarar sus errores.
 
 general
 
-Capacidad de revisión · decisiones en 28 días: 67 · PR externos abiertos: 5 · **plazas libres: 0**.
+Capacidad de revisión · decisiones en 28 días: 64 · PR externos abiertos: 5 · **plazas libres: 0**.
 
 - [bug\: honor environment markers in cookbook dependency preflight](https://github.com/cubrid-lab/cubrid-cookbook-python/issues/581) · —<br>
   Lenguajes: Python · Prueba: consulta la CI del proyecto
