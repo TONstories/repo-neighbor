@@ -9,13 +9,13 @@
 Из корня скачанного репозитория проверьте состояние без вызова модели:
 
 ```sh
-python3 skills/repo-neighbor/scripts/reset_window.py check --period weekly --before-hours 10 --reserve-percent 30
+python3 skills/repo-neighbor/scripts/reset_window.py check --period weekly --before-hours 10 --reserve-percent 5
 ```
 
 Для запуска сначала отключите платный перерасход у провайдера. Выберите свободную задачу по документации. Подставьте ее URL вместо примера:
 
 ```sh
-python3 skills/repo-neighbor/scripts/reset_window.py watch --period weekly --before-hours 10 --reserve-percent 30 --minutes 45 --included-only --issue https://github.com/OWNER/PROJECT/issues/123
+python3 skills/repo-neighbor/scripts/reset_window.py watch --period weekly --before-hours 10 --reserve-percent 5 --minutes 45 --included-only --issue https://github.com/OWNER/PROJECT/issues/123
 ```
 
 | Status | Что происходит |
@@ -39,7 +39,7 @@ The reserve is sampled during the run (about every 30 seconds). A single request
 python3 skills/repo-neighbor/scripts/reset_window.py suggest --included-only
 ```
 
-Оставьте терминал открытым. За 12 часов до подтвержденного недельного сброса программа предложит одну задачу, если во всех известных окнах осталось больше 30%. `later` откладывает предложение на 30 минут, `skip` пропускает сброс. После `start` подтвердите GitHub однократным Gist. Удалите Gist после входа.
+Оставьте терминал открытым. За 12 часов до подтвержденного недельного сброса программа предложит одну задачу, если во всех известных окнах осталось больше 5%. `later` откладывает предложение на 30 минут, `skip` пропускает сброс. После `start` подтвердите GitHub однократным Gist. Удалите Gist после входа.
 
 Далее Codex бронирует и выполняет по одному переводу из той же очереди, которую видит участник в браузере. Готовый текст отправляется на внутреннее ревью, после квитанции предлагается следующая доступная задача, сначала из того же репозитория. У всей серии общий лимит 45 минут. `--minutes`, `--before-hours` и `--reserve-percent` меняют настройки. Аккаунт, квота и время сброса проверяются перед каждым вызовом. Чтобы остановить серию, нажмите Ctrl+C. Черновики и журнал событий сохраняются локально, незавершенная бронь освобождается или истекает. Сессия GitHub хранится в памяти процесса.
 

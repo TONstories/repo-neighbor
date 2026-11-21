@@ -21,6 +21,21 @@ def usage(used=10):
 
 
 class ResetWindowTests(unittest.TestCase):
+    def test_suggest_requires_more_than_five_percent_in_each_window(self):
+        for short_used, weekly_used, should_suggest in ((94, 94, True), (95, 94, False), (94, 95, False)):
+            with self.subTest(short_used=short_used, weekly_used=weekly_used):
+                data = usage(short_used)
+                data["rateLimits"]["secondary"]["usedPercent"] = weekly_used
+                with patch.object(sys, "argv", ["reset_window.py", "suggest", "--included-only"]), \
+                     patch.object(window, "limits", return_value=data), \
+                     patch.object(window.time, "time", return_value=100), \
+                     patch.object(window, "suggest", return_value=None) as suggest:
+                    window.main()
+                if should_suggest:
+                    suggest.assert_called_once()
+                else:
+                    suggest.assert_not_called()
+
     def test_window_and_both_reserves(self):
         self.assertEqual(window.decision(usage(), "weekly", 10, 30, 100), ("early", 40000))
         self.assertEqual(window.decision(usage(), "weekly", 12, 30, 100), ("ready", 40000))

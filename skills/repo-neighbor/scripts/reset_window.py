@@ -313,7 +313,7 @@ def main():
     parser.add_argument("mode", choices=["check", "watch", "suggest"])
     parser.add_argument("--period", choices=DURATIONS, default="weekly")
     parser.add_argument("--before-hours", type=float)
-    parser.add_argument("--reserve-percent", type=int, default=30)
+    parser.add_argument("--reserve-percent", type=int, default=5)
     parser.add_argument("--minutes", type=int, default=45)
     parser.add_argument("--issue")
     parser.add_argument("--output", type=Path, default=Path.home()/".repo-neighbor"/"drafts")
