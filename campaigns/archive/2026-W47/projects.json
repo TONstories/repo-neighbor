@@ -81,7 +81,7 @@
     "track": "general",
     "window": {
       "complete": true,
-      "decisions": 64,
+      "decisions": 65,
       "limit": 3,
       "open": [
         "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/578",

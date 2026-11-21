@@ -8,7 +8,7 @@ Hacer reproducibles los ejemplos del recetario Python y aclarar sus errores.
 
 general
 
-Capacidad de revisión · decisiones en 28 días: 64 · PR externos abiertos: 8 · **plazas libres: 0**.
+Capacidad de revisión · decisiones en 28 días: 65 · PR externos abiertos: 8 · **plazas libres: 0**.
 
 - [test\: protect first\-CUBRID tutorial cleanup ownership with offline fakes](https://github.com/cubrid-lab/cubrid-cookbook-python/issues/582) · —<br>
   Lenguajes: Python · Prueba: consulta la CI del proyecto
