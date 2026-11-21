@@ -6,44 +6,6 @@
       {
         "checks": [],
         "evidence": [
-          "scripts/example_requirements.py"
-        ],
-        "fit": "fits",
-        "kind": "code",
-        "license": "MIT",
-        "minutes": [
-          45,
-          120
-        ],
-        "parent": null,
-        "repo": "cubrid-lab/cubrid-cookbook-python",
-        "scope": [
-          "CONTRIBUTING.md/AGENTS.md",
-          "github.com/cubrid-lab/cubrid-cookbook-python/blob/main/scripts/example_requirements.py",
-          "github.com/cubrid-lab/cubrid-cookbook-python/blob/main/tests/test_example_requirements.py",
-          "scripts/example_requirements.py",
-          "tests/test_example_requirements.py"
-        ],
-        "score": 76,
-        "signals": [
-          "good first issue",
-          "help wanted"
-        ],
-        "stack": [
-          "Python"
-        ],
-        "stack_source": "issue",
-        "title": "bug: honor environment markers in cookbook dependency preflight",
-        "unknown": [
-          "Confirm AI and attribution policy, current ownership and actual scope.",
-          "Inspect the project's CI for its exact check."
-        ],
-        "updated": "2026-11-20T14:48:08Z",
-        "url": "https://github.com/cubrid-lab/cubrid-cookbook-python/issues/581"
-      },
-      {
-        "checks": [],
-        "evidence": [
           "quickstart/first-cubrid/04_cleanup.py"
         ],
         "fit": "fits",
@@ -126,7 +88,10 @@
         "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/586",
         "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/589",
         "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/590",
-        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/591"
+        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/591",
+        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/595",
+        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/596",
+        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/597"
       ]
     }
   }
