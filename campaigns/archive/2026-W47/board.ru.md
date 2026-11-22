@@ -8,7 +8,7 @@
 
 general
 
-Нагрузка на ревью · решения за 28 дней: 46 · открытые внешние PR: 12 · **свободные места: 0**.
+Нагрузка на ревью · решения за 28 дней: 50 · открытые внешние PR: 14 · **свободные места: 0**.
 
 - [test\: protect first\-CUBRID tutorial cleanup ownership with offline fakes](https://github.com/cubrid-lab/cubrid-cookbook-python/issues/582) · —<br>
   Стек: Python · Проверка: уточните в CI проекта

@@ -45,7 +45,7 @@
     "track": "general",
     "window": {
       "complete": true,
-      "decisions": 46,
+      "decisions": 50,
       "limit": 3,
       "open": [
         "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/578",
@@ -54,12 +54,14 @@
         "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/590",
         "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/591",
         "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/595",
-        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/596",
         "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/597",
-        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/609",
         "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/610",
         "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/612",
-        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/614"
+        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/630",
+        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/631",
+        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/632",
+        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/633",
+        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/634"
       ]
     }
   }
