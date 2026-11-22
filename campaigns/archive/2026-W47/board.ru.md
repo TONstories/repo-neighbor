@@ -8,14 +8,11 @@
 
 general
 
-Нагрузка на ревью · решения за 28 дней: 65 · открытые внешние PR: 8 · **свободные места: 0**.
+Нагрузка на ревью · решения за 28 дней: 46 · открытые внешние PR: 12 · **свободные места: 0**.
 
 - [test\: protect first\-CUBRID tutorial cleanup ownership with offline fakes](https://github.com/cubrid-lab/cubrid-cookbook-python/issues/582) · —<br>
   Стек: Python · Проверка: уточните в CI проекта
   <br>Основания отбора: good first issue \· help wanted \· quickstart\/first\-cubrid\/04_cleanup\.py \· 30\–90 min
-- [bug\: close failed pool connections in the retry\-worker teaching recipe](https://github.com/cubrid-lab/cubrid-cookbook-python/issues/585) · —<br>
-  Стек: Python · Проверка: уточните в CI проекта
-  <br>Основания отбора: help wanted \· fundamentals\/pycubrid\/12_pool_retry_worker\.py \· 45\–120 min
 
 ## Принятые улучшения · 0
 

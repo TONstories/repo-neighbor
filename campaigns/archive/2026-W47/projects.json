@@ -40,48 +40,12 @@
         ],
         "updated": "2026-11-20T14:48:06Z",
         "url": "https://github.com/cubrid-lab/cubrid-cookbook-python/issues/582"
-      },
-      {
-        "checks": [],
-        "evidence": [
-          "fundamentals/pycubrid/12_pool_retry_worker.py"
-        ],
-        "fit": "fits",
-        "kind": "code",
-        "license": "MIT",
-        "minutes": [
-          45,
-          120
-        ],
-        "parent": null,
-        "repo": "cubrid-lab/cubrid-cookbook-python",
-        "scope": [
-          "fundamentals/pycubrid/12_pool_retry_worker.py",
-          "github.com/cubrid-lab/cubrid-cookbook-python/blob/main/fundamentals/pycubrid/12_pool_retry_worker.py",
-          "github.com/cubrid-lab/cubrid-cookbook-python/blob/main/tests/test_pool_retry_recipe.py",
-          "tests/test_pool_retry_recipe.py"
-        ],
-        "score": 76,
-        "signals": [
-          "help wanted"
-        ],
-        "stack": [
-          "Python"
-        ],
-        "stack_source": "issue",
-        "title": "bug: close failed pool connections in the retry-worker teaching recipe",
-        "unknown": [
-          "Confirm AI and attribution policy, current ownership and actual scope.",
-          "Inspect the project's CI for its exact check."
-        ],
-        "updated": "2026-11-20T14:47:23Z",
-        "url": "https://github.com/cubrid-lab/cubrid-cookbook-python/issues/585"
       }
     ],
     "track": "general",
     "window": {
       "complete": true,
-      "decisions": 65,
+      "decisions": 46,
       "limit": 3,
       "open": [
         "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/578",
@@ -91,7 +55,11 @@
         "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/591",
         "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/595",
         "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/596",
-        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/597"
+        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/597",
+        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/609",
+        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/610",
+        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/612",
+        "https://github.com/cubrid-lab/cubrid-cookbook-python/pull/614"
       ]
     }
   }

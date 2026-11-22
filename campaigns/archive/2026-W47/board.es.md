@@ -8,14 +8,11 @@ Hacer reproducibles los ejemplos del recetario Python y aclarar sus errores.
 
 general
 
-Capacidad de revisión · decisiones en 28 días: 65 · PR externos abiertos: 8 · **plazas libres: 0**.
+Capacidad de revisión · decisiones en 28 días: 46 · PR externos abiertos: 12 · **plazas libres: 0**.
 
 - [test\: protect first\-CUBRID tutorial cleanup ownership with offline fakes](https://github.com/cubrid-lab/cubrid-cookbook-python/issues/582) · —<br>
   Lenguajes: Python · Prueba: consulta la CI del proyecto
   <br>Criterios de selección: good first issue \· help wanted \· quickstart\/first\-cubrid\/04_cleanup\.py \· 30\–90 min
-- [bug\: close failed pool connections in the retry\-worker teaching recipe](https://github.com/cubrid-lab/cubrid-cookbook-python/issues/585) · —<br>
-  Lenguajes: Python · Prueba: consulta la CI del proyecto
-  <br>Criterios de selección: help wanted \· fundamentals\/pycubrid\/12_pool_retry_worker\.py \· 45\–120 min
 
 ## Mejoras aceptadas · 0
 
