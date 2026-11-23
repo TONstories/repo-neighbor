@@ -1,0 +1,92 @@
+{
+  "prior": [],
+  "rounds": [
+    {
+      "ballot": {
+        "nominees": {},
+        "votes": {}
+      },
+      "history": [
+        "general",
+        "general"
+      ],
+      "limit": 2,
+      "pool": [
+        {
+          "repo": "AppsYogi-com/ComposeYogi",
+          "tasks": [
+            {
+              "score": 78
+            },
+            {
+              "score": 78
+            }
+          ],
+          "track": "fun"
+        },
+        {
+          "repo": "TheZupZup/Linthra",
+          "tasks": [
+            {
+              "score": 76
+            },
+            {
+              "score": 66
+            }
+          ],
+          "track": "fun"
+        },
+        {
+          "repo": "Joeypc6/AE2-Sunrise",
+          "tasks": [
+            {
+              "score": 70
+            },
+            {
+              "score": 70
+            }
+          ],
+          "track": "general"
+        }
+      ],
+      "selected": [
+        "AppsYogi-com/ComposeYogi",
+        "TheZupZup/Linthra"
+      ],
+      "skipped": {
+        "apache/iggy": "Insufficient independent tasks",
+        "apex-engine-dev/apex-verify": "No review capacity",
+        "bcpathway/bc-forge": "Insufficient independent tasks",
+        "eogenyi23-creator/soroban-merkle-airdrop": "Insufficient independent tasks",
+        "givikuna/ynternals": "Insufficient independent tasks",
+        "gnudatalanguage/gdl": "No review capacity",
+        "hivecommons/hive": "Insufficient independent tasks",
+        "hol-theorem-prover/hol": "No eligible issues",
+        "leanprover-community/physlib": "No review capacity",
+        "libra-works/librafx": "Insufficient independent tasks",
+        "marksgraham/oct-converter": "No eligible issues",
+        "nandinigoyaldev/open-source-contribution-atelier": "No review capacity",
+        "neurowealth/backend": "No review capacity",
+        "nipy/nibabel": "No eligible issues",
+        "nolanmak/tabagent": "Insufficient independent tasks",
+        "ogenyialice120/soroban-upgrade-manager": "Insufficient independent tasks",
+        "oppia/oppia": "Insufficient independent tasks",
+        "prismorsec/prismor": "Insufficient independent tasks",
+        "rawnaldclark/stash": "No eligible issues",
+        "sgateway/s-gw": "No eligible issues",
+        "sorokit/ui": "Insufficient independent tasks",
+        "trellis-ecosystem/trellis": "No review capacity",
+        "weighinng/weighin": "Insufficient independent tasks",
+        "zenos-org/zenos": "Insufficient independent tasks"
+      }
+    }
+  ],
+  "shares": {
+    "defensive-security": 15,
+    "fun": 20,
+    "general": 10,
+    "public-good": 40,
+    "science": 15
+  },
+  "version": 1
+}

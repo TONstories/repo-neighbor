@@ -1,0 +1,234 @@
+[
+  {
+    "repo": "AppsYogi-com/ComposeYogi",
+    "review_limit": 3,
+    "tasks": [
+      {
+        "checks": [
+          "npm test (package.json)"
+        ],
+        "evidence": [
+          "components/compose/ProjectSelector.tsx"
+        ],
+        "fit": "fits",
+        "kind": "code",
+        "license": "MIT",
+        "minutes": [
+          45,
+          120
+        ],
+        "parent": null,
+        "repo": "AppsYogi-com/ComposeYogi",
+        "scope": [
+          "blob/main/ARCHITECTURE.md",
+          "components/compose/ProjectSelector.tsx",
+          "lib/persistence/db.ts",
+          "lib/templates/loader.ts",
+          "tests/persistence.test.ts"
+        ],
+        "score": 78,
+        "signals": [
+          "good first issue"
+        ],
+        "stack": [
+          "TypeScript"
+        ],
+        "stack_source": "issue",
+        "title": "Add \"Duplicate project\" to the project menu",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope."
+        ],
+        "updated": "2026-08-29T07:18:54Z",
+        "url": "https://github.com/AppsYogi-com/ComposeYogi/issues/23"
+      },
+      {
+        "checks": [
+          "npm test (package.json)"
+        ],
+        "evidence": [
+          "components/compose/TrackList.tsx"
+        ],
+        "fit": "fits",
+        "kind": "code",
+        "license": "MIT",
+        "minutes": [
+          45,
+          120
+        ],
+        "parent": null,
+        "repo": "AppsYogi-com/ComposeYogi",
+        "scope": [
+          "components/compose/TrackList.tsx",
+          "hooks/useVisibleClips.ts",
+          "lib/store/ui.ts"
+        ],
+        "score": 78,
+        "signals": [
+          "good first issue"
+        ],
+        "stack": [
+          "TypeScript"
+        ],
+        "stack_source": "issue",
+        "title": "Rubber-band (marquee) selection on the timeline",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope."
+        ],
+        "updated": "2026-08-29T07:18:58Z",
+        "url": "https://github.com/AppsYogi-com/ComposeYogi/issues/25"
+      },
+      {
+        "checks": [
+          "npm test (package.json)"
+        ],
+        "evidence": [
+          "app/sw.ts",
+          "Go"
+        ],
+        "fit": "fits",
+        "kind": "code",
+        "license": "MIT",
+        "minutes": [
+          45,
+          120
+        ],
+        "parent": null,
+        "repo": "AppsYogi-com/ComposeYogi",
+        "scope": [
+          "app/sw.ts",
+          "components/OfflineIndicator.tsx",
+          "hooks/useOfflineStatus.ts"
+        ],
+        "score": 78,
+        "signals": [
+          "good first issue",
+          "help wanted"
+        ],
+        "stack": [
+          "TypeScript",
+          "Go"
+        ],
+        "stack_source": "issue",
+        "title": "Verify the full offline (PWA) workflow",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope."
+        ],
+        "updated": "2026-08-29T07:19:24Z",
+        "url": "https://github.com/AppsYogi-com/ComposeYogi/issues/29"
+      }
+    ],
+    "track": "fun",
+    "window": {
+      "complete": true,
+      "decisions": 1,
+      "limit": 1,
+      "open": []
+    }
+  },
+  {
+    "repo": "TheZupZup/Linthra",
+    "review_limit": 3,
+    "tasks": [
+      {
+        "checks": [],
+        "evidence": [
+          "lib/features/player/widgets/queue_sheet.dart"
+        ],
+        "fit": "fits",
+        "kind": "code",
+        "license": "AGPL-3.0",
+        "minutes": [
+          45,
+          120
+        ],
+        "parent": null,
+        "repo": "TheZupZup/Linthra",
+        "scope": [
+          "lib/features/player/widgets/queue_sheet.dart"
+        ],
+        "score": 76,
+        "signals": [
+          "good first issue"
+        ],
+        "stack": [
+          "Dart"
+        ],
+        "stack_source": "issue",
+        "title": "\"Save queue as playlist\" reports more songs than it saved when the queue has duplicates",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope.",
+          "Inspect the project's CI for its exact check."
+        ],
+        "updated": "2026-10-10T23:07:03Z",
+        "url": "https://github.com/TheZupZup/Linthra/issues/882"
+      },
+      {
+        "checks": [],
+        "evidence": [],
+        "fit": "fits",
+        "kind": "code",
+        "license": "AGPL-3.0",
+        "minutes": [
+          45,
+          120
+        ],
+        "parent": null,
+        "repo": "TheZupZup/Linthra",
+        "scope": [],
+        "score": 66,
+        "signals": [
+          "help wanted"
+        ],
+        "stack": [
+          "Dart"
+        ],
+        "stack_source": "repository only",
+        "title": "[Flathub] Submit Linthra to Flathub",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope.",
+          "Inspect the project's CI for its exact check.",
+          "Issue stack inferred from repository files."
+        ],
+        "updated": "2026-09-03T20:14:44Z",
+        "url": "https://github.com/TheZupZup/Linthra/issues/456"
+      },
+      {
+        "checks": [],
+        "evidence": [],
+        "fit": "fits",
+        "kind": "code",
+        "license": "AGPL-3.0",
+        "minutes": [
+          45,
+          120
+        ],
+        "parent": null,
+        "repo": "TheZupZup/Linthra",
+        "scope": [],
+        "score": 66,
+        "signals": [
+          "help wanted"
+        ],
+        "stack": [
+          "Dart"
+        ],
+        "stack_source": "repository only",
+        "title": "[Desktop] Add audio CD and music disc playback support",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope.",
+          "Inspect the project's CI for its exact check.",
+          "Issue stack inferred from repository files."
+        ],
+        "updated": "2026-09-11T17:21:34Z",
+        "url": "https://github.com/TheZupZup/Linthra/issues/631"
+      }
+    ],
+    "track": "fun",
+    "window": {
+      "complete": true,
+      "decisions": 2,
+      "limit": 1,
+      "open": []
+    }
+  }
+]

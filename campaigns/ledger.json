@@ -14,6 +14,20 @@
         "cubrid-lab/sqlalchemy-cubrid": "general"
       },
       "votes": {}
+    },
+    "2026-W48": {
+      "capacity": 2,
+      "closed": true,
+      "nominees": {},
+      "selected": [
+        "AppsYogi-com/ComposeYogi",
+        "TheZupZup/Linthra"
+      ],
+      "tracks": {
+        "AppsYogi-com/ComposeYogi": "fun",
+        "TheZupZup/Linthra": "fun"
+      },
+      "votes": {}
     }
   },
   "mobile": [],
