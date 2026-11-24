@@ -1,6 +1,6 @@
 # Community desk · Сообщество · Comunidad
 
-[Today / Сегодня](2026-11-24.md) · [This week / Эта неделя](2026-W48.md) · [Next ballot / Голосование](2026-W49.md)
+[Today / Сегодня](2026-11-25.md) · [This week / Эта неделя](2026-W48.md) · [Next ballot / Голосование](2026-W49.md)
 
 Lifetime: 1 participant · 0 PRs · 0 merged · **$0–$0 estimated replacement value** · 0 unpriced.
 
