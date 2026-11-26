@@ -223,6 +223,44 @@
         "prapaa-ai/agav": "Insufficient independent tasks",
         "prismorsec/prismor": "No eligible issues"
       }
+    },
+    {
+      "ballot": {
+        "nominees": {},
+        "votes": {}
+      },
+      "history": [
+        "general",
+        "general",
+        "fun",
+        "fun",
+        "general"
+      ],
+      "limit": 2,
+      "pool": [],
+      "selected": [],
+      "skipped": {
+        "curvineio/curvine": "No review capacity",
+        "felladrin/minisearch": "Insufficient independent tasks",
+        "gnudatalanguage/gdl": "No eligible issues",
+        "h5i-dev/h5i": "No eligible issues",
+        "hol-theorem-prover/hol": "No eligible issues",
+        "holoviz/panel": "Insufficient independent tasks",
+        "infisical/infisical": "No eligible issues",
+        "kestra-io/kestra": "Insufficient independent tasks",
+        "largemodgames/spotatui": "No review capacity",
+        "leanprover-community/physlib": "No review capacity",
+        "mlavik1/unityvolumerendering": "No eligible issues",
+        "music-assistant/mobile-app": "Insufficient independent tasks",
+        "nipy/nibabel": "No eligible issues",
+        "nota-daw/nota": "No eligible issues",
+        "oras-project/oras-go": "Insufficient independent tasks",
+        "orwa-mahmoud/nightshift": "Insufficient independent tasks",
+        "phasehq/console": "No eligible issues",
+        "prismorsec/prismor": "No eligible issues",
+        "r0y00/xbox2windows": "No review capacity",
+        "rtk-ai/rtk": "Insufficient independent tasks"
+      }
     }
   ],
   "shares": {
