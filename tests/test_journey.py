@@ -1,8 +1,10 @@
+import json
+import subprocess
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from test_community import c  # sets the campaign and skill import paths
-from journey import follow_up, pilot_sessions, report
+from journey import follow_up, pilot_sessions, read_fork_workflow_runs, read_pr, report
 from quota import CREDIT
 
 ISSUE = "https://github.com/Example/Client/issues/4"
@@ -198,6 +200,86 @@ class FollowUpTest(unittest.TestCase):
         self.assertEqual(follow_up(self.pr, c.parse("2026-12-26T15:00:00+03:00"))["open_age_days"], 30)
         self.assertEqual(info["review_history_status"], "available")
         self.assertEqual(report_at_due["follow_up"]["counts"]["2026-W48"]["open_due"], 1)
+
+    def test_reports_actions_waiting_when_fork_pr_has_no_check_rollup(self):
+        head = "a" * 40
+        run_url = "https://github.com/Example/Client/actions/runs/123"
+        self.pr.update(
+            headRefOid=head, headRefName="fix",
+            headRepository={"nameWithOwner": "Alice/Client"}, statusCheckRollup=[],
+        )
+        run = dict(
+            name="CI", event="pull_request", conclusion="action_required",
+            status="completed", head_sha=head, head_branch="fix",
+            head_repository={"full_name": "Alice/Client"}, pull_requests=[],
+            html_url=run_url, workflow_id=10, run_number=3, run_attempt=1,
+        )
+        runs = [
+            {**run, "workflow_id": 20, "run_number": 2, "run_attempt": 2, "conclusion": "success"},
+            {**run, "workflow_id": 20, "run_number": 1},
+            {**run, "workflow_id": 20, "run_number": 2},
+            {**run, "run_number": 4, "head_branch": "another-branch", "conclusion": "success"},
+            {**run, "run_number": 4, "head_repository": {"full_name": "Bob/Client"}, "conclusion": "success"},
+            {**run, "run_number": 4, "pull_requests": [{"number": 99}], "conclusion": "success"},
+            run,
+        ]
+        with patch("journey.subprocess.check_output") as gh:
+            def response(command, **_):
+                if command[1] == "pr":
+                    return json.dumps(self.pr)
+                if "/actions/runs?" in command[-1]:
+                    self.assertIn(f"head_sha={head}", command[-1])
+                    return json.dumps({"total_count": len(runs), "workflow_runs": runs})
+                return "[[]]"
+
+            gh.side_effect = response
+            snapshot = read_pr(PR, include_reviews=True)
+        checks = follow_up(snapshot, c.parse(END))["checks"]
+        self.assertEqual(checks["reported"], 0)
+        self.assertEqual(checks["workflow_runs"], {
+            "status": "complete",
+            "action_required": [{"name": "CI", "url": run_url, "match": "head"}],
+        })
+
+    def test_newer_pr_linked_success_replaces_unlinked_blocker(self):
+        head = "a" * 40
+        pr = dict(headRefOid=head, headRefName="fix", headRepository={"nameWithOwner": "Alice/Client"})
+        old_run = dict(
+            name="CI", event="pull_request", conclusion="action_required",
+            head_sha=head, head_branch="fix", head_repository={"full_name": "Alice/Client"},
+            pull_requests=[], html_url="https://github.com/Example/Client/actions/runs/123",
+            workflow_id=10, run_number=3, run_attempt=1,
+        )
+        new_run = dict(
+            old_run, conclusion="success", pull_requests=[{"number": 12}], run_number=4,
+            html_url="https://github.com/Example/Client/actions/runs/124",
+        )
+        for runs in ([old_run, new_run], [new_run, old_run]):
+            with self.subTest(first_run=runs[0]["run_number"]):
+                data = json.dumps({"total_count": len(runs), "workflow_runs": runs})
+                with patch("journey.subprocess.check_output", return_value=data):
+                    result = read_fork_workflow_runs("Example/Client", 12, pr)
+                self.assertEqual(result, {"status": "complete", "action_required": []})
+
+    def test_unavailable_fork_actions_preserve_the_pr_check_rollup(self):
+        self.pr.update(
+            headRefOid="a" * 40, headRefName="fix",
+            headRepository={"nameWithOwner": "Alice/Client"},
+            statusCheckRollup=[{"context": "CLA", "state": "FAILURE"}],
+        )
+
+        def response(command, **_):
+            if command[1] == "pr":
+                return json.dumps(self.pr)
+            if "/actions/runs?" in command[-1]:
+                raise subprocess.CalledProcessError(1, command, stderr="HTTP 403")
+            return "[[]]"
+
+        with patch("journey.subprocess.check_output", side_effect=response):
+            snapshot = read_pr(PR, include_reviews=True)
+        checks = follow_up(snapshot, c.parse(END))["checks"]
+        self.assertEqual(checks["workflow_runs"], {"status": "unknown", "action_required": []})
+        self.assertEqual(checks["needs_attention"], [{"name": "CLA", "url": None, "state": "FAILURE"}])
 
     def test_open_pr_reports_pending_and_failed_checks_at_the_observed_head(self):
         checks = [

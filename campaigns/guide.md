@@ -35,6 +35,13 @@ If the bounded approval search cannot verify a selected project, the board hides
 
 Monday at 09:15 Moscow time is the intended release. GitHub can delay scheduled jobs. Each new project needs at least two distinct tasks. We compare mentioned file paths and similar titles; the contributor must confirm the change is independent. A repository without sufficient review bandwidth waits. External PR decisions over the last 28 days set the weekly limit: round up decisions/4, clamp to 1–5, subtract current open external PRs and unsubmitted active reservations. Owner/member/collaborator PRs and recognized bot accounts are excluded. A bounded review sample with incomplete coverage yields zero slots. An open submitted PR counts only through the upstream queue. Results follow the original week after merge. The board is a snapshot; command processing checks live eligibility. The additional reconciliation runs every six hours.
 
+## От отбора до решения / From selection to outcome
+
+1. Выберите задачу на доске или через `python3 skills/repo-neighbor/scripts/quota.py find`. Проверьте актуальное одобрение сопровождающего и порог звезд. Перед началом сформируйте `brief ISSUE_URL` и проверьте исполнителя, полное обсуждение и связанные PR.
+2. Проверьте CONTRIBUTING, шаблон PR, CI и обсуждение на требования об ИИ, атрибуции, назначении и CLA. Уточните доступность среды и критерий воспроизведения. В индивидуальном вкладе согласование и ревью перед отправкой нужны, только если их требует upstream. В совместном пилоте заранее запишите согласие проекта, объем и контакт ревью. CLA подписывает участник.
+3. Зафиксируйте базовый SHA, воспроизведение или исходное состояние и команды проверки измененного модуля. Перед отправкой повторите `check-issue ISSUE_URL` и `check-pr PR_BODY.md`, вручную проверьте новые обсуждения и связанные PR. Отправляйте вклад в рамках разрешения участника и правил upstream.
+4. В журнале храните отдельно локальный патч с проверками, отправленный PR с head SHA, наблюдение CI, решение upstream и следующий шаг с ответственным. Для открытого PR перечитывайте состояние при смене head, при изменении CI или ревью и через 30 дней после отправки. Состояние опубликованного вклада проверяйте командой отчета ниже.
+
 ## Community allocation / Распределение / Selección
 
 [Rules, capacity, priorities and volunteer computing](../docs/allocation.md)
@@ -54,9 +61,13 @@ Monday at 09:15 Moscow time is the intended release. GitHub can delay scheduled 
 
 ### Проверки открытых PR / Open PR checks
 
-`campaign/journey.py --live --as-of TIMESTAMP` при заполненном `--supplement` добавляет к открытым PR ожидающие проверки и проверки, требующие внимания. У снимка проверок есть свое время чтения и SHA коммита. Старые снимки могут не содержать этих данных.
+`campaign/journey.py --live --as-of TIMESTAMP` при заполненном `--supplement` добавляет к открытым PR ожидающие проверки и проверки, требующие внимания. У снимка проверок есть свое время чтения и SHA коммита. Старые снимки могут не содержать этих данных. Для открытых PR из форков отчет также читает до 100 запусков Actions на том же head и показывает `action_required`. `match: head` означает, что GitHub связал запуск с репозиторием, веткой и коммитом форка, а номер PR в ответе отсутствовал. При недоступном API статус — `unknown`.
 
-**EN** — A live journey report with `--as-of` shows pending checks and checks that need attention for open PRs. The report records the observation time and head commit for those checks.
+Для каждого workflow учитывается последний запуск и последняя попытка в пределах выборки. Запуски с явной привязкой к PR и совпадения по форку, ветке и SHA сравниваются вместе. При равных номерах запуска и попытки используется запись с явной привязкой к PR.
+
+**EN** — A live journey report with `--as-of` shows pending checks and checks that need attention for open PRs. The report records the observation time and head commit for those checks. For open PRs from forks, the report samples up to 100 Actions runs on the same head and checks the latest run and attempt for each workflow across both match types. An explicit PR link breaks a tie. A `head` match means GitHub matched the fork, branch, and commit without returning a PR number.
+
+**ES** — Para PR abiertos desde un fork, el informe consulta hasta 100 ejecuciones de Actions del mismo commit. Para cada workflow, evalúa la ejecución y el intento más recientes entre ambos tipos de coincidencia. Si hay empate, usa el vínculo explícito al PR.
 
 ### Отзыв после merge / Outcome feedback / Resultado
 
