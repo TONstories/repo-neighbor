@@ -19,7 +19,7 @@ import community as c
 import sponsor
 import run
 from finder import assess, discover
-from test_campaign import ROW, REPO, META, FILES, NOW, ISSUE, WINDOW, APPROVAL
+from test_campaign import ROW, REPO, META, FILES, NOW, ISSUE, WINDOW, APPROVAL, discovery
 
 
 class ElectionTests(unittest.TestCase):
@@ -150,7 +150,7 @@ class ElectionTests(unittest.TestCase):
         with (
             patch.object(run, "metadata", return_value=(META, FILES)),
             patch.object(run, "graph", return_value={"search": {"nodes": []}}),
-            patch.object(run, "discover", return_value={"candidates": tasks}),
+            patch.object(run, "discover", return_value=discovery(tasks)),
             patch.object(run, "reviews", return_value=WINDOW),
             patch.object(run, "project_approval", return_value=APPROVAL),
         ):

@@ -4,7 +4,10 @@ from collections import Counter
 from pathlib import PurePosixPath
 import os
 import re
+import shlex
 import subprocess
+
+from module_checks import hints
 
 MANIFESTS = set(
     """package.json pnpm-workspace.yaml pyproject.toml setup.py setup.cfg tox.ini
@@ -159,6 +162,12 @@ def map_repo(root, focus=None, term=None):
         ),
         "sections": {},
     }
+    def read_manifest(path):
+        if files[path] > 512000:
+            return ""
+        return git(top, "cat-file", "blob", f"{rev}:{path}").stdout.decode("utf-8")
+
+    result["check_hints"] = hints(prefix, files, selected, read_manifest)
     if term is not None:
         if not term.strip() or len(term) > 200 or "\n" in term:
             raise ValueError(
@@ -218,6 +227,8 @@ def display(result):
         print(
             f"Literal search: {result['searched_source_files']}/{result['eligible_source_files']} eligible source files"
         )
+    for hint in result["check_hints"]:
+        print(f"Check hint (unrun) | cwd: {hint['cwd']} | {shlex.join(hint['argv'])} | source: {hint['source']}")
     for label, group in result["sections"].items():
         print(f"\n{label} ({group['count']}, showing {len(group['paths'])})")
         for path in group["paths"]:

@@ -1,0 +1,20 @@
+name: Pull request checks
+on:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Unit tests
+        run: python3 -m unittest discover -s tests
+      - name: Check contribution attribution
+        run: python3 skills/repo-neighbor/scripts/quota.py check-pr templates/contribution.md
+      - name: Verify archived campaign rounds
+        run: python3 campaign/verify_week.py 2026-W48
