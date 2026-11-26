@@ -24,6 +24,10 @@ python3 skills/repo-neighbor/scripts/quota.py find --language Python --limit 3
 
 The finder reads public GitHub issues and shows up to three candidates with evidence about the language, scope and checks. Change `Python` to the language you want. Discovery makes no model calls. [Supported stacks](docs/stacks.md)
 
+<p align="center">
+  <img src="docs/images/find-issue-soft.webp" width="330" alt="A magnifier over three task cards in a blue-gray tray." />
+</p>
+
 ![Example pull request: fix a broken documentation link. Checks passed and the change is ready for maintainer review.](docs/images/review-example.webp)
 
 For a coordinated session, reserve your issue on the weekly board and wait for confirmation. Give your agent the issue link and a time box. For example:
@@ -31,6 +35,10 @@ For a coordinated session, reserve your issue on the weekly board and wait for c
 > I have 45 minutes. Use Repo Neighbor to fix one documentation issue. Keep the last 10 minutes for checks. Show me the diff and PR description before posting.
 
 ## Connect your agent
+
+<p align="center">
+  <img src="docs/images/connect-agent-soft.webp" width="330" alt="A chat tile and a terracotta Return key in a blue-gray holder." />
+</p>
 
 | | Agent instructions |
 |---|---|
@@ -66,6 +74,10 @@ Validate your final body with `python3 skills/repo-neighbor/scripts/quota.py che
 ## Run a community week
 
 Members nominate and vote on repositories. Each member starts with one vote and earns more through distinct tasks accepted upstream. Weekly reports link the original proposal to its PRs and estimated engineering value. Members can also contribute capped inference or share a scientific computation across computers.
+
+<p align="center">
+  <img src="docs/images/community-week-soft.webp" width="330" alt="A blue-gray ballot box with two cream voting cards and colored seals." />
+</p>
 
 [Voting rules](docs/community.md) · [Project allocation and volunteer computing](docs/allocation.md) · [Task reservations and handoffs](campaigns/guide.md) · [Sponsor inference](sponsorship/README.md)
 
