@@ -273,6 +273,15 @@ class CampaignTests(TestCase):
                 "Проверка редактора",
                 (run.DIR / "archive/2026-W47/board.ru.md").read_text(),
             )
+            archive = run.DIR / "archive/2026-W47"
+            selection = run.load(archive / "selection.json", [])
+            self.assertEqual([row["repo"] for row in selection], [REPO])
+            editor["weeks"]["2026-W47"]["exclude"] = [REPO.upper()]
+            run.save(run.DIR / "editor.json", editor)
+            run.run(NOW)
+            self.assertEqual(run.load(archive / "projects.json", None), [])
+            self.assertEqual(run.load(archive / "selection.json", []), selection)
+            self.assertEqual(run.load(run.DIR / "ledger.json", {})["claims"], state["claims"])
             run.run(NOW + timedelta(hours=4))
             self.assertEqual(
                 run.load(run.DIR / "ledger.json", {})["claims"][0]["status"], "expired"

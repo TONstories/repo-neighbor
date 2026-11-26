@@ -25,6 +25,8 @@ For selection and new reservations, a project needs at least 100 GitHub stars an
 
 Weekly `discovery_seeds` in [the editor file](editor.json) extend the GitHub search. Seeded projects go through the same eligibility, workload and review checks as search results. Seeds carry no voting weight.
 
+An `exclude` entry in the editor file removes a repository from the active board and from new selection. Use the weekly `exclude` list for a single campaign. Earlier selections and existing reservation records stay in the archive and ledger.
+
 Monday at 09:15 Moscow time is the intended release. GitHub can delay scheduled jobs. Each new project needs at least two distinct tasks. We compare mentioned file paths and similar titles; the contributor must confirm the change is independent. A repository without sufficient review bandwidth waits. External PR decisions over the last 28 days set the weekly limit: round up decisions/4, clamp to 1–5, subtract current open external PRs and unsubmitted active reservations. Owner/member/collaborator PRs and recognized bot accounts are excluded. A bounded review sample with incomplete coverage yields zero slots. An open submitted PR counts only through the upstream queue. Results follow the original week after merge. The board is a snapshot; command processing checks live eligibility. The additional reconciliation runs every six hours.
 
 ## Community allocation / Распределение / Selección

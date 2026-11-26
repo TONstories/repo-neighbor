@@ -21,8 +21,11 @@
       }
     },
     "2026-W48": {
+      "exclude": [
+        "nowledge-co/hawdb"
+      ],
       "discovery_seeds": [
-        "nowledge-co/hawdb",
+        "orwa-mahmoud/nightshift",
         "oras-project/oras-go"
       ]
     }

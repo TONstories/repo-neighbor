@@ -569,6 +569,7 @@ def run(now):
     week = week_key(now)
     editor = load(DIR / "editor.json", {})
     override = editor["weeks"].get(week, {})
+    excluded = [*editor.get("exclude", []), *override.get("exclude", [])]
     folder = DIR / "archive" / week
     folder.mkdir(parents=True, exist_ok=True)
     board = folder / "projects.json"
@@ -627,7 +628,7 @@ def run(now):
     audit = load(audit_path, dict(version=version, shares=balance.SHARES, prior=[p["repo"] for p in selection], rounds=[]))
     before_search = time.monotonic()
     first_call = len(GRAPH_CALLS)
-    projects = select(now, {}, unfinished, claims) if unfinished else []
+    projects = select(now, {"exclude": excluded}, unfinished, claims) if unfinished else []
     vacancies = max(0, limit - len(projects))
     if not selection or not unfinished or (vacancies and len(projects) < len(unfinished)):
         past = [t for k, e in ledger["elections"].items() if k <= week for t in e.get("tracks", {}).values()]
@@ -639,7 +640,7 @@ def run(now):
                     past[project.get("track", "general")] += balance.workload(project)
             for project in selection:
                 past[project.get("track", "general")] += balance.workload(project)
-        options = dict(version=audit["version"], replacement=bool(selection), proposals=election["nominees"], exclude=[p["repo"] for p in selection], ranked=community.ranking(election),
+        options = dict(version=audit["version"], replacement=bool(selection), proposals=election["nominees"], exclude=[*excluded, *(p["repo"] for p in selection)], ranked=community.ranking(election),
                        limit=1 if selection and not unfinished else vacancies, history=past,
                        discovery_seeds=override.get("discovery_seeds", []))
         additions = select(now, options, None, claims)
