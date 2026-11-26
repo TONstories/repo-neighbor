@@ -19,6 +19,12 @@
           "es": "Evitar efectos secundarios al importar ejemplos de SQLAlchemy y verificar los fallos de conexión."
         }
       }
+    },
+    "2026-W48": {
+      "discovery_seeds": [
+        "nowledge-co/hawdb",
+        "oras-project/oras-go"
+      ]
     }
   }
 }

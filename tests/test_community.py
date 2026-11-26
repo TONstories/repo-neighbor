@@ -19,7 +19,7 @@ import community as c
 import sponsor
 import run
 from finder import assess, discover
-from test_campaign import ROW, REPO, META, FILES, NOW, ISSUE, WINDOW
+from test_campaign import ROW, REPO, META, FILES, NOW, ISSUE, WINDOW, APPROVAL
 
 
 class ElectionTests(unittest.TestCase):
@@ -107,6 +107,7 @@ class ElectionTests(unittest.TestCase):
             patch.object(run, "live_issue", return_value=ROW),
             patch.object(run, "metadata", return_value=(META, FILES)),
             patch.object(run, "reviews", return_value=WINDOW),
+            patch.object(run, "project_approval", return_value=APPROVAL),
         ):
             self.assertIn(
                 "overlapping",
@@ -129,13 +130,14 @@ class ElectionTests(unittest.TestCase):
         parent = dict(
             ROW,
             subIssues={"nodes": [{"url": child["url"], "state": "OPEN"}]},
-            repository={"nameWithOwner": REPO},
+            repository={"nameWithOwner": REPO, "stargazerCount": 100},
         )
         self.assertIsNone(assess(parent, REPO, META, FILES, NOW.date()))
         with (
             patch("finder.graph", return_value={"search": {"nodes": [parent]}}),
             patch("finder.live_issues", return_value=[child]),
             patch("finder.metadata", return_value=(META, FILES)),
+            patch("finder.project_approval", return_value=APPROVAL),
         ):
             picks = discover([], None, 4, NOW.date())["candidates"]
         self.assertEqual([row["url"] for row in picks], [child["url"]])
@@ -150,6 +152,7 @@ class ElectionTests(unittest.TestCase):
             patch.object(run, "graph", return_value={"search": {"nodes": []}}),
             patch.object(run, "discover", return_value={"candidates": tasks}),
             patch.object(run, "reviews", return_value=WINDOW),
+            patch.object(run, "project_approval", return_value=APPROVAL),
         ):
             selected = run.select(
                 NOW, {"exclude": [], "override": {}, "ranked": [REPO.upper()]}, None, []

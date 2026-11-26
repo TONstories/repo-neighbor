@@ -2,6 +2,8 @@
 
 [Подать заявку / Submit a proposal / Enviar propuesta](https://github.com/TONstories/repo-neighbor/issues/new?template=maintainer-proposal.yml) · [Голосование](../campaigns/reports/README.md)
 
+Для отбора нужно от 100 звезд GitHub и хотя бы один PR с явным аппрувом сопровождающего за последние 72 часа. · At least 100 GitHub stars and a verified maintainer approval in the last 72 hours are required. · Se requieren al menos 100 estrellas en GitHub y una aprobación verificada de un mantenedor en las últimas 72 horas.
+
 ## Русский
 
 1. **Подготовьте задачи в своем репозитории.** Для недельного отбора нужны открытый активный репозиторий с распознанной лицензией и хотя бы две независимые подходящие задачи. Дайте на них прямые ссылки. Если вы действительно приглашаете внешних участников, отметьте задачи меткой `help wanted` или `good first issue`: по этим меткам работает поиск. Проверьте, что задачи свободны, а правила проекта допускают предложенный формат работы и указание Repo Neighbor в PR.

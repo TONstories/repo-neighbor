@@ -21,6 +21,10 @@ rn submit https://github.com/OWNER/PROJECT/issues/123 https://github.com/OWNER/P
 
 ## How a week works
 
+For selection and new reservations, a project needs at least 100 GitHub stars and a verified maintainer approval on an open or merged PR in the past 72 hours. The current board drops projects that no longer qualify and fills available places from the eligible pool. Existing reservations and tracked PRs retain their original history. [Selection and roadmap](../docs/roadmap.md)
+
+Weekly `discovery_seeds` in [the editor file](editor.json) extend the GitHub search. Seeded projects go through the same eligibility, workload and review checks as search results. Seeds carry no voting weight.
+
 Monday at 09:15 Moscow time is the intended release. GitHub can delay scheduled jobs. Each new project needs at least two distinct tasks. We compare mentioned file paths and similar titles; the contributor must confirm the change is independent. A repository without sufficient review bandwidth waits. External PR decisions over the last 28 days set the weekly limit: round up decisions/4, clamp to 1–5, subtract current open external PRs and unsubmitted active reservations. Owner/member/collaborator PRs and recognized bot accounts are excluded. A bounded review sample with incomplete coverage yields zero slots. An open submitted PR counts only through the upstream queue. Results follow the original week after merge. The board is a snapshot; command processing checks live eligibility. The additional reconciliation runs every six hours.
 
 ## Community allocation / Распределение / Selección

@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Replace OWNER/REPO in the title with the GitHub repository. Answer in English, Russian or Spanish.
+        Replace OWNER/REPO in the title. The repository needs 100 GitHub stars and a verified maintainer PR approval within the last 72 hours. Answer in English, Russian or Spanish.
         В заголовке замените OWNER/REPO на адрес репозитория без https://github.com/. Можно отвечать по-русски.
         Sustituye OWNER/REPO en el título. Puedes responder en español.
         [Guide and example / Инструкция и пример / Guía](https://github.com/TONstories/repo-neighbor/blob/main/docs/maintainers.md)

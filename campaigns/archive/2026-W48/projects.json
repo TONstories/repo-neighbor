@@ -1,234 +1,145 @@
 [
   {
-    "repo": "AppsYogi-com/ComposeYogi",
+    "recent_approval": {
+      "pr": "https://github.com/nowledge-co/hawdb/pull/1951",
+      "review": "https://github.com/nowledge-co/hawdb/pull/1951#pullrequestreview-6051544869",
+      "submitted_at": "2026-11-25T03:43:39Z"
+    },
+    "repo": "nowledge-co/hawdb",
     "review_limit": 3,
+    "stars": 216,
     "tasks": [
       {
         "checks": [
-          "npm test (package.json)"
+          "cargo test --locked -p hawdb-storage (CONTRIBUTING.md)"
         ],
         "evidence": [
-          "components/compose/ProjectSelector.tsx"
+          "python",
+          "src/api/database_maintenance.rs"
         ],
         "fit": "fits",
         "kind": "code",
-        "license": "MIT",
+        "license": "Apache-2.0",
         "minutes": [
           45,
           120
         ],
         "parent": null,
-        "repo": "AppsYogi-com/ComposeYogi",
+        "recent_approval": {
+          "pr": "https://github.com/nowledge-co/hawdb/pull/1951",
+          "review": "https://github.com/nowledge-co/hawdb/pull/1951#pullrequestreview-6051544869",
+          "submitted_at": "2026-11-25T03:43:39Z"
+        },
+        "repo": "nowledge-co/hawdb",
         "scope": [
-          "blob/main/ARCHITECTURE.md",
-          "components/compose/ProjectSelector.tsx",
-          "lib/persistence/db.ts",
-          "lib/templates/loader.ts",
-          "tests/persistence.test.ts"
+          "src/api/database_maintenance.rs"
         ],
-        "score": 78,
+        "score": 84,
         "signals": [
           "good first issue"
         ],
         "stack": [
-          "TypeScript"
+          "Python",
+          "Rust"
         ],
         "stack_source": "issue",
-        "title": "Add \"Duplicate project\" to the project menu",
+        "stars": 216,
+        "title": "python: expose Database.checkpoint()",
         "unknown": [
           "Confirm AI and attribution policy, current ownership and actual scope."
         ],
-        "updated": "2026-08-29T07:18:54Z",
-        "url": "https://github.com/AppsYogi-com/ComposeYogi/issues/23"
+        "updated": "2026-11-20T11:39:05Z",
+        "url": "https://github.com/nowledge-co/hawdb/issues/1455"
       },
       {
         "checks": [
-          "npm test (package.json)"
+          "cargo test --locked -p hawdb-storage (CONTRIBUTING.md)"
         ],
         "evidence": [
-          "components/compose/TrackList.tsx"
+          "crates/plan-cypher/src/physical/explain.rs"
         ],
         "fit": "fits",
         "kind": "code",
-        "license": "MIT",
+        "license": "Apache-2.0",
         "minutes": [
           45,
           120
         ],
         "parent": null,
-        "repo": "AppsYogi-com/ComposeYogi",
+        "recent_approval": {
+          "pr": "https://github.com/nowledge-co/hawdb/pull/1951",
+          "review": "https://github.com/nowledge-co/hawdb/pull/1951#pullrequestreview-6051544869",
+          "submitted_at": "2026-11-25T03:43:39Z"
+        },
+        "repo": "nowledge-co/hawdb",
         "scope": [
-          "components/compose/TrackList.tsx",
-          "hooks/useVisibleClips.ts",
-          "lib/store/ui.ts"
+          "crates/plan-cypher/src/physical/explain.rs"
         ],
-        "score": 78,
+        "score": 84,
         "signals": [
           "good first issue"
         ],
         "stack": [
-          "TypeScript"
+          "Rust"
         ],
         "stack_source": "issue",
-        "title": "Rubber-band (marquee) selection on the timeline",
+        "stars": 216,
+        "title": "plan-cypher: EXPLAIN for VectorIndexScan always prints metric=cosine",
         "unknown": [
           "Confirm AI and attribution policy, current ownership and actual scope."
         ],
-        "updated": "2026-08-29T07:18:58Z",
-        "url": "https://github.com/AppsYogi-com/ComposeYogi/issues/25"
+        "updated": "2026-11-20T11:39:06Z",
+        "url": "https://github.com/nowledge-co/hawdb/issues/1478"
       },
       {
         "checks": [
-          "npm test (package.json)"
+          "cargo test --locked -p hawdb-storage (CONTRIBUTING.md)"
         ],
         "evidence": [
-          "app/sw.ts",
-          "Go"
+          "src/embedded_store/handle.rs"
         ],
         "fit": "fits",
         "kind": "code",
-        "license": "MIT",
+        "license": "Apache-2.0",
         "minutes": [
           45,
           120
         ],
         "parent": null,
-        "repo": "AppsYogi-com/ComposeYogi",
+        "recent_approval": {
+          "pr": "https://github.com/nowledge-co/hawdb/pull/1951",
+          "review": "https://github.com/nowledge-co/hawdb/pull/1951#pullrequestreview-6051544869",
+          "submitted_at": "2026-11-25T03:43:39Z"
+        },
+        "repo": "nowledge-co/hawdb",
         "scope": [
-          "app/sw.ts",
-          "components/OfflineIndicator.tsx",
-          "hooks/useOfflineStatus.ts"
+          "src/embedded_store/handle.rs"
         ],
         "score": 78,
-        "signals": [
-          "good first issue",
-          "help wanted"
-        ],
-        "stack": [
-          "TypeScript",
-          "Go"
-        ],
-        "stack_source": "issue",
-        "title": "Verify the full offline (PWA) workflow",
-        "unknown": [
-          "Confirm AI and attribution policy, current ownership and actual scope."
-        ],
-        "updated": "2026-08-29T07:19:24Z",
-        "url": "https://github.com/AppsYogi-com/ComposeYogi/issues/29"
-      }
-    ],
-    "track": "fun",
-    "window": {
-      "complete": true,
-      "decisions": 1,
-      "limit": 1,
-      "open": []
-    }
-  },
-  {
-    "repo": "TheZupZup/Linthra",
-    "review_limit": 3,
-    "tasks": [
-      {
-        "checks": [],
-        "evidence": [
-          "lib/features/player/widgets/queue_sheet.dart"
-        ],
-        "fit": "fits",
-        "kind": "code",
-        "license": "AGPL-3.0",
-        "minutes": [
-          45,
-          120
-        ],
-        "parent": null,
-        "repo": "TheZupZup/Linthra",
-        "scope": [
-          "lib/features/player/widgets/queue_sheet.dart"
-        ],
-        "score": 76,
         "signals": [
           "good first issue"
         ],
         "stack": [
-          "Dart"
+          "Rust"
         ],
         "stack_source": "issue",
-        "title": "\"Save queue as playlist\" reports more songs than it saved when the queue has duplicates",
+        "stars": 216,
+        "title": "api: EmbeddedStoreHandle should expose its effective read limits (max_read_result_payload_bytes and row limits)",
         "unknown": [
-          "Confirm AI and attribution policy, current ownership and actual scope.",
-          "Inspect the project's CI for its exact check."
+          "Confirm AI and attribution policy, current ownership and actual scope."
         ],
-        "updated": "2026-10-10T23:07:03Z",
-        "url": "https://github.com/TheZupZup/Linthra/issues/882"
-      },
-      {
-        "checks": [],
-        "evidence": [],
-        "fit": "fits",
-        "kind": "code",
-        "license": "AGPL-3.0",
-        "minutes": [
-          45,
-          120
-        ],
-        "parent": null,
-        "repo": "TheZupZup/Linthra",
-        "scope": [],
-        "score": 66,
-        "signals": [
-          "help wanted"
-        ],
-        "stack": [
-          "Dart"
-        ],
-        "stack_source": "repository only",
-        "title": "[Flathub] Submit Linthra to Flathub",
-        "unknown": [
-          "Confirm AI and attribution policy, current ownership and actual scope.",
-          "Inspect the project's CI for its exact check.",
-          "Issue stack inferred from repository files."
-        ],
-        "updated": "2026-09-03T20:14:44Z",
-        "url": "https://github.com/TheZupZup/Linthra/issues/456"
-      },
-      {
-        "checks": [],
-        "evidence": [],
-        "fit": "fits",
-        "kind": "code",
-        "license": "AGPL-3.0",
-        "minutes": [
-          45,
-          120
-        ],
-        "parent": null,
-        "repo": "TheZupZup/Linthra",
-        "scope": [],
-        "score": 66,
-        "signals": [
-          "help wanted"
-        ],
-        "stack": [
-          "Dart"
-        ],
-        "stack_source": "repository only",
-        "title": "[Desktop] Add audio CD and music disc playback support",
-        "unknown": [
-          "Confirm AI and attribution policy, current ownership and actual scope.",
-          "Inspect the project's CI for its exact check.",
-          "Issue stack inferred from repository files."
-        ],
-        "updated": "2026-09-11T17:21:34Z",
-        "url": "https://github.com/TheZupZup/Linthra/issues/631"
+        "updated": "2026-11-20T11:39:10Z",
+        "url": "https://github.com/nowledge-co/hawdb/issues/1699"
       }
     ],
-    "track": "fun",
+    "track": "general",
     "window": {
       "complete": true,
-      "decisions": 2,
-      "limit": 1,
-      "open": []
+      "decisions": 194,
+      "limit": 3,
+      "open": [
+        "https://github.com/nowledge-co/hawdb/pull/1922"
+      ]
     }
   }
 ]

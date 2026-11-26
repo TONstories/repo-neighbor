@@ -7,7 +7,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "campaign"))
 import run
-from finder import assess
+from finder import assess, project_approval, recent_approval
 from quota import CREDIT
 
 NOW = datetime(2026, 11, 20, 10, tzinfo=timezone.utc)
@@ -15,6 +15,7 @@ REPO = "fixture/kit"
 ISSUE = "https://github.com/fixture/kit/issues/7"
 PR = "https://github.com/fixture/kit/pull/8"
 META = dict(
+    stargazerCount=100,
     licenseInfo={"spdxId": "MIT"},
     primaryLanguage={"name": "Rust"},
     pushedAt="2026-11-19",
@@ -38,6 +39,7 @@ ROW = dict(
     closedByPullRequestsReferences={"totalCount": 0},
 )
 WINDOW = {"complete": True, "limit": 2, "open": ["other"], "decisions": 8}
+APPROVAL = dict(pr=PR, review=PR + "#pullrequestreview-1", submitted_at=NOW.isoformat())
 
 
 class FinderTests(TestCase):
@@ -97,10 +99,11 @@ class FinderTests(TestCase):
     def test_deduplication_and_repository_filters(self):
         from finder import discover
 
-        row = dict(ROW, repository={"nameWithOwner": REPO})
+        row = dict(ROW, repository={"nameWithOwner": REPO, "stargazerCount": 100})
         with (
             patch("finder.graph", return_value={"search": {"nodes": [row, row]}}),
             patch("finder.metadata", return_value=(META, FILES)),
+            patch("finder.project_approval", return_value=APPROVAL),
         ):
             self.assertEqual(len(discover([], None, 5, NOW.date())["candidates"]), 1)
         for meta in (
@@ -109,6 +112,32 @@ class FinderTests(TestCase):
             dict(META, pushedAt="2020-01-01"),
         ):
             self.assertIsNone(assess(ROW, REPO, meta, FILES, NOW.date()))
+
+    def test_minimum_stars_and_recent_approval_cutoff(self):
+        self.addCleanup(recent_approval.cache_clear)
+        review = {
+            "url": APPROVAL["review"], "state": "APPROVED",
+            "authorAssociation": "MEMBER", "author": {"login": "maintainer", "__typename": "User"},
+        }
+        cutoff = NOW - timedelta(days=3)
+        for stars, at, state, decision, passes in (
+            (99, cutoff, "APPROVED", None, False),
+            (100, cutoff, "APPROVED", None, True),
+            (100, cutoff - timedelta(seconds=1), "APPROVED", None, False),
+            (101, NOW + timedelta(seconds=1), "APPROVED", None, False),
+            (101, NOW, "DISMISSED", None, False),
+            (101, NOW, "APPROVED", "CHANGES_REQUESTED", False),
+        ):
+            recent_approval.cache_clear()
+            pr = dict(
+                url=PR, updatedAt=NOW.isoformat(), reviewDecision=decision, author={"login": "contributor"},
+                latestOpinionatedReviews={"nodes": [dict(review, submittedAt=at.isoformat(), state=state)]},
+            )
+            response = {"repository": {"pullRequests": {"nodes": [pr], "pageInfo": {"hasNextPage": False}}}}
+            with self.subTest(stars=stars, at=at, state=state, decision=decision), patch("finder.graph", return_value=response) as graph:
+                self.assertEqual(bool(project_approval(REPO, dict(META, stargazerCount=stars), NOW)), passes)
+                if stars < 100:
+                    graph.assert_not_called()
 
 
 class CampaignTests(TestCase):
@@ -119,6 +148,7 @@ class CampaignTests(TestCase):
             ("reviews", WINDOW),
             ("metadata", (META, FILES)),
             ("live_issue", ROW),
+            ("project_approval", APPROVAL),
         ):
             mock = patch.object(run, name, return_value=value)
             mock.start()
@@ -143,6 +173,16 @@ class CampaignTests(TestCase):
         self.assertIn("Reserved", self.send(who="bob"))
         self.assertIn("Reserved", self.send(now=NOW + timedelta(hours=3)))
         self.assertEqual(run.slots(dict(WINDOW, complete=False), [], NOW, REPO), 0)
+
+    def test_expired_approval_removes_project_and_prevents_new_claim(self):
+        self.assertIn("Reserved", self.send())
+        with (
+            patch.object(run, "project_approval", return_value=None),
+            patch.object(run, "live_issues", return_value=[ROW]),
+        ):
+            self.assertIn("Released", self.send("release", arg=""))
+            self.assertIn("verified PR approval", self.send(who="bob"))
+            self.assertEqual(run.select(NOW, {}, self.projects, []), [])
 
     def test_submit_and_late_merge(self):
         self.send()

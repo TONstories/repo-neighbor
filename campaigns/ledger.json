@@ -21,11 +21,13 @@
       "nominees": {},
       "selected": [
         "AppsYogi-com/ComposeYogi",
-        "TheZupZup/Linthra"
+        "TheZupZup/Linthra",
+        "nowledge-co/hawdb"
       ],
       "tracks": {
         "AppsYogi-com/ComposeYogi": "fun",
-        "TheZupZup/Linthra": "fun"
+        "TheZupZup/Linthra": "fun",
+        "nowledge-co/hawdb": "general"
       },
       "votes": {}
     }

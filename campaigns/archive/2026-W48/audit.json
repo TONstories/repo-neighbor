@@ -79,6 +79,83 @@
         "weighinng/weighin": "Insufficient independent tasks",
         "zenos-org/zenos": "Insufficient independent tasks"
       }
+    },
+    {
+      "ballot": {
+        "nominees": {},
+        "votes": {}
+      },
+      "history": [
+        "general",
+        "general",
+        "fun",
+        "fun"
+      ],
+      "limit": 2,
+      "pool": [],
+      "selected": [],
+      "skipped": {
+        "cakeml/cakeml": "No review capacity",
+        "gnudatalanguage/gdl": "No eligible issues",
+        "infisical/infisical": "No eligible issues",
+        "leanprover-community/physlib": "No review capacity",
+        "m-igashi/mp3rgain": "No eligible issues",
+        "mlavik1/unityvolumerendering": "No eligible issues",
+        "music-assistant/mobile-app": "Insufficient independent tasks",
+        "mxsm/rocketmq-rust": "No review capacity",
+        "nipy/nibabel": "No eligible issues",
+        "nota-daw/nota": "No eligible issues",
+        "phasehq/console": "No eligible issues",
+        "prismorsec/prismor": "No eligible issues",
+        "rocq-prover/rocq": "No review capacity"
+      }
+    },
+    {
+      "ballot": {
+        "nominees": {},
+        "votes": {}
+      },
+      "history": [
+        "general",
+        "general",
+        "fun",
+        "fun"
+      ],
+      "limit": 2,
+      "pool": [
+        {
+          "repo": "nowledge-co/hawdb",
+          "tasks": [
+            {
+              "score": 84
+            },
+            {
+              "score": 84
+            }
+          ],
+          "track": "general"
+        }
+      ],
+      "selected": [
+        "nowledge-co/hawdb"
+      ],
+      "skipped": {
+        "cakeml/cakeml": "No review capacity",
+        "gnudatalanguage/gdl": "No eligible issues",
+        "infisical/infisical": "No eligible issues",
+        "leanprover-community/physlib": "No review capacity",
+        "m-igashi/mp3rgain": "No eligible issues",
+        "microsoft/terminal": "Insufficient independent tasks",
+        "mlavik1/unityvolumerendering": "No eligible issues",
+        "music-assistant/mobile-app": "Insufficient independent tasks",
+        "mxsm/rocketmq-rust": "No review capacity",
+        "nipy/nibabel": "No eligible issues",
+        "nota-daw/nota": "No eligible issues",
+        "oras-project/oras-go": "Insufficient independent tasks",
+        "phasehq/console": "No eligible issues",
+        "prismorsec/prismor": "No eligible issues",
+        "rocq-prover/rocq": "No review capacity"
+      }
     }
   ],
   "shares": {

@@ -19,6 +19,7 @@ sys.path.insert(
 )
 from finder import (
     GRAPH_CALLS,
+    MIN_REPO_STARS,
     URL,
     assess,
     discover,
@@ -26,6 +27,7 @@ from finder import (
     live_issue,
     live_issues,
     metadata,
+    project_approval,
     reviews,
 )
 
@@ -112,7 +114,7 @@ def select(now, editor, existing, claims):
         def add(name):
             if name.lower() in excluded or name.lower() in by_repo:
                 return
-            by_repo[name.lower()] = list(discover([], name, 60, today, 180, 10)["candidates"])
+            by_repo[name.lower()] = list(discover([], name, 60, today, 180, 10, as_of=now)["candidates"])
 
         for name in ranked:
             add(name)
@@ -123,18 +125,21 @@ def select(now, editor, existing, claims):
             items = [assess(issue, meta["nameWithOwner"], meta, files, today, minutes=180)
                      for issue in live_issues(proposal["tasks"][:18])] if meta else []
             by_repo[name] = [item for item in items if item]
+        for name in editor.get("discovery_seeds", []):
+            add(name)
         rotation = community.start(now).date().toordinal() // 7
         for tags in balance.TOPICS.values():
             tag = tags[rotation % len(tags)]
             query = "query($q:String!){search(type:REPOSITORY,first:3,query:$q){nodes{... on Repository{nameWithOwner}}}}"
-            for node in graph(query, q=f"topic:{tag} archived:false fork:false good-first-issues:>0 sort:updated")["search"]["nodes"]:
+            for node in graph(query, q=f"topic:{tag} stars:>={MIN_REPO_STARS} archived:false fork:false good-first-issues:>0 sort:updated")["search"]["nodes"]:
                 add(node["nameWithOwner"])
-        for row in discover([], None, 150, today, 180, 10)["candidates"]:
+        for row in discover([], None, 150, today, 180, 10, as_of=now)["candidates"]:
             by_repo.setdefault(row["repo"].lower(), []).append(row)
     else:
         for project in existing:
             name = project["repo"]
-            if name in by_repo or name.lower() in excluded:
+            key = name.casefold()
+            if key in by_repo or key in excluded:
                 continue
             fresh = []
             for row in live_issues([t["url"] for t in project["tasks"]]):
@@ -142,7 +147,7 @@ def select(now, editor, existing, claims):
                     item = assess(row, name, *metadata(name), today, minutes=180)
                     if item:
                         fresh.append(item)
-            by_repo[name] = fresh
+            by_repo[key] = fresh
     result = []
     for repo, rows in by_repo.items():
         if repo.lower() in excluded:
@@ -153,6 +158,10 @@ def select(now, editor, existing, claims):
             continue
         canonical = rows[0]["repo"]
         meta, files = metadata(canonical)
+        approval = project_approval(canonical, meta, now)
+        if not approval:
+            skipped[repo] = "Requires 100 GitHub stars and a verified PR approval in the last 72 hours"
+            continue
         category = balance.track(meta)
         if (existing is None and editor.get("version") == 2
             and proposals.get(repo.lower(), {}).get("source") != "maintainer"
@@ -179,7 +188,8 @@ def select(now, editor, existing, claims):
             continue
         if existing is None and editor.get("version") == 2:
             tasks = tasks[:max(2, 2 * slots(window, claims, now, repo))]
-        result.append(dict(repo=canonical, tasks=tasks, window=window,
+        result.append(dict(repo=canonical, tasks=tasks, window=window, stars=meta["stargazerCount"],
+                           recent_approval=approval,
                            track=category, review_limit=review_limit))
     if existing is not None:
         return result
@@ -312,7 +322,10 @@ def transition(command, user, claims, week, projects, now, requires=None, body="
     if blockers:
         return "Waiting for accepted prerequisites: " + " ".join(blockers)
     issue = live_issue(url)
-    eligible = issue and assess(issue, repo, *metadata(repo), now.date(), minutes=int(arg), reserve=0)
+    meta, files = metadata(repo)
+    if not project_approval(repo, meta, now):
+        return "The repository needs at least 100 GitHub stars and a verified PR approval in the last 72 hours."
+    eligible = issue and assess(issue, repo, meta, files, now.date(), minutes=int(arg), reserve=0)
     if not eligible:
         return "Issue is unavailable or does not fit this session."
     window = reviews(repo, now.date())
@@ -458,6 +471,11 @@ def render(week, projects, claims, now, override, lang):
                 "",
             ]
         )
+        if approval := p.get("recent_approval"):
+            lines.extend([
+                f"GitHub ★ {p['stars']} · [APPROVED]({approval['review']}) · {approval['submitted_at']}",
+                "",
+            ])
         for t in p["tasks"]:
             active = next(
                 (
@@ -590,7 +608,8 @@ def run(now):
             )
             ledger["receipts"][key] = community.command(
                 title, user, at, ledger, metadata, issue_number=request["number"],
-                body=request.get("body") or "", qualify=qualify
+                body=request.get("body") or "", qualify=qualify,
+                project_check=lambda repo, meta: project_approval(repo, meta, now),
             )
     election = ledger.setdefault("elections", {}).setdefault(
         week, {"nominees": {}, "votes": {}}
@@ -602,13 +621,15 @@ def run(now):
     limit = election.setdefault("capacity", balance.capacity(previous, claims, opening, last.get("capacity", 3)))
     selection_file = folder / "selection.json"
     selection = load(selection_file, load(board, []))
-    complete = bool(selection) and all(balance.finished(p, claims, now) for p in selection)
+    unfinished = [p for p in selection if not balance.finished(p, claims, now)]
     audit_path = folder / "audit.json"
     version = 2 if week >= community.RULES_WEEK else 1
     audit = load(audit_path, dict(version=version, shares=balance.SHARES, prior=[p["repo"] for p in selection], rounds=[]))
     before_search = time.monotonic()
     first_call = len(GRAPH_CALLS)
-    if not selection or complete:
+    projects = select(now, {}, unfinished, claims) if unfinished else []
+    vacancies = max(0, limit - len(projects))
+    if not selection or not unfinished or (vacancies and len(projects) < len(unfinished)):
         past = [t for k, e in ledger["elections"].items() if k <= week for t in e.get("tracks", {}).values()]
         if audit["version"] == 2:
             past = {category: 0 for category in balance.SHARES}
@@ -618,21 +639,20 @@ def run(now):
                     past[project.get("track", "general")] += balance.workload(project)
             for project in selection:
                 past[project.get("track", "general")] += balance.workload(project)
-        options = dict(version=audit["version"], replacement=complete, proposals=election["nominees"], exclude=[p["repo"] for p in selection], ranked=community.ranking(election),
-                       limit=1 if complete else limit, history=past)
+        options = dict(version=audit["version"], replacement=bool(selection), proposals=election["nominees"], exclude=[p["repo"] for p in selection], ranked=community.ranking(election),
+                       limit=1 if selection and not unfinished else vacancies, history=past,
+                       discovery_seeds=override.get("discovery_seeds", []))
         additions = select(now, options, None, claims)
         record = dict(ballot=copy.deepcopy({k: election[k] for k in ("nominees", "votes")}),
                       history=past, limit=options["limit"], pool=options["pool"],
                       skipped=options["skipped"], selected=[p["repo"] for p in additions])
         if audit["version"] == 2:
-            record.update(replacement=complete, reasons=options["reasons"])
+            record.update(replacement=options["replacement"], reasons=options["reasons"])
         if not audit["rounds"] or audit["rounds"][-1] != record:
             audit["rounds"].append(record)
         selection.extend(additions)
-        projects = additions
+        projects.extend(additions)
         save(selection_file, selection)
-    else:
-        projects = select(now, {}, [p for p in selection if not balance.finished(p, claims, now)], claims)
     save(audit_path, audit)
     calls = GRAPH_CALLS[first_call:]
     save(folder / "discovery-metrics.json", dict(seconds=round(time.monotonic()-before_search, 2),

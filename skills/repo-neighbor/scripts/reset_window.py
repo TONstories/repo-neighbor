@@ -6,7 +6,7 @@ import re
 import sqlite3
 import sys
 from contextlib import closing
-from datetime import date, datetime, timezone
+from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
@@ -20,7 +20,7 @@ import uuid
 from urllib.error import HTTPError
 from urllib.request import HTTPCookieProcessor, HTTPRedirectHandler, Request, build_opener
 
-from finder import URL, assess, live_issue, metadata
+from finder import URL, assess, live_issue, metadata, project_approval
 
 DURATIONS = {"five-hour": (300, 300), "weekly": (10080, 10080), "monthly": (40320, 44640)}
 
@@ -108,8 +108,11 @@ def decision(data, period, lead_hours, reserve, now):
 def prepare(url, minutes):
     issue = live_issue(url)
     repo = URL.fullmatch(url)[1]
-    item = issue and assess(issue, repo, *metadata(repo), date.today(), minutes=minutes,
-                            reserve=0, kind="docs")
+    now = datetime.now(timezone.utc)
+    meta, files = metadata(repo)
+    approval = issue and project_approval(repo, meta, now)
+    item = approval and assess(issue, repo, meta, files, now.date(), minutes=minutes,
+                               reserve=0, kind="docs")
     if not item or item["fit"] != "fits":
         raise ValueError("The documentation issue is unavailable or exceeds the session.")
     return ("Draft a documentation change for human review using only the supplied public data. "

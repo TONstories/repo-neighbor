@@ -56,7 +56,8 @@ def weight(user, claims, opening, mobile=()):
     return credit_weight(credited_issues(user, claims, opening, mobile), version)
 
 
-def command(title, user, at, ledger, repo_lookup, issue_number=None, *, body="", qualify=None):
+def command(title, user, at, ledger, repo_lookup, issue_number=None, *, body="", qualify=None,
+            project_check=None):
     verb, _, target = title[3:].partition(" ")
     if verb == "pledge":
         if not re.fullmatch(r"[a-f0-9]{32}", target):
@@ -92,6 +93,8 @@ def command(title, user, at, ledger, repo_lookup, issue_number=None, *, body="",
         canonical = meta["nameWithOwner"].lower()
         if canonical in ballot["nominees"]:
             return "Already nominated."
+        if project_check and not project_check(canonical, meta):
+            return "The repository needs at least 100 GitHub stars and a verified PR approval in the last 72 hours."
         proposal = {}
         if verb == "propose":
             expected = ("Product", "Roadmap", "Weekly outcome", "Work packages", "Review and rules", "Review capacity", "Permission")

@@ -5,10 +5,12 @@ import math
 import re
 import subprocess
 import time
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from functools import lru_cache
 
 SLUG = r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+"
+MIN_REPO_STARS = 100
+APPROVAL_WINDOW = timedelta(days=3)
 URL = re.compile(r"https://github\.com/(" + SLUG + r")/(issues|pull)/([1-9][0-9]*)")
 BLOCK = {"blocked", "wontfix", "duplicate", "in progress", "invalid", "claimed"}
 LANGS = {
@@ -60,7 +62,7 @@ FILES = (
         "yarn.lock",
     ]
 )
-META = """repositoryTopics(first:50){nodes{topic{name}}} nameWithOwner isPrivate isFork isArchived isDisabled pushedAt
+META = """repositoryTopics(first:50){nodes{topic{name}}} nameWithOwner stargazerCount isPrivate isFork isArchived isDisabled pushedAt
  licenseInfo{spdxId} primaryLanguage{name} defaultBranchRef{name} """ + " ".join(
     'f%d:object(expression:"HEAD:%s"){... on Blob{%s}}'
     % (
@@ -156,6 +158,55 @@ def live_issues(urls):
     return [(data[f"i{i}"] or {}).get("issue") for i in range(len(fields))]
 
 
+def has_minimum_stars(meta):
+    stars = meta.get("stargazerCount")
+    return type(stars) is int and stars >= MIN_REPO_STARS
+
+
+def project_approval(repo, meta, as_of):
+    if has_minimum_stars(meta):
+        return recent_approval(meta.get("nameWithOwner", repo).casefold(), as_of)
+    return None
+
+
+@lru_cache(maxsize=128)
+def recent_approval(repo, as_of):
+    owner, name = repo.casefold().split("/")
+    cutoff = as_of - APPROVAL_WINDOW
+    query = """query($o:String!,$n:String!,$after:String){
+      repository(owner:$o,name:$n){pullRequests(first:25,after:$after,states:[OPEN,MERGED],
+        orderBy:{field:UPDATED_AT,direction:DESC}){
+        nodes{url updatedAt reviewDecision author{login}
+          latestOpinionatedReviews(first:20){nodes{url state submittedAt authorAssociation author{login __typename}}}}
+        pageInfo{endCursor hasNextPage}}}}"""
+    args = {"o": owner, "n": name}
+    for _ in range(4):
+        repository = graph(query, **args)["repository"]
+        if repository is None:
+            return None
+        page = repository["pullRequests"]
+        for pr in page["nodes"]:
+            if datetime.fromisoformat(pr["updatedAt"].replace("Z", "+00:00")) < cutoff:
+                return None
+            if pr["reviewDecision"] == "CHANGES_REQUESTED":
+                continue
+            author = (pr["author"] or {}).get("login", "").casefold()
+            for review in (pr["latestOpinionatedReviews"] or {}).get("nodes", []):
+                reviewer = review["author"] or {}
+                if (review["state"] != "APPROVED" or not review["submittedAt"]
+                    or review["authorAssociation"] not in {"OWNER", "MEMBER", "COLLABORATOR"}
+                    or reviewer.get("__typename") != "User" or not reviewer.get("login")
+                    or reviewer["login"].casefold() == author):
+                    continue
+                submitted = datetime.fromisoformat(review["submittedAt"].replace("Z", "+00:00"))
+                if cutoff <= submitted <= as_of:
+                    return {"pr": pr["url"], "review": review["url"], "submitted_at": review["submittedAt"]}
+        if not page["pageInfo"]["hasNextPage"]:
+            break
+        args["after"] = page["pageInfo"]["endCursor"]
+    return None
+
+
 @lru_cache(maxsize=64)
 def reviews(repo, today):
     owner, name = repo.split("/")
@@ -205,7 +256,7 @@ def reviews(repo, today):
 def assess(
     issue, repo, meta, files, today, languages=(), minutes=60, reserve=10, kind=None
 ):
-    if not issue or not meta:
+    if not issue or not has_minimum_stars(meta):
         return None
     labels = {n["name"].lower() for n in issue["labels"]["nodes"]}
     parent = issue.get("parent")
@@ -378,7 +429,8 @@ def assess(
     )
 
 
-def discover(languages, repo, limit, today, minutes=60, reserve=10, kind=None):
+def discover(languages, repo, limit, today, minutes=60, reserve=10, kind=None, *, as_of=None):
+    as_of = as_of or datetime.now(timezone.utc)
     base = (
         "is:public is:issue is:open archived:false no:assignee -linked:pr updated:>="
         + (today - timedelta(days=90)).isoformat()
@@ -389,7 +441,7 @@ def discover(languages, repo, limit, today, minutes=60, reserve=10, kind=None):
     query = (
         "query($q:String!){search(type:ISSUE,first:35,query:$q){nodes{... on Issue{"
         + ISSUE
-        + " repository{nameWithOwner}}}}}"
+        + " repository{nameWithOwner stargazerCount}}}}}"
     )
     grouped = {}
     for scope in filters:
@@ -398,13 +450,16 @@ def discover(languages, repo, limit, today, minutes=60, reserve=10, kind=None):
                 "search"
             ]["nodes"]
             for row in rows:
-                if row:
+                if row and has_minimum_stars(row["repository"]):
                     grouped.setdefault(row["repository"]["nameWithOwner"], {})[
                         row["url"]
                     ] = row
     picks = []
     for name, issues in list(grouped.items())[:24]:
         meta, files = metadata(name)
+        approval = project_approval(name, meta, as_of)
+        if not approval:
+            continue
         children = list(
             dict.fromkeys(
                 child["url"]
@@ -423,6 +478,8 @@ def discover(languages, repo, limit, today, minutes=60, reserve=10, kind=None):
                 row, name, meta, files, today, languages, minutes, reserve, kind
             )
             if item:
+                item["stars"] = meta["stargazerCount"]
+                item["recent_approval"] = approval
                 picks.append(item)
     picks.sort(key=lambda i: (-i["score"], i["url"]))
     return {
