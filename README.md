@@ -1,4 +1,4 @@
-![Repo Neighbor: spare AI quota for open source. A quota meter leads to a pull request.](docs/images/quota-to-pr.webp)
+![A remaining AI quota gauge points to a checked pull request.](docs/images/quota-to-pr-soft.webp)
 
 **English** · [Русский](docs/ru.md) · [Español](docs/es.md) · [Deutsch](docs/de.md) · [Français](docs/fr.md) · [Português](docs/pt.md) · [简体中文](docs/zh.md) · [日本語](docs/ja.md) · [Українська](docs/uk.md)
 
