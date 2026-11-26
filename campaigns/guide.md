@@ -2,6 +2,8 @@
 
 [Current selection](README.md) · [Archive](archive) · [Editor](editor.json) · [Receipts](ledger.json)
 
+![Reserve a task, prepare the patch and submit it for review. · Забронируйте задачу, подготовьте правку и отправьте ее на ревью. · Reserva una tarea, prepara el cambio y envíalo a revisión.](../docs/images/reservation-workflow.webp)
+
 | English | Русский | Español |
 | --- | --- | --- |
 | Choose a task on the current board. Click **Reserve**, adjust the session length in minutes in the issue title, and submit it here. | Выберите задачу в выпуске, нажмите **Забронировать**, укажите длительность сессии в минутах в заголовке и создайте issue здесь. | Elige una tarea, pulsa **Reservar**, ajusta los minutos en el título y abre la incidencia aquí. |

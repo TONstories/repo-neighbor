@@ -31,6 +31,8 @@ Una traducción aceptada por otra persona aporta un crédito. La misma tarea con
 
 Use a project-week as the shared goal and upstream issue URLs as work-package IDs. For a larger issue the finder inspects GitHub sub-issues; it offers eligible open children instead of assigning the parent to several people. Each child has its own owner, scope, acceptance criteria and PR. For projects asking for one atomic PR, keep the issue with one contributor. Active claims and open reviews block duplicate tasks and known file overlaps; an expired reservation frees capacity. Coordinate unlisted file overlap with the maintainer before editing.
 
+![One shared goal splits into independent tasks that are submitted for review separately.](images/community-neighborhood.webp)
+
 The browser and Codex CLI reserve pilot translations in the same desk. GitHub issue commands also check that desk before confirming a reservation. One active hold per participant and at most three reserved or awaiting-review tasks per project apply across entry points. The maintainer can request a smaller limit for upstream work. The public GitHub ledger records only campaign actions and review metadata.
 
 Editors can declare ordering in the week's `requires` map in [editor.json](../campaigns/editor.json). Keys are task URLs, values are prerequisite task URLs. A dependent task can be claimed after those prerequisites have a registered merged PR. Keep dependencies acyclic. The live desk lists active owners, blockers, available work and next week's candidates.

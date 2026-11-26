@@ -1,5 +1,7 @@
 # Repo Neighbor — свободный лимит агента для open source
 
+![Остаток лимита идет на одну открытую задачу. Правку проверяют и отправляют в виде pull request.](images/repo-neighbor-hero.webp)
+
 **[Начать с телефона или компьютера](https://repo-neighbor-6b014c.appwrite.network/)**
 
 [Как быстро изучить репозиторий и проверить правку](repo-field-guide.md#русский)
@@ -17,7 +19,7 @@
 
 Предлагайте проекты и выбирайте работу на следующую неделю. Вес растет за принятые задачи. Отчеты показывают людей, PR и расчетную стоимость работы в долларах.
 
-![Карточки проектов, жетоны для голосования и урна с бюллетенем.](images/community-week-soft.webp)
+![Сообщество голосует за проекты, которые возьмет в работу на следующей неделе.](images/community-vote.webp)
 
 [Dashboard](../campaigns/reports/README.md) · [Voting](community.md) · [API donations](../sponsorship/README.md) · [Goose](../agents/goose.md) · [Mistral Vibe](../agents/vibe.md) · [Qwen Code](../agents/qwen-code.md) · [Zcode CLI](../agents/zcode.md)
 
@@ -44,13 +46,13 @@ python3 skills/repo-neighbor/scripts/quota.py find --language Python --limit 3
 
 Для поиска внутри знакомого проекта добавьте `--repo владелец/репозиторий`, подставив его адрес. Для обработки результатов скриптом добавьте `--json`.
 
-![Ящик с карточками задач и лупа над выбранной карточкой.](images/find-issue-soft.webp)
+![Поиск показывает три задачи, одну выбирают для более внимательной проверки.](images/find-an-issue.webp)
 
 ## Передайте задачу агенту
 
 Выберите инструкцию: [Codex](../agents/codex.md), [Claude Code](../agents/claude.md), [Gemini CLI](../agents/gemini.md), [Cursor](../agents/cursor.md), [GitHub Copilot](../agents/copilot.md).
 
-![Карточка чата, клавиша Enter и стопка карточек навыков.](images/connect-agent-soft.webp)
+![Через терминал агенту передают краткое описание задачи и список проверок.](images/connect-an-agent.webp)
 
 > У меня 25 минут на работу и 10 на проверку. Найди одну задачу по документации. Прочитай обсуждение и правила использования ИИ, проверь, что другой участник еще не начал работу. Подготовь правку, проверь пример и покажи мне diff и текст PR до отправки.
 
@@ -62,3 +64,5 @@ python3 skills/repo-neighbor/scripts/quota.py check-pr pr-body.md
 ```
 
 Если правила проекта несовместимы с этой атрибуцией, выберите другую задачу. Поиск и проверка текста сами по себе ничего не публикуют.
+
+![Пример. Исправьте битую ссылку в документации, проверьте правку и отправьте ее на ревью мейнтейнеру.](images/documentation-link-review.webp)

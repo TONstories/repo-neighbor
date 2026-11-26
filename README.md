@@ -1,4 +1,4 @@
-![From spare AI quota to a verified pull request, via a task card and a checkmark.](docs/images/quota-to-pr-soft.webp)
+![Spare AI quota goes toward one issue, then the change is checked and sent as a pull request.](docs/images/repo-neighbor-hero.webp)
 
 **English** · [Русский](docs/ru.md) · [Español](docs/es.md) · [Deutsch](docs/de.md) · [Français](docs/fr.md) · [Português](docs/pt.md) · [简体中文](docs/zh.md) · [日本語](docs/ja.md) · [Українська](docs/uk.md)
 
@@ -24,9 +24,7 @@ python3 skills/repo-neighbor/scripts/quota.py find --language Python --limit 3
 
 The finder reads public GitHub issues and shows up to three candidates with evidence about the language, scope and checks. Change `Python` to the language you want. Discovery makes no model calls. [Supported stacks](docs/stacks.md)
 
-![A magnifying glass over the selected card beside a box of tasks.](docs/images/find-issue-soft.webp)
-
-![Example pull request: fix a broken documentation link. Checks passed and the change is ready for maintainer review.](docs/images/review-example.webp)
+![An issue finder surfaces three candidates and one task is selected for a closer look.](docs/images/find-an-issue.webp)
 
 For a coordinated session, reserve your issue on the weekly board and wait for confirmation. Give your agent the issue link and a time box. For example:
 
@@ -34,7 +32,7 @@ For a coordinated session, reserve your issue on the weekly board and wait for c
 
 ## Connect your agent
 
-![A chat tile, a Return key and a stack of linked skill cards.](docs/images/connect-agent-soft.webp)
+![A terminal and Return key lead to a brief that gives the coding agent a scoped task and a checklist.](docs/images/connect-an-agent.webp)
 
 | | Agent instructions |
 |---|---|
@@ -67,11 +65,13 @@ Use the target project's template, link the issue and list the checks you actual
 
 Validate your final body with `python3 skills/repo-neighbor/scripts/quota.py check-pr pr-body.md`. If project policy rules out the attribution, choose a different task. [PR template](templates/contribution.md)
 
+![Example: repair a broken documentation link, run the checks and submit the fix for maintainer review.](docs/images/documentation-link-review.webp)
+
 ## Run a community week
 
 Members nominate and vote on repositories. Each member starts with one vote and earns more through distinct tasks accepted upstream. Weekly reports link the original proposal to its PRs and estimated engineering value. Members can also contribute capped inference or share a scientific computation across computers.
 
-![Project nominations, voting tokens and a ballot box.](docs/images/community-week-soft.webp)
+![The community votes on nominated projects to choose work for the next week.](docs/images/community-vote.webp)
 
 [Voting rules](docs/community.md) · [Project allocation and volunteer computing](docs/allocation.md) · [Task reservations and handoffs](campaigns/guide.md) · [Sponsor inference](sponsorship/README.md)
 
