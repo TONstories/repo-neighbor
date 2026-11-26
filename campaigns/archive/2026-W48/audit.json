@@ -156,6 +156,39 @@
         "prismorsec/prismor": "No eligible issues",
         "rocq-prover/rocq": "No review capacity"
       }
+    },
+    {
+      "ballot": {
+        "nominees": {},
+        "votes": {}
+      },
+      "history": [
+        "general",
+        "general",
+        "fun",
+        "fun",
+        "general"
+      ],
+      "limit": 1,
+      "pool": [],
+      "selected": [],
+      "skipped": {
+        "cakeml/cakeml": "No review capacity",
+        "gnudatalanguage/gdl": "No eligible issues",
+        "infisical/infisical": "No eligible issues",
+        "leanprover-community/physlib": "No review capacity",
+        "m-igashi/mp3rgain": "No eligible issues",
+        "mlavik1/unityvolumerendering": "No eligible issues",
+        "music-assistant/mobile-app": "Insufficient independent tasks",
+        "nilearn/nilearn": "Insufficient independent tasks",
+        "nipy/nibabel": "No eligible issues",
+        "nota-daw/nota": "No eligible issues",
+        "openssl/openssl": "Insufficient independent tasks",
+        "oras-project/oras-go": "Insufficient independent tasks",
+        "phasehq/console": "No eligible issues",
+        "prismorsec/prismor": "No eligible issues",
+        "rocq-prover/rocq": "No review capacity"
+      }
     }
   ],
   "shares": {
