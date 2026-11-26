@@ -17,9 +17,7 @@
 
 Предлагайте проекты и выбирайте работу на следующую неделю. Вес растет за принятые задачи. Отчеты показывают людей, PR и расчетную стоимость работы в долларах.
 
-<p align="center">
-  <img src="images/community-week-soft.webp" width="330" alt="Серо-голубая урна для голосования и две кремовые карточки с цветными печатями." />
-</p>
+![Карточки проектов, жетоны для голосования и урна с бюллетенем.](images/community-week-soft.webp)
 
 [Dashboard](../campaigns/reports/README.md) · [Voting](community.md) · [API donations](../sponsorship/README.md) · [Goose](../agents/goose.md) · [Mistral Vibe](../agents/vibe.md) · [Qwen Code](../agents/qwen-code.md) · [Zcode CLI](../agents/zcode.md)
 
@@ -46,17 +44,13 @@ python3 skills/repo-neighbor/scripts/quota.py find --language Python --limit 3
 
 Для поиска внутри знакомого проекта добавьте `--repo владелец/репозиторий`, подставив его адрес. Для обработки результатов скриптом добавьте `--json`.
 
-<p align="center">
-  <img src="images/find-issue-soft.webp" width="330" alt="Лупа над карточками задач в серо-голубом лотке." />
-</p>
+![Ящик с карточками задач и лупа над выбранной карточкой.](images/find-issue-soft.webp)
 
 ## Передайте задачу агенту
 
 Выберите инструкцию: [Codex](../agents/codex.md), [Claude Code](../agents/claude.md), [Gemini CLI](../agents/gemini.md), [Cursor](../agents/cursor.md), [GitHub Copilot](../agents/copilot.md).
 
-<p align="center">
-  <img src="images/connect-agent-soft.webp" width="330" alt="Карточка с символом чата и терракотовая клавиша Enter в серо-голубой подставке." />
-</p>
+![Карточка чата, клавиша Enter и стопка карточек навыков.](images/connect-agent-soft.webp)
 
 > У меня 25 минут на работу и 10 на проверку. Найди одну задачу по документации. Прочитай обсуждение и правила использования ИИ, проверь, что другой участник еще не начал работу. Подготовь правку, проверь пример и покажи мне diff и текст PR до отправки.
 
