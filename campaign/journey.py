@@ -41,16 +41,58 @@ def read_pr_history(endpoint, timestamp, *fields):
     ]
 
 
+def read_fork_workflow_runs(repo, number, pr):
+    head = pr["headRefOid"]
+    endpoint = f"repos/{repo}/actions/runs?event=pull_request&head_sha={head}&per_page=100"
+    try:
+        data = json.loads(subprocess.check_output(
+            ["gh", "api", endpoint], text=True, stderr=subprocess.PIPE, timeout=30,
+        ))
+        runs = data["workflow_runs"]
+        coverage = "partial" if data["total_count"] > len(runs) else "complete"
+    except (OSError, subprocess.SubprocessError, json.JSONDecodeError, KeyError, TypeError):
+        return {"status": "unknown", "action_required": []}
+
+    latest_runs = {}
+    head_repo = pr["headRepository"]["nameWithOwner"].casefold()
+    for run in runs:
+        if (run["event"] != "pull_request" or run["head_sha"] != head
+                or run["head_branch"] != pr["headRefName"]
+                or ((run["head_repository"] or {}).get("full_name") or "").casefold() != head_repo):
+            continue
+        linked = run["pull_requests"]
+        if linked and not any(row["number"] == number for row in linked):
+            continue
+        workflow = run["workflow_id"]
+        order = (run["run_number"], run["run_attempt"], bool(linked))
+        previous = latest_runs.get(workflow)
+        if previous is None or order > previous[0]:
+            latest_runs[workflow] = (order, run)
+
+    action_required = [
+        {
+            "name": run["name"], "url": run["html_url"],
+            "match": "pull_request" if run["pull_requests"] else "head",
+        }
+        for _, run in latest_runs.values()
+        if run["conclusion"] == "action_required"
+    ]
+    return {"status": coverage, "action_required": action_required}
+
+
 def read_pr(url, include_reviews=False):
     fields = "url,author,body,state,createdAt,closedAt,mergedAt,closingIssuesReferences"
     if include_reviews:
-        fields += ",headRefOid,statusCheckRollup"
+        fields += ",headRefOid,headRefName,headRepository,statusCheckRollup"
     pr = json.loads(subprocess.check_output(
         ["gh", "pr", "view", url, "--json", fields], text=True, timeout=30,
     ))
     if include_reviews:
         pr["checks_observed_at"] = datetime.now(timezone.utc).isoformat()
         match = URL.fullmatch(url)
+        head_repo = (pr.get("headRepository") or {}).get("nameWithOwner")
+        if pr["state"] == "OPEN" and head_repo and head_repo.casefold() != match[1].casefold():
+            pr["fork_workflow_runs"] = read_fork_workflow_runs(match[1], int(match[3]), pr)
         pr["review_history"] = read_pr_history(
             f"repos/{match[1]}/pulls/{match[3]}/reviews", "submitted_at", "state",
         )
@@ -81,6 +123,7 @@ def check_rollup(pr):
         "reported": len(pr["statusCheckRollup"]),
         "pending": pending,
         "needs_attention": needs_attention,
+        **({"workflow_runs": pr["fork_workflow_runs"]} if "fork_workflow_runs" in pr else {}),
     }
 
 
