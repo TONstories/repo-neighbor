@@ -1,0 +1,12 @@
+{
+  "title": "QA: hardware test matrix and CI",
+  "body": "> **Notice:** This issue tracks community testing/implementation work. Having an open issue does **not** mean this platform, GPU, display mode, remote, or service is currently supported. See `docs/COMPATIBILITY.md`.\n\n### Goal\nExpand GitHub Actions CI checks, anonymized hardware fixtures, and standardized manual hardware acceptance reporting.\n\n### Current Unknowns\nReal-world anonymized kscreen-doctor/vainfo/cec-ctl fixtures needed from AMD, NVIDIA, and mutable distros.\n\n### Acceptance Checks\nCI passes unit/syntax/shellcheck/C-syntax/link checks on every PR and clearly notes hardware testing remains manual.\n\n### Full Specification & Checklist\nSee the complete card (Scope / Non-goals, Prerequisites, Possible Files, Hardware Evidence Needed, Security Considerations, Documentation Expected) in [`docs/CONTRIBUTION_BOARD.md#15-qa-hardware-test-matrix-and-ci`](https://github.com/nissifield/NextGen_plasmabigscreen/blob/main/docs/CONTRIBUTION_BOARD.md#15-qa-hardware-test-matrix-and-ci).\n\n### Contributor Safety Reminders\n- Keep all NextGen changes inside user-space (`$HOME`); never edit `/usr` or `/etc`.\n- Run `./install.sh --dry-run` and unit tests before touching your live desktop.\n- Redact usernames, serial numbers, MAC addresses, tokens, and private server URLs from any pasted diagnostics.\n- Follow `CONTRIBUTING.md` (AI assistants are optional; see `CONTRIBUTOR_AI_PROMPT.md`).",
+  "html_url": "https://github.com/nissifield/NextGen_plasmabigscreen/issues/15",
+  "labels": [
+    "help wanted",
+    "good first issue",
+    "area:compatibility",
+    "area:docs",
+    "priority:P0"
+  ]
+}

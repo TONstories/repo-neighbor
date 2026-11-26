@@ -45,7 +45,7 @@ For a coordinated session, reserve your issue on the weekly board and wait for c
 <details>
 <summary>Search filters, portable briefs and local models</summary>
 
-Filter by repository with `--repo owner/name`, or use `--json` for scored results. A project needs at least 100 GitHub stars and a verified maintainer approval on an open or merged PR in the last 72 hours. The finder also checks invitation labels, project policy, file references and review capacity. Verify the scope in the target project. [Selection and roadmap](docs/roadmap.md)
+Filter by repository with `--repo owner/name`, or use `--json` for scored results. A project needs at least 100 GitHub stars and a verified maintainer approval on an open or merged PR in the last 72 hours. The finder recognizes common invitation labels, including `good-first-issue`, `beginner-friendly` and `help-wanted`. It checks project policy and file references. It reports incomplete search coverage and distinguishes estimated review capacity from an incomplete or failed review lookup. Its default weekly board estimate excludes reservations and maintainer-specific limits. Verify the scope in the target project. [Selection and roadmap](docs/roadmap.md)
 
 ```sh
 python3 skills/repo-neighbor/scripts/quota.py find --language Python --language TypeScript --minutes 90 --reserve 15 --kind tests --json

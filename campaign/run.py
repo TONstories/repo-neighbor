@@ -18,16 +18,21 @@ sys.path.insert(
     0, str(Path(__file__).resolve().parents[1] / "skills/repo-neighbor/scripts")
 )
 from finder import (
+    ApprovalCoverageIncomplete,
+    DEFAULT_BOARD_REVIEW_LIMIT,
     GRAPH_CALLS,
+    GitHubRateLimited,
     MIN_REPO_STARS,
     URL,
     assess,
+    complete_issue_discussion,
     discover,
     graph,
     live_issue,
     live_issues,
     metadata,
     project_approval,
+    required_actions,
     reviews,
 )
 
@@ -38,6 +43,7 @@ COMMAND = re.compile(
     r"(?:rn|qfg) (claim|release|submit|handoff|feedback) (https://github\.com/\S+)(?: (\S+))?", re.ASCII
 )
 UTC = timezone.utc
+APPROVAL_UNVERIFIED = "Could not verify recent PR approval because GitHub review coverage is incomplete."
 
 
 def load(path, default):
@@ -99,7 +105,8 @@ def qualify(source, repo, user, detail):
                for path, content in detail.items()):
         return False
     candidates = discover([], repo, 10, datetime.now(UTC).date(), 180, 10)["candidates"]
-    return any(compatible([a], b) for i, a in enumerate(candidates) for b in candidates[i+1:])
+    ready = [candidate for candidate in candidates if not required_actions(candidate)]
+    return any(compatible([a], b) for i, a in enumerate(ready) for b in ready[i+1:])
 
 
 def select(now, editor, existing, claims):
@@ -108,13 +115,25 @@ def select(now, editor, existing, claims):
     ranked = editor.get("ranked", [])
     by_repo = {}
     proposals = editor.get("proposals", {})
-    previous_caps = {p["repo"].casefold(): p.get("review_limit", 3) for p in existing or []}
+    previous_caps = {p["repo"].casefold(): p.get("review_limit", DEFAULT_BOARD_REVIEW_LIMIT) for p in existing or []}
     skipped = editor.setdefault("skipped", {})
     if existing is None:
+        coverage = editor["discovery"] = {}
+
+        def search(name, limit):
+            report = discover([], name, limit, today, 180, 10, report_errors=True, as_of=now)
+            source = name.casefold() if name else "global"
+            coverage[source] = {key: report[key] for key in (
+                "search_status", "coverage_limits", "api_errors", "queries_completed",
+            )}
+            if "github_rate_limit" in report["coverage_limits"]:
+                raise GitHubRateLimited(f"GitHub API rate limit during weekly discovery ({source})")
+            return report["candidates"]
+
         def add(name):
             if name.lower() in excluded or name.lower() in by_repo:
                 return
-            by_repo[name.lower()] = list(discover([], name, 60, today, 180, 10, as_of=now)["candidates"])
+            by_repo[name.lower()] = list(search(name, 60))
 
         for name in ranked:
             add(name)
@@ -133,7 +152,7 @@ def select(now, editor, existing, claims):
             query = "query($q:String!){search(type:REPOSITORY,first:3,query:$q){nodes{... on Repository{nameWithOwner}}}}"
             for node in graph(query, q=f"topic:{tag} stars:>={MIN_REPO_STARS} archived:false fork:false good-first-issues:>0 sort:updated")["search"]["nodes"]:
                 add(node["nameWithOwner"])
-        for row in discover([], None, 150, today, 180, 10, as_of=now)["candidates"]:
+        for row in search(None, 150):
             by_repo.setdefault(row["repo"].lower(), []).append(row)
     else:
         for project in existing:
@@ -154,11 +173,23 @@ def select(now, editor, existing, claims):
             skipped[repo] = "Already selected"
             continue
         if not rows:
-            skipped[repo] = "No eligible issues"
+            status = editor.get("discovery", {}).get(repo, {}).get("search_status")
+            skipped[repo] = {
+                "partial": "Issue search incomplete",
+                "api_error": "Issue search failed",
+            }.get(status, "No eligible issues")
             continue
         canonical = rows[0]["repo"]
         meta, files = metadata(canonical)
-        approval = project_approval(canonical, meta, now)
+        if meta.get("incomplete_policy_files"):
+            skipped[repo] = "Contribution rules could not be verified"
+            continue
+        try:
+            approval = project_approval(canonical, meta, now)
+        except ApprovalCoverageIncomplete:
+            skipped[repo] = APPROVAL_UNVERIFIED
+            editor.setdefault("approval_unverified", []).append(repo)
+            continue
         if not approval:
             skipped[repo] = "Requires 100 GitHub stars and a verified PR approval in the last 72 hours"
             continue
@@ -170,7 +201,7 @@ def select(now, editor, existing, claims):
             skipped[repo] = "No published contribution rules or verified maintainer proposal"
             continue
         tasks = []
-        for row in rows:
+        for row in sorted(rows, key=lambda candidate: bool(required_actions(candidate))):
             if category == "defensive-security" and row.get("kind") != "docs":
                 continue
             if row["url"] not in [t["url"] for t in tasks] and compatible(tasks, row):
@@ -180,11 +211,14 @@ def select(now, editor, existing, claims):
         if len(tasks) < (2 if existing is None else 1):
             skipped[repo] = "Insufficient independent tasks"
             continue
-        review_limit = proposals.get(repo.casefold(), {}).get("review_limit", previous_caps.get(repo.casefold(), 3))
+        if existing is None and sum(not required_actions(task) for task in tasks) < 2:
+            skipped[repo] = "Insufficient independent tasks ready to reserve"
+            continue
+        review_limit = proposals.get(repo.casefold(), {}).get("review_limit", previous_caps.get(repo.casefold(), DEFAULT_BOARD_REVIEW_LIMIT))
         window = reviews(repo, today)
         window = dict(window, limit=min(window["limit"], review_limit))
         if existing is None and not slots(window, claims, now, repo):
-            skipped[repo] = "No review capacity"
+            skipped[repo] = "No review capacity" if window["complete"] else "Review capacity could not be verified"
             continue
         if existing is None and editor.get("version") == 2:
             tasks = tasks[:max(2, 2 * slots(window, claims, now, repo))]
@@ -323,14 +357,28 @@ def transition(command, user, claims, week, projects, now, requires=None, body="
         return "Waiting for accepted prerequisites: " + " ".join(blockers)
     issue = live_issue(url)
     meta, files = metadata(repo)
-    if not project_approval(repo, meta, now):
+    if meta.get("incomplete_policy_files"):
+        return "Cannot verify the full contribution rules for this reservation."
+    try:
+        approval = project_approval(repo, meta, now)
+    except ApprovalCoverageIncomplete:
+        return APPROVAL_UNVERIFIED
+    if not approval:
         return "The repository needs at least 100 GitHub stars and a verified PR approval in the last 72 hours."
+    if issue:
+        issue = complete_issue_discussion(issue)
+        if issue is None:
+            return "Cannot verify the complete issue discussion for this reservation."
     eligible = issue and assess(issue, repo, meta, files, now.date(), minutes=int(arg), reserve=0)
     if not eligible:
         return "Issue is unavailable or does not fit this session."
+    if actions := required_actions(eligible):
+        return "Upstream prerequisites need confirmation before reserving: " + " ".join(actions)
     window = reviews(repo, now.date())
-    review_limit = project.get("review_limit", 3)
+    review_limit = project.get("review_limit", DEFAULT_BOARD_REVIEW_LIMIT)
     window = dict(window, limit=min(window["limit"], review_limit))
+    if window.get("open_complete") and len(window["open"]) >= review_limit:
+        return "Review capacity is full."
     if (sum(c["repo"].casefold() == repo.casefold() for c in active) >= review_limit
             or slots(window, claims, now, repo) < 1):
         return "Review capacity is full or unknown."
@@ -399,6 +447,7 @@ def render(week, projects, claims, now, override, lang):
             "Stack",
             "Check",
             "confirm in target CI",
+            "Confirm before starting",
         ),
         "ru": (
             "Проекты недели",
@@ -414,6 +463,7 @@ def render(week, projects, claims, now, override, lang):
             "Стек",
             "Проверка",
             "уточните в CI проекта",
+            "Подтвердите до начала работы",
         ),
         "es": (
             "Proyectos de la semana",
@@ -429,6 +479,7 @@ def render(week, projects, claims, now, override, lang):
             "Lenguajes",
             "Prueba",
             "consulta la CI del proyecto",
+            "Confirma antes de empezar",
         ),
     }[lang]
     (
@@ -445,6 +496,7 @@ def render(week, projects, claims, now, override, lang):
         stack,
         check,
         unknown,
+        confirm_first,
     ) = copy
     lines = [
         f"# {title} · {week}",
@@ -458,6 +510,8 @@ def render(week, projects, claims, now, override, lang):
     for p in projects:
         repo = p["repo"]
         w = p["window"]
+        decisions_count = str(w["decisions"]) if w.get("decisions_complete", True) else f"≥{w['decisions']}"
+        open_count = str(len(w["open"])) if w.get("open_complete", True) else f"≥{len(w['open'])}"
         note = override.get("descriptions", {}).get(repo, {})
         lines.extend(
             [
@@ -467,7 +521,7 @@ def render(week, projects, claims, now, override, lang):
                 "",
                 p.get("track", "general"),
                 "",
-                f"{capacity} · {decisions}: {w['decisions']} · {opened}: {len(w['open'])} · **{free}: {slots(w, claims, now, repo)}**.",
+                f"{capacity} · {decisions}: {decisions_count} · {opened}: {open_count} · **{free}: {slots(w, claims, now, repo)}**.",
                 "",
             ]
         )
@@ -477,6 +531,7 @@ def render(week, projects, claims, now, override, lang):
                 "",
             ])
         for t in p["tasks"]:
+            actions = required_actions(t)
             active = next(
                 (
                     c
@@ -499,6 +554,7 @@ def render(week, projects, claims, now, override, lang):
             action = (
                 ("[%s](%s)" % (reserve, link))
                 if not active
+                and not actions
                 and slots(w, claims, now, repo) > 0
                 and week == week_key(now)
                 else (
@@ -509,6 +565,8 @@ def render(week, projects, claims, now, override, lang):
             lines.append(
                 f"  {stack}: {safe(', '.join(t['stack']) or '?')} · {check}: {safe(' / '.join(t['checks']) or unknown)}"
             )
+            if actions:
+                lines.append(f"  <br>{confirm_first}: {safe(' '.join(actions))}")
             why, notes = {"en": ("Selection signals", "Handoff"), "ru": ("Основания отбора", "Передача работы"), "es": ("Criterios de selección", "Relevo")}[lang]
             signals = list(t.get("signals") or []) + list(t.get("evidence") or [])[:1]
             if t.get("minutes"):
@@ -607,11 +665,14 @@ def run(now):
                 or request.get("createdAt")
                 or now.isoformat()
             )
-            ledger["receipts"][key] = community.command(
-                title, user, at, ledger, metadata, issue_number=request["number"],
-                body=request.get("body") or "", qualify=qualify,
-                project_check=lambda repo, meta: project_approval(repo, meta, now),
-            )
+            try:
+                ledger["receipts"][key] = community.command(
+                    title, user, at, ledger, metadata, issue_number=request["number"],
+                    body=request.get("body") or "", qualify=qualify,
+                    project_check=lambda repo, meta: project_approval(repo, meta, now),
+                )
+            except ApprovalCoverageIncomplete:
+                ledger["receipts"][key] = APPROVAL_UNVERIFIED
     election = ledger.setdefault("elections", {}).setdefault(
         week, {"nominees": {}, "votes": {}}
     )
@@ -628,9 +689,12 @@ def run(now):
     audit = load(audit_path, dict(version=version, shares=balance.SHARES, prior=[p["repo"] for p in selection], rounds=[]))
     before_search = time.monotonic()
     first_call = len(GRAPH_CALLS)
-    projects = select(now, {"exclude": excluded}, unfinished, claims) if unfinished else []
-    vacancies = max(0, limit - len(projects))
-    if not selection or not unfinished or (vacancies and len(projects) < len(unfinished)):
+    recheck = {"exclude": excluded}
+    projects = select(now, recheck, unfinished, claims) if unfinished else []
+    unverified = recheck.get("approval_unverified", [])
+    occupied = len(projects) + len(unverified)
+    vacancies = max(0, limit - occupied)
+    if not selection or not unfinished or (vacancies and occupied < len(unfinished)):
         past = [t for k, e in ledger["elections"].items() if k <= week for t in e.get("tracks", {}).values()]
         if audit["version"] == 2:
             past = {category: 0 for category in balance.SHARES}
@@ -646,7 +710,8 @@ def run(now):
         additions = select(now, options, None, claims)
         record = dict(ballot=copy.deepcopy({k: election[k] for k in ("nominees", "votes")}),
                       history=past, limit=options["limit"], pool=options["pool"],
-                      skipped=options["skipped"], selected=[p["repo"] for p in additions])
+                      skipped=options["skipped"], discovery=options["discovery"],
+                      selected=[p["repo"] for p in additions])
         if audit["version"] == 2:
             record.update(replacement=options["replacement"], reasons=options["reasons"])
         if not audit["rounds"] or audit["rounds"][-1] != record:
@@ -654,6 +719,10 @@ def run(now):
         selection.extend(additions)
         projects.extend(additions)
         save(selection_file, selection)
+    if unverified:
+        audit["approval_unverified"] = unverified
+    else:
+        audit.pop("approval_unverified", None)
     save(audit_path, audit)
     calls = GRAPH_CALLS[first_call:]
     save(folder / "discovery-metrics.json", dict(seconds=round(time.monotonic()-before_search, 2),

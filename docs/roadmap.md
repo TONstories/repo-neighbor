@@ -6,10 +6,16 @@ Select active public GitHub repositories with at least 100 stars and a verified 
 
 ## Pilot and expansion
 
-1. Refresh the shortlist before each new pilot round. Record the stars, approval link and UTC time for each project. Check issue availability, contribution and AI rules, review capacity and runnable acceptance checks. Move paused projects out of the active rotation and record the reason and date. Preserve their historical results and replace them with eligible projects as review capacity allows.
-2. Invite two eligible projects with a named reviewer. Track up to ten sessions and the reason each stopped. Aim for three appropriate submissions and one confirmed merge, then check any open PR after 30 days.
-3. Improve module checks for TypeScript/JavaScript, Go and Python. Record revision, working directory, command, exit status and tests that actually ran. Label incomplete search and unknown review capacity. Track opens, merges, closures without merge and review feedback. The next outcome target is three attributable merges across at least two projects.
-4. Expand Rust and either JVM or .NET when participants request them and a maintainer owns the fixtures. Expand other stacks after a public pilot and a negative control. Aim for six attributable merges across at least three projects in six months, including a repeat invitation. Consider GitLab or Forgejo when a project there agrees to pilot.
+1. Start one bounded contribution with a runnable acceptance check. Refresh stars, approval, issue availability and project rules before starting. Reuse the recorded shortlist while its evidence is current. Record exclusions so a subsequent round can resume with the next eligible project.
+2. For a contributor-led issue, follow the upstream rules for assignment, AI assistance, credit and contributor eligibility. Contact a maintainer or arrange review when upstream requires it. Check CLA eligibility before implementing and leave signing to the contributor. For a coordinated pilot, agree the scope and a review contact with each participating project.
+3. Reproduce the issue when applicable and test the patch on the target module. Inspect the jobs triggered by the changed paths and run relevant contract checks, including exact catalog or schema assertions. Refresh the issue and base before publishing. Record the checkout, base, exact commands and outcomes so another participant can resume.
+4. Track a ready patch, an opened PR and an upstream decision as separate milestones. Record the PR URL and head, pending or failed checks, and the next action. Revisit open PRs on a meaningful change and at the 30-day checkpoint. Fix in-scope failures on the existing branch with a normal fast-forward update.
+5. For the two-project coordinated pilot, track up to ten sessions and aim for three appropriate submissions and one confirmed merge. After the pilot, aim for three attributable merges across two projects. Keep TypeScript/JavaScript, Go and Python as the first priorities. Extend Rust and one of JVM or .NET when a participant requests it and someone can maintain the fixtures. Validate each new stack with an upstream pilot and a negative control.
+6. Aim for six attributable merges across at least three projects in six months and record any repeat invitation. Start a GitLab or Forgejo adapter when a project there agrees to pilot.
+
+## November 27, 2026 contributor outcomes
+
+Four upstream PRs were submitted. [CodeToVideo #12](https://github.com/Anatomik5/codetovideo/pull/12) and [Nightshift #268](https://github.com/orwa-mahmoud/nightshift/pull/268) merged. [Nightshift #270](https://github.com/orwa-mahmoud/nightshift/pull/270) and [OnlyRead #55](https://github.com/onlyreadai/onlyread/pull/55) were open at the review. The Nightshift stack exposed an exact catalog assertion outside the initial local checks. OnlyRead surfaced a contributor-only CLA step after submission. Carry both checks into preflight. The two-project coordinated pilot remains a separate milestone.
 
 ## November 26, 2026 selection refresh
 
@@ -21,4 +27,4 @@ HawDB work is paused and the repository is out of the W48 rotation. The previous
 | OnlyRead | 109 | [Nov 25, 11:11](https://github.com/onlyreadai/onlyread/pull/51#pullrequestreview-6056534605) | Conditional candidate. The [CI task](https://github.com/onlyreadai/onlyread/issues/32) and [search task](https://github.com/onlyreadai/onlyread/issues/52) require first-time contributor eligibility and an issue comment before work begins. |
 | Editor Code Assistant | 1,061 | [Nov 24, 12:20](https://github.com/editor-code-assistant/eca/pull/707#pullrequestreview-6039082300) | Reserve. The maintainers publish [development checks](https://github.com/editor-code-assistant/eca/blob/c7fbd65c161f04b65c259e589f11d62ccb1f53ef/AGENTS.md), and the pilot needs a bounded task and confirmed contribution rules. |
 
-Confirm issue scope, maintainer consent and the reviewer before starting a pilot. The weekly board runs its independent task and capacity checks separately.
+The weekly board uses its own task and review-capacity checks when selecting a project slot.

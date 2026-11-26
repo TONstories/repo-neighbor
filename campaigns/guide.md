@@ -25,7 +25,13 @@ For selection and new reservations, a project needs at least 100 GitHub stars an
 
 Weekly `discovery_seeds` in [the editor file](editor.json) extend the GitHub search. Seeded projects go through the same eligibility, workload and review checks as search results. Seeds carry no voting weight.
 
+When a task lists an upstream prerequisite, confirm it with the project before starting. The board shows the prerequisite and directs contributors to the project's own coordination process. These tasks do not count towards the two reservable tasks needed for a new project. The GitHub reservation command reports the same prerequisites if a card changed after the board was published.
+
 An `exclude` entry in the editor file removes a repository from the active board and from new selection. Use the weekly `exclude` list for a single campaign. Earlier selections and existing reservation records stay in the archive and ledger.
+
+Each selection round records the status and coverage limits of its GitHub issue searches in `audit.json`. A partial search can still yield candidates that pass the project and review capacity checks. An unverified review queue supplies no capacity for new projects. A GitHub rate limit interrupts selection so the existing board can be retried from the next run.
+
+If the bounded approval search cannot verify a selected project, the board hides that project's cards and keeps its allocation for the next recheck. The audit lists affected projects. A nomination or reservation encountering the same limit receives a verification message.
 
 Monday at 09:15 Moscow time is the intended release. GitHub can delay scheduled jobs. Each new project needs at least two distinct tasks. We compare mentioned file paths and similar titles; the contributor must confirm the change is independent. A repository without sufficient review bandwidth waits. External PR decisions over the last 28 days set the weekly limit: round up decisions/4, clamp to 1–5, subtract current open external PRs and unsubmitted active reservations. Owner/member/collaborator PRs and recognized bot accounts are excluded. A bounded review sample with incomplete coverage yields zero slots. An open submitted PR counts only through the upstream queue. Results follow the original week after merge. The board is a snapshot; command processing checks live eligibility. The additional reconciliation runs every six hours.
 
@@ -45,6 +51,12 @@ Monday at 09:15 Moscow time is the intended release. GitHub can delay scheduled 
 
 **EN** — Open an issue titled `rn handoff ISSUE_URL`. Use three body lines for the public branch/commit/draft PR URL, checks and results, and the next step.
 **ES** — Abre un issue con el titulo `rn handoff ISSUE_URL`. Escribe tres lineas con el enlace publico a la rama, commit o PR, las pruebas y su resultado, y el proximo paso.
+
+### Проверки открытых PR / Open PR checks
+
+`campaign/journey.py --live --as-of TIMESTAMP` при заполненном `--supplement` добавляет к открытым PR ожидающие проверки и проверки, требующие внимания. У снимка проверок есть свое время чтения и SHA коммита. Старые снимки могут не содержать этих данных.
+
+**EN** — A live journey report with `--as-of` shows pending checks and checks that need attention for open PRs. The report records the observation time and head commit for those checks.
 
 ### Отзыв после merge / Outcome feedback / Resultado
 
