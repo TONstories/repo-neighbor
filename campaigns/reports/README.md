@@ -1,6 +1,6 @@
 # Community desk · Сообщество · Comunidad
 
-[Today / Сегодня](2026-11-27.md) · [This week / Эта неделя](2026-W48.md) · [Next ballot / Голосование](2026-W49.md)
+[Today / Сегодня](2026-11-28.md) · [This week / Эта неделя](2026-W48.md) · [Next ballot / Голосование](2026-W49.md)
 
 Lifetime: 1 participant · 0 PRs · 0 merged · **$0–$0 estimated replacement value** · 0 unpriced.
 
@@ -13,6 +13,10 @@ Lifetime: 1 participant · 0 PRs · 0 merged · **$0–$0 estimated replacement 
 ### [orwa-mahmoud/nightshift](https://github.com/orwa-mahmoud/nightshift)
 - [#219 Evidence kinds\: how would you show the night\'s work is right\?](https://github.com/orwa-mahmoud/nightshift/issues/219) · available for eligibility check · [claim](https://github.com/TONstories/repo-neighbor/issues/new?title=rn%20claim%20https%3A%2F%2Fgithub.com%2Forwa-mahmoud%2Fnightshift%2Fissues%2F219%2090)
 - [#22 Receipts\: what did the night leave behind\?](https://github.com/orwa-mahmoud/nightshift/issues/22) · available for eligibility check · [claim](https://github.com/TONstories/repo-neighbor/issues/new?title=rn%20claim%20https%3A%2F%2Fgithub.com%2Forwa-mahmoud%2Fnightshift%2Fissues%2F22%2090)
+
+### [oras-project/oras-go](https://github.com/oras-project/oras-go)
+- [#1800 ci\: replace RELEASE_PAT with a GitHub App token in the release workflow](https://github.com/oras-project/oras-go/issues/1800) · available for eligibility check · [claim](https://github.com/TONstories/repo-neighbor/issues/new?title=rn%20claim%20https%3A%2F%2Fgithub.com%2Foras-project%2Foras-go%2Fissues%2F1800%2090)
+- [#1797 feat\: default blob uploads to HTTP\/1\.1 and add upload\-http\-version to registries\.conf](https://github.com/oras-project/oras-go/issues/1797) · available for eligibility check · [claim](https://github.com/TONstories/repo-neighbor/issues/new?title=rn%20claim%20https%3A%2F%2Fgithub.com%2Foras-project%2Foras-go%2Fissues%2F1797%2090)
 
 ## Next week
 

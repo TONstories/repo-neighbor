@@ -477,5 +477,118 @@
       "open": [],
       "open_complete": true
     }
+  },
+  {
+    "recent_approval": {
+      "pr": "https://github.com/oras-project/oras-go/pull/1798",
+      "review": "https://github.com/oras-project/oras-go/pull/1798#pullrequestreview-6082689364",
+      "submitted_at": "2026-11-27T02:27:14Z"
+    },
+    "repo": "oras-project/oras-go",
+    "review_limit": 3,
+    "stars": 301,
+    "tasks": [
+      {
+        "check_requirements": [],
+        "checks": [],
+        "evidence": [
+          "Go"
+        ],
+        "fit": "uncertain",
+        "issue_requirements": [],
+        "kind": "code",
+        "license": "Apache-2.0",
+        "minutes": [
+          45,
+          120
+        ],
+        "parent": null,
+        "recent_approval": {
+          "pr": "https://github.com/oras-project/oras-go/pull/1798",
+          "review": "https://github.com/oras-project/oras-go/pull/1798#pullrequestreview-6082689364",
+          "submitted_at": "2026-11-27T02:27:14Z"
+        },
+        "repo": "oras-project/oras-go",
+        "scope": [
+          "github/act/release-event.json"
+        ],
+        "score": 41,
+        "signals": [
+          "good first issue",
+          "help wanted"
+        ],
+        "stack": [
+          "Go"
+        ],
+        "stack_source": "issue",
+        "stars": 301,
+        "submission_requirements": [],
+        "title": "ci: replace RELEASE_PAT with a GitHub App token in the release workflow",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope.",
+          "No check detected. Inspect CI or document the manual acceptance check."
+        ],
+        "updated": "2026-11-27T19:01:03Z",
+        "url": "https://github.com/oras-project/oras-go/issues/1800"
+      },
+      {
+        "check_requirements": [],
+        "checks": [],
+        "evidence": [
+          "Go"
+        ],
+        "fit": "uncertain",
+        "issue_requirements": [],
+        "kind": "code",
+        "license": "Apache-2.0",
+        "minutes": [
+          45,
+          120
+        ],
+        "parent": null,
+        "recent_approval": {
+          "pr": "https://github.com/oras-project/oras-go/pull/1798",
+          "review": "https://github.com/oras-project/oras-go/pull/1798#pullrequestreview-6082689364",
+          "submitted_at": "2026-11-27T02:27:14Z"
+        },
+        "repo": "oras-project/oras-go",
+        "scope": [
+          "HTTP/1.1",
+          "HTTP/2.0",
+          "http/1.1",
+          "registry/remote/config/properties.go",
+          "registry/remote/config/registries.go",
+          "registry/remote/properties/transport.go"
+        ],
+        "score": 35,
+        "signals": [
+          "help wanted"
+        ],
+        "stack": [
+          "Go"
+        ],
+        "stack_source": "issue",
+        "stars": 301,
+        "submission_requirements": [],
+        "title": "feat: default blob uploads to HTTP/1.1 and add upload-http-version to registries.conf",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope.",
+          "No check detected. Inspect CI or document the manual acceptance check."
+        ],
+        "updated": "2026-11-26T15:36:56Z",
+        "url": "https://github.com/oras-project/oras-go/issues/1797"
+      }
+    ],
+    "track": "general",
+    "window": {
+      "complete": true,
+      "decisions": 41,
+      "decisions_complete": true,
+      "limit": 3,
+      "open": [
+        "https://github.com/oras-project/oras-go/pull/1802"
+      ],
+      "open_complete": true
+    }
   }
 ]

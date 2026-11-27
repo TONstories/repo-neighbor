@@ -23,12 +23,14 @@
         "AppsYogi-com/ComposeYogi",
         "TheZupZup/Linthra",
         "nowledge-co/hawdb",
-        "orwa-mahmoud/nightshift"
+        "orwa-mahmoud/nightshift",
+        "oras-project/oras-go"
       ],
       "tracks": {
         "AppsYogi-com/ComposeYogi": "fun",
         "TheZupZup/Linthra": "fun",
         "nowledge-co/hawdb": "general",
+        "oras-project/oras-go": "general",
         "orwa-mahmoud/nightshift": "general"
       },
       "votes": {}

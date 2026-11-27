@@ -403,6 +403,142 @@
         "seladb/pcapplusplus": "Insufficient independent tasks",
         "sirius-db/sirius": "Insufficient independent tasks"
       }
+    },
+    {
+      "ballot": {
+        "nominees": {},
+        "votes": {}
+      },
+      "discovery": {
+        "beetbox/beets": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "complete"
+        },
+        "cog-creators/red-discordbot": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "empty"
+        },
+        "dicoogle/dicoogle": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "empty"
+        },
+        "global": {
+          "api_errors": {},
+          "coverage_limits": [
+            "search_result_limit"
+          ],
+          "queries_completed": 2,
+          "search_status": "partial"
+        },
+        "gnudatalanguage/gdl": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "empty"
+        },
+        "h5i-dev/h5i": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "empty"
+        },
+        "infisical/infisical": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "empty"
+        },
+        "leanprover-community/physlib": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "complete"
+        },
+        "mlavik1/unityvolumerendering": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "empty"
+        },
+        "nota-daw/nota": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "empty"
+        },
+        "oras-project/oras-go": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "complete"
+        },
+        "phasehq/console": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "empty"
+        },
+        "prismorsec/prismor": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "complete"
+        },
+        "rocq-prover/rocq": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "complete"
+        }
+      },
+      "history": [
+        "general",
+        "general",
+        "fun",
+        "fun",
+        "general",
+        "general"
+      ],
+      "limit": 1,
+      "pool": [
+        {
+          "repo": "oras-project/oras-go",
+          "tasks": [
+            {
+              "score": 41
+            },
+            {
+              "score": 35
+            }
+          ],
+          "track": "general"
+        }
+      ],
+      "selected": [
+        "oras-project/oras-go"
+      ],
+      "skipped": {
+        "apache/opendal": "Review capacity could not be verified",
+        "beetbox/beets": "Insufficient independent tasks",
+        "cog-creators/red-discordbot": "No eligible issues",
+        "dicoogle/dicoogle": "No eligible issues",
+        "gnudatalanguage/gdl": "No eligible issues",
+        "h5i-dev/h5i": "No eligible issues",
+        "infisical/infisical": "No eligible issues",
+        "leanprover-community/physlib": "No review capacity",
+        "mlavik1/unityvolumerendering": "No eligible issues",
+        "nota-daw/nota": "No eligible issues",
+        "phasehq/console": "No eligible issues",
+        "prismorsec/prismor": "Insufficient independent tasks",
+        "r0y00/xbox2windows": "Insufficient independent tasks",
+        "rocq-prover/rocq": "No review capacity"
+      }
     }
   ],
   "shares": {
