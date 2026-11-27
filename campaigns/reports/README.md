@@ -10,6 +10,10 @@ Lifetime: 1 participant · 0 PRs · 0 merged · **$0–$0 estimated replacement 
 
 ## Текущие задачи и исполнители / Current work
 
+### [orwa-mahmoud/nightshift](https://github.com/orwa-mahmoud/nightshift)
+- [#219 Evidence kinds\: how would you show the night\'s work is right\?](https://github.com/orwa-mahmoud/nightshift/issues/219) · available for eligibility check · [claim](https://github.com/TONstories/repo-neighbor/issues/new?title=rn%20claim%20https%3A%2F%2Fgithub.com%2Forwa-mahmoud%2Fnightshift%2Fissues%2F219%2090)
+- [#22 Receipts\: what did the night leave behind\?](https://github.com/orwa-mahmoud/nightshift/issues/22) · available for eligibility check · [claim](https://github.com/TONstories/repo-neighbor/issues/new?title=rn%20claim%20https%3A%2F%2Fgithub.com%2Forwa-mahmoud%2Fnightshift%2Fissues%2F22%2090)
+
 ## Next week
 
 [Nominate a project](https://github.com/TONstories/repo-neighbor/issues/new?title=rn%20nominate%20OWNER%2FREPO) · [Заявка владельца / Maintainer proposal](../../docs/maintainers.md) · [Rules](../../docs/community.md)

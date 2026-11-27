@@ -261,6 +261,148 @@
         "r0y00/xbox2windows": "No review capacity",
         "rtk-ai/rtk": "Insufficient independent tasks"
       }
+    },
+    {
+      "ballot": {
+        "nominees": {},
+        "votes": {}
+      },
+      "discovery": {
+        "fzn0x/mixmusic": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "empty"
+        },
+        "global": {
+          "api_errors": {},
+          "coverage_limits": [
+            "search_result_limit"
+          ],
+          "queries_completed": 2,
+          "search_status": "partial"
+        },
+        "gnudatalanguage/gdl": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "empty"
+        },
+        "h5i-dev/h5i": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "empty"
+        },
+        "hol-theorem-prover/hol": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "empty"
+        },
+        "infisical/infisical": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "empty"
+        },
+        "leanprover-community/physlib": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "complete"
+        },
+        "lmms/lmms": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "empty"
+        },
+        "m-igashi/mp3rgain": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "empty"
+        },
+        "mlavik1/unityvolumerendering": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "empty"
+        },
+        "nipy/nibabel": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "empty"
+        },
+        "oras-project/oras-go": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "complete"
+        },
+        "orwa-mahmoud/nightshift": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "complete"
+        },
+        "phasehq/console": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "empty"
+        },
+        "prismorsec/prismor": {
+          "api_errors": {},
+          "coverage_limits": [],
+          "queries_completed": 2,
+          "search_status": "complete"
+        }
+      },
+      "history": [
+        "general",
+        "general",
+        "fun",
+        "fun",
+        "general"
+      ],
+      "limit": 2,
+      "pool": [
+        {
+          "repo": "orwa-mahmoud/nightshift",
+          "tasks": [
+            {
+              "score": 5
+            },
+            {
+              "score": 5
+            }
+          ],
+          "track": "general"
+        }
+      ],
+      "selected": [
+        "orwa-mahmoud/nightshift"
+      ],
+      "skipped": {
+        "fzn0x/mixmusic": "No eligible issues",
+        "gnudatalanguage/gdl": "No eligible issues",
+        "h5i-dev/h5i": "No eligible issues",
+        "hol-theorem-prover/hol": "No eligible issues",
+        "infisical/infisical": "No eligible issues",
+        "leanprover-community/physlib": "No review capacity",
+        "lmms/lmms": "No eligible issues",
+        "m-igashi/mp3rgain": "No eligible issues",
+        "mlavik1/unityvolumerendering": "No eligible issues",
+        "nipy/nibabel": "No eligible issues",
+        "oras-project/oras-go": "Insufficient independent tasks",
+        "phasehq/console": "No eligible issues",
+        "prismorsec/prismor": "Insufficient independent tasks",
+        "seladb/pcapplusplus": "Insufficient independent tasks",
+        "sirius-db/sirius": "Insufficient independent tasks"
+      }
     }
   ],
   "shares": {

@@ -22,12 +22,14 @@
       "selected": [
         "AppsYogi-com/ComposeYogi",
         "TheZupZup/Linthra",
-        "nowledge-co/hawdb"
+        "nowledge-co/hawdb",
+        "orwa-mahmoud/nightshift"
       ],
       "tracks": {
         "AppsYogi-com/ComposeYogi": "fun",
         "TheZupZup/Linthra": "fun",
-        "nowledge-co/hawdb": "general"
+        "nowledge-co/hawdb": "general",
+        "orwa-mahmoud/nightshift": "general"
       },
       "votes": {}
     }

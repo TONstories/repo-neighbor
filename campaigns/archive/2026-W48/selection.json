@@ -373,5 +373,109 @@
         "https://github.com/nowledge-co/hawdb/pull/1922"
       ]
     }
+  },
+  {
+    "recent_approval": {
+      "pr": "https://github.com/orwa-mahmoud/nightshift/pull/265",
+      "review": "https://github.com/orwa-mahmoud/nightshift/pull/265#pullrequestreview-6066890853",
+      "submitted_at": "2026-11-26T00:25:39Z"
+    },
+    "repo": "orwa-mahmoud/nightshift",
+    "review_limit": 3,
+    "stars": 605,
+    "tasks": [
+      {
+        "check_requirements": [],
+        "checks": [],
+        "evidence": [],
+        "fit": "investigate",
+        "issue_requirements": [],
+        "kind": "code",
+        "license": "MIT",
+        "minutes": null,
+        "parent": null,
+        "recent_approval": {
+          "pr": "https://github.com/orwa-mahmoud/nightshift/pull/265",
+          "review": "https://github.com/orwa-mahmoud/nightshift/pull/265#pullrequestreview-6066890853",
+          "submitted_at": "2026-11-26T00:25:39Z"
+        },
+        "repo": "orwa-mahmoud/nightshift",
+        "scope": [
+          "github.com/orwa-mahmoud/nightshift/blob/main/docs/add-to-a-catalog.md",
+          "github.com/orwa-mahmoud/nightshift/blob/main/plugins/nightshift/skills/nightshift/references/evidence/kinds/ui.md",
+          "github.com/orwa-mahmoud/nightshift/blob/main/plugins/nightshift/skills/nightshift/references/evidence/recipe.md",
+          "github.com/orwa-mahmoud/nightshift/blob/main/plugins/nightshift/skills/nightshift/references/templates/evidence-kind.md",
+          "plugins/nightshift/skills/nightshift/references/evidence/kinds/your-kind.md"
+        ],
+        "score": 5,
+        "signals": [
+          "good first issue",
+          "help wanted"
+        ],
+        "stack": [
+          "Shell"
+        ],
+        "stack_source": "repository only",
+        "stars": 605,
+        "submission_requirements": [],
+        "title": "Evidence kinds: how would you show the night's work is right?",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope.",
+          "No check detected. Inspect CI or document the manual acceptance check.",
+          "Issue stack inferred from repository files."
+        ],
+        "updated": "2026-11-26T22:25:43Z",
+        "url": "https://github.com/orwa-mahmoud/nightshift/issues/219"
+      },
+      {
+        "check_requirements": [],
+        "checks": [],
+        "evidence": [],
+        "fit": "investigate",
+        "issue_requirements": [],
+        "kind": "docs",
+        "license": "MIT",
+        "minutes": null,
+        "parent": null,
+        "recent_approval": {
+          "pr": "https://github.com/orwa-mahmoud/nightshift/pull/265",
+          "review": "https://github.com/orwa-mahmoud/nightshift/pull/265#pullrequestreview-6066890853",
+          "submitted_at": "2026-11-26T00:25:39Z"
+        },
+        "repo": "orwa-mahmoud/nightshift",
+        "scope": [
+          "github.com/orwa-mahmoud/nightshift/blob/main/examples/README.md"
+        ],
+        "score": 5,
+        "signals": [
+          "documentation",
+          "good first issue",
+          "help wanted"
+        ],
+        "stack": [
+          "Shell"
+        ],
+        "stack_source": "repository only",
+        "stars": 605,
+        "submission_requirements": [],
+        "title": "Receipts: what did the night leave behind?",
+        "unknown": [
+          "Confirm AI and attribution policy, current ownership and actual scope.",
+          "No check detected. Inspect CI or document the manual acceptance check.",
+          "Issue stack inferred from repository files."
+        ],
+        "updated": "2026-11-26T22:25:42Z",
+        "url": "https://github.com/orwa-mahmoud/nightshift/issues/22"
+      }
+    ],
+    "track": "general",
+    "window": {
+      "complete": true,
+      "decisions": 7,
+      "decisions_complete": true,
+      "limit": 2,
+      "open": [],
+      "open_complete": true
+    }
   }
 ]
