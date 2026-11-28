@@ -10,7 +10,7 @@ general
 
 Нагрузка на ревью · решения за 28 дней: 7 · открытые внешние PR: 0 · **свободные места: 2**.
 
-GitHub ★ 602 · [APPROVED](https://github.com/orwa-mahmoud/nightshift/pull/265#pullrequestreview-6066890853) · 2026-11-26T00:25:39Z
+GitHub ★ 534 · [APPROVED](https://github.com/orwa-mahmoud/nightshift/pull/265#pullrequestreview-6066890853) · 2026-11-26T00:25:39Z
 
 - [Evidence kinds\: how would you show the night\'s work is right\?](https://github.com/orwa-mahmoud/nightshift/issues/219) · [Забронировать](https://github.com/TONstories/repo-neighbor/issues/new?title=rn+claim+https%3A%2F%2Fgithub.com%2Forwa-mahmoud%2Fnightshift%2Fissues%2F219+90&body=Repo+Neighbor+campaign+reservation.)<br>
   Стек: Shell · Проверка: уточните в CI проекта
@@ -25,9 +25,9 @@ GitHub ★ 602 · [APPROVED](https://github.com/orwa-mahmoud/nightshift/pull/265
 
 general
 
-Нагрузка на ревью · решения за 28 дней: 41 · открытые внешние PR: 1 · **свободные места: 2**.
+Нагрузка на ревью · решения за 28 дней: 39 · открытые внешние PR: 2 · **свободные места: 1**.
 
-GitHub ★ 301 · [APPROVED](https://github.com/oras-project/oras-go/pull/1798#pullrequestreview-6082689364) · 2026-11-27T02:27:14Z
+GitHub ★ 301 · [APPROVED](https://github.com/oras-project/oras-go/pull/1803#pullrequestreview-6094156089) · 2026-11-27T23:07:18Z
 
 - [ci\: replace RELEASE_PAT with a GitHub App token in the release workflow](https://github.com/oras-project/oras-go/issues/1800) · [Забронировать](https://github.com/TONstories/repo-neighbor/issues/new?title=rn+claim+https%3A%2F%2Fgithub.com%2Foras-project%2Foras-go%2Fissues%2F1800+90&body=Repo+Neighbor+campaign+reservation.)<br>
   Стек: Go · Проверка: уточните в CI проекта

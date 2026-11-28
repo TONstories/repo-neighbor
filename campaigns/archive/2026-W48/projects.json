@@ -7,7 +7,7 @@
     },
     "repo": "orwa-mahmoud/nightshift",
     "review_limit": 3,
-    "stars": 602,
+    "stars": 534,
     "tasks": [
       {
         "check_requirements": [],
@@ -36,7 +36,7 @@
           "Shell"
         ],
         "stack_source": "repository only",
-        "stars": 602,
+        "stars": 534,
         "submission_requirements": [],
         "title": "Evidence kinds: how would you show the night's work is right?",
         "unknown": [
@@ -71,7 +71,7 @@
           "Shell"
         ],
         "stack_source": "repository only",
-        "stars": 602,
+        "stars": 534,
         "submission_requirements": [],
         "title": "Receipts: what did the night leave behind?",
         "unknown": [
@@ -95,9 +95,9 @@
   },
   {
     "recent_approval": {
-      "pr": "https://github.com/oras-project/oras-go/pull/1798",
-      "review": "https://github.com/oras-project/oras-go/pull/1798#pullrequestreview-6082689364",
-      "submitted_at": "2026-11-27T02:27:14Z"
+      "pr": "https://github.com/oras-project/oras-go/pull/1803",
+      "review": "https://github.com/oras-project/oras-go/pull/1803#pullrequestreview-6094156089",
+      "submitted_at": "2026-11-27T23:07:18Z"
     },
     "repo": "oras-project/oras-go",
     "review_limit": 3,
@@ -118,11 +118,6 @@
           120
         ],
         "parent": null,
-        "recent_approval": {
-          "pr": "https://github.com/oras-project/oras-go/pull/1798",
-          "review": "https://github.com/oras-project/oras-go/pull/1798#pullrequestreview-6082689364",
-          "submitted_at": "2026-11-27T02:27:14Z"
-        },
         "repo": "oras-project/oras-go",
         "scope": [
           "github/act/release-event.json"
@@ -161,11 +156,6 @@
           120
         ],
         "parent": null,
-        "recent_approval": {
-          "pr": "https://github.com/oras-project/oras-go/pull/1798",
-          "review": "https://github.com/oras-project/oras-go/pull/1798#pullrequestreview-6082689364",
-          "submitted_at": "2026-11-27T02:27:14Z"
-        },
         "repo": "oras-project/oras-go",
         "scope": [
           "HTTP/1.1",
@@ -197,11 +187,12 @@
     "track": "general",
     "window": {
       "complete": true,
-      "decisions": 41,
+      "decisions": 39,
       "decisions_complete": true,
       "limit": 3,
       "open": [
-        "https://github.com/oras-project/oras-go/pull/1802"
+        "https://github.com/oras-project/oras-go/pull/1802",
+        "https://github.com/oras-project/oras-go/pull/1804"
       ],
       "open_complete": true
     }
